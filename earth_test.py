@@ -1,0 +1,118 @@
+#!/usr/bin/env python3
+"""The Earth Test: is Earth's 15 C set by pressure and the lapse rate, or by the greenhouse effect?
+
+Two runs with the same sunlight, the same 1 bar and the same lapse rate:
+  1. pressure only        the air doesn't absorb infrared, the surface radiates straight to space
+  2. infrared absorbers   Earth radiates to space from the level where the measured profile
+                          reaches the emission temperature
+
+Prints the energy ledgers, the compression bill, the middle-of-the-mass rule and the Moon test,
+and writes results/numbers.txt and results/earth_test.png.
+
+Usage:
+    python3 earth_test.py
+"""
+import csv
+import os
+
+import numpy as np
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+
+SIGMA = 5.670374419e-8
+S, ALBEDO, R_EARTH = 1361.0, 0.294, 6371.0        # NASA Earth Fact Sheet
+SUN_AT_SURFACE = 161.0                             # W/m2, Trenberth et al. 2009; Wild et al. 2013
+SURFACE_LW, BACK_LW = 396.0, 333.0                 # W/m2, Trenberth et al. 2009
+LAPSE = 6.5                                        # K/km, U.S. Standard Atmosphere troposphere
+BASE = os.path.dirname(os.path.abspath(__file__))
+
+
+def load():
+    with open(os.path.join(BASE, "data", "earth_us1976.csv")) as f:
+        rows = list(csv.DictReader(f))
+    return tuple(np.array([float(r[k]) for r in rows]) for k in ("altitude_km", "temperature_K", "pressure_bar"))
+
+
+def main():
+    z, T, p = load()
+    absorbed = S * (1 - ALBEDO) / 4
+    Te = (absorbed / SIGMA) ** 0.25
+    T_em = lambda h: Te * (R_EARTH / (R_EARTH + h)) ** 0.5
+    ze = 5.0
+    for _ in range(60):
+        ze = (T[0] - T_em(ze)) / LAPSE              # emission level on the measured troposphere
+    Ts = T_em(ze) + LAPSE * ze
+    emit = SIGMA * T[0] ** 4
+    ceiling = (S / 4 / SIGMA) ** 0.25
+
+    # half of the mass above: the 1976 troposphere, p/p0 = (T/T0)^(g M / (R L))
+    expo = 9.80665 * 0.0289644 / (8.3144598 * LAPSE / 1e3)
+    zhalf = (T[0] - T[0] * 0.5 ** (1 / expo)) / LAPSE
+
+    # gravitational energy of the column, integral of p dz
+    E = sum((z[i + 1] - z[i]) * 1e3 / np.log(p[i] / p[i + 1]) * (p[i] - p[i + 1]) * 1e5 for i in range(len(z) - 1))
+    E += p[-1] * 1e5 * 7e3                          # above 50 km
+    bill = emit - SUN_AT_SURFACE
+    p0 = p[0] * 1e5
+
+    q_moon = S * (1 - 0.11) / 4
+
+    out = [
+        f"absorbed sunlight (planet average)  {absorbed:6.1f} W/m2, Te = {Te:.2f} K",
+        f"emission level                      {ze:6.3f} km, T_em = {T_em(ze):.2f} K (curvature)",
+        f"surface, T_em + lapse x z_e         {T_em(ze):.2f} + {LAPSE} x {ze:.3f} = {Ts:.2f} K (measured {T[0]} K)",
+        f"ceiling, transparent air, nothing reflected: {ceiling:.1f} K",
+        "",
+        "pressure only: surface at Te, emits = leaves = absorbed, greenhouse effect 0",
+        "infrared absorbers:",
+        f"  surface emits sigma T^4 = {emit:.1f} W/m2 (measured {SURFACE_LW:.0f}), leaves {absorbed:.1f}",
+        f"  greenhouse effect = {emit - absorbed:.1f} W/m2 (measured {SURFACE_LW - absorbed:.0f})",
+        f"  sunlight absorbed by the surface {SUN_AT_SURFACE:.0f}, must come back from the air >= {emit - SUN_AT_SURFACE:.0f} (measured back radiation {BACK_LW:.0f})",
+        "",
+        "middle-of-the-mass rule:",
+        f"  half the mass above {zhalf:.3f} km: {Te:.2f} + {LAPSE} x {zhalf:.3f} = {Te + LAPSE * zhalf:.2f} K, off by {T[0] - (Te + LAPSE * zhalf):+.2f} K",
+        "",
+        "if compression paid the bill:",
+        f"  bill {bill:.0f} W/m2 -> sinking speed {bill / p0 * 1e3:.2f} mm/s = {bill / p0 * 3.156e7 / 1e3:.0f} km/yr",
+        f"  gravitational energy {E / 1e6:.0f} MJ/m2, centre of mass {E / p0 / 1e3:.1f} km, lasts {E / bill / 86400:.0f} days",
+        "",
+        "Moon test:",
+        f"  Moon absorbs {q_moon:.1f} W/m2 ({q_moon / absorbed - 1:+.0%} vs Earth), black body {(q_moon / SIGMA) ** 0.25:.1f} K (NASA Moon Fact Sheet: 270.4 K)",
+        "",
+        f"CO2 above each m2 at 420 ppm: {p0 / 9.80665 * 420e-6 * 44.01 / 28.97:.1f} kg, air {p0 / 9.80665 / 1e3:.1f} t",
+    ]
+    print("\n".join(out))
+    os.makedirs(os.path.join(BASE, "results"), exist_ok=True)
+    with open(os.path.join(BASE, "results", "numbers.txt"), "w") as f:
+        f.write("\n".join(out) + "\n")
+
+    BG, FG, DIM = "#0f1419", "#e7e9ea", "#8b98a5"
+    plt.rcParams.update({"text.color": FG, "axes.labelcolor": FG, "xtick.color": DIM, "ytick.color": DIM,
+                         "axes.edgecolor": DIM, "figure.facecolor": BG, "axes.facecolor": BG, "font.family": "DejaVu Sans"})
+    fig, ax = plt.subplots(figsize=(8, 6), dpi=160)
+    m = z <= 20
+    ax.plot(T[m], z[m], color=FG, alpha=0.5, lw=2.4, label="U.S. Standard Atmosphere 1976")
+    ax.axvline(Te, color=DIM, ls="--", lw=1)
+    ax.text(Te + 1, 19.2, f"Te = {Te:.1f} K", color=DIM, fontsize=9)
+    ax.plot([T_em(ze), Ts], [ze, 0], color="#4fd1c5", lw=2.6)
+    ax.plot(T_em(ze), ze, "o", color="#4fd1c5", ms=7)
+    ax.plot(Ts, 0, "o", color="#4fd1c5", ms=11, clip_on=False, label=f"infrared absorbers: surface {Ts:.0f} K")
+    ax.plot(Te, 0, "o", color="#a0aec0", ms=11, clip_on=False, label=f"pressure only: surface {Te:.0f} K")
+    ax.set_xlim(200, 330)
+    ax.set_ylim(0, 20)
+    ax.set_xlabel("temperature (K)")
+    ax.set_ylabel("altitude (km)")
+    ax.set_title("The Earth Test: same pressure, same lapse rate", loc="left", fontsize=12)
+    ax.grid(alpha=0.15)
+    ax.legend(frameon=False, fontsize=9, loc="upper right")
+    fig.text(0.01, 0.01, "Data: U.S. Standard Atmosphere 1976; NASA Earth Fact Sheet; Trenberth et al. 2009   ·   Made with Python by @splugged",
+             fontsize=7.5, color=DIM)
+    fig.tight_layout(rect=(0, 0.03, 1, 1))
+    path = os.path.join(BASE, "results", "earth_test.png")
+    fig.savefig(path, facecolor=BG)
+    print("saved", path)
+
+
+if __name__ == "__main__":
+    main()

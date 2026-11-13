@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Earth Test</title>
+<meta name="description" content="Is Earth's 15 °C set by pressure and the lapse rate, or by the greenhouse effect? Two runs, an energy ledger, measured data and published models.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="The Earth Test: pressure or greenhouse effect?">
+<meta property="og:description" content="Same air, same pressure, same lapse rate: 255 K without infrared absorbers, 288 K with them. An interactive energy ledger on measured data.">
+<meta property="og:url" content="https://davey811.github.io/earth-greenhouse/">
+<meta property="og:image" content="https://davey811.github.io/earth-greenhouse/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Earth temperature profile: 255 K without infrared absorbers, 288 K with them, same pressure and lapse rate.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Earth Test: pressure or greenhouse effect?">
+<meta name="twitter:description" content="Same air, same pressure, same lapse rate: 255 K without infrared absorbers, 288 K with them. An interactive energy ledger on measured data.">
+<meta name="twitter:image" content="https://davey811.github.io/earth-greenhouse/og.png">
+<style>
+  :root {
+    --bg: #0f1419; --panel: #161d24; --line: #2a333d; --fg: #e7e9ea; --dim: #8b98a5;
+    --teal: #4fd1c5; --red: #ff6b6b; --amber: #f6ad55; --green: #68d391; --grey: #a0aec0;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--fg);
+    font: 15.5px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+  main { max-width: 1080px; margin: 0 auto; padding: 26px 16px 52px; }
+  h1 { font-size: 28px; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .sub { color: var(--dim); margin: 0 0 20px; max-width: 780px; }
+  .grid { display: grid; grid-template-columns: 340px 1fr; gap: 16px; align-items: start; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; margin-top: 16px; }
+  @media (max-width: 860px) { .grid, .grid2 { grid-template-columns: 1fr; } }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .wide { margin-top: 16px; }
+  .card h2 { font-size: 14px; color: var(--dim); margin: 0 0 10px; font-weight: 600; }
+  .mode { display: grid; gap: 6px; margin-bottom: 12px; }
+  .mode button { background: transparent; color: var(--fg); border: 1px solid var(--line); border-radius: 8px;
+    padding: 9px 11px; font: inherit; font-size: 14.5px; cursor: pointer; text-align: left; line-height: 1.3; }
+  .mode button .k { display: block; font-size: 12.5px; color: var(--dim); margin-top: 2px; }
+  .mode button[aria-pressed="true"][data-m="pressure"] { border-color: var(--grey); box-shadow: inset 0 0 0 1px var(--grey); }
+  .mode button[aria-pressed="true"][data-m="greenhouse"] { border-color: var(--teal); box-shadow: inset 0 0 0 1px var(--teal); }
+  .mode button:hover { border-color: var(--dim); }
+  button:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+  .explain { font-size: 14px; margin: 0 0 4px; }
+  label, .lab { display: block; font-size: 14px; margin: 12px 0 4px; font-weight: 600; }
+  label output { float: right; color: var(--dim); font-weight: 400; font-variant-numeric: tabular-nums; }
+  input[type=range] { width: 100%; accent-color: var(--teal); }
+  input[type=range]:disabled { opacity: 0.35; cursor: not-allowed; }
+  .seg { display: flex; gap: 6px; }
+  .seg button { flex: 1; font: inherit; font-size: 13.5px; color: var(--fg); background: transparent; border: 1px solid var(--line);
+    border-radius: 8px; padding: 7px 8px; cursor: pointer; }
+  .seg button[aria-pressed="true"] { border-color: var(--grey); background: #1e2730; }
+  .note { font-size: 12.5px; color: var(--dim); margin: 4px 0 0; }
+  .big { font-size: 34px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .bigcap { font-size: 13px; color: var(--dim); margin: 2px 0 6px; }
+  .eq { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; color: var(--dim); margin: 0 0 8px; }
+  svg { display: block; width: 100%; height: auto; }
+  svg text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 14.5px; }
+  td { padding: 6px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td:last-child { text-align: right; white-space: nowrap; padding-left: 12px; }
+  td small { color: var(--dim); font-size: 12.5px; }
+  tr.head td { color: var(--dim); font-size: 13px; font-weight: 600; border-bottom: none; padding-top: 12px; padding-left: 0; text-align: left; }
+  tr.head:first-child td { padding-top: 0; }
+  tr.total td { font-weight: 700; }
+  .ok { color: var(--green); }
+  .verdict { margin: 10px 0 0; font-size: 14.5px; }
+  .gases { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 12px; }
+  .gases button { font: inherit; font-size: 14px; color: var(--fg); background: transparent; border: 1px solid var(--line);
+    border-radius: 999px; padding: 6px 13px; cursor: pointer; }
+  .gases button[aria-pressed="true"] { background: #22303c; border-color: var(--amber); }
+  .bars { display: grid; gap: 7px; }
+  .bar { display: grid; grid-template-columns: 110px 1fr 66px; gap: 10px; align-items: center; font-size: 13.5px; }
+  .bar .t { height: 12px; background: #0b1015; border-radius: 6px; overflow: hidden; }
+  .bar .f { display: block; height: 100%; background: #4a5563; border-radius: 6px; }
+  .bar.on .f { background: var(--amber); }
+  .bar .n { text-align: right; font-variant-numeric: tabular-nums; color: var(--dim); }
+  .gtools { display: flex; gap: 6px; margin: -4px 0 12px; }
+  .gtools button { font: inherit; font-size: 12.5px; color: var(--dim); background: transparent; border: 1px dashed var(--line);
+    border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+  .gtools button:hover { color: var(--fg); border-color: var(--dim); }
+  .chartbar { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .chartbar .note { margin: 0; flex-basis: 100%; }
+  .chartbar .radnote { margin: 4px 0 0; flex-basis: 100%; font-size: 14px; border-left: 3px solid var(--red); padding-left: 10px; }
+  #linkBox { flex-basis: 100%; font: inherit; font-size: 12.5px; color: var(--fg); background: #0b1015; border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px; }
+  #chart { touch-action: pan-y; cursor: crosshair; }
+  .chartbar button { font: inherit; font-size: 13px; color: var(--dim); background: transparent; border: 1px dashed var(--line); border-radius: 8px; padding: 5px 11px; cursor: pointer; }
+  .chartbar button[aria-pressed="true"] { color: var(--fg); border-style: solid; border-color: var(--amber); }
+  #range { margin-top: 12px; }
+  .bar.on .n { color: var(--fg); font-weight: 700; }
+  .prose p, .prose li { max-width: 780px; }
+  .prose p { margin: 0 0 11px; }
+  ol.steps { margin: 0 0 6px; padding-left: 22px; }
+  ol.steps li { margin: 0 0 11px; }
+  q { color: #cfd6dc; font-style: italic; }
+  q::before { content: "\201C"; } q::after { content: "\201D"; }
+  .ref { color: var(--dim); font-size: 13px; white-space: nowrap; }
+  details { border-top: 1px solid var(--line); padding: 9px 0; }
+  details:first-of-type { border-top: none; padding-top: 2px; }
+  summary { cursor: pointer; font-weight: 600; }
+  details p { margin: 7px 0 0; max-width: 780px; }
+  a { color: var(--teal); }
+  .eqwrap { overflow-x: auto; }
+  section[id], details[id] { scroll-margin-top: 14px; }
+  .quick { margin: 0 0 16px; }
+  .quick .nums { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  @media (max-width: 860px) { .quick .nums { grid-template-columns: 1fr 1fr; } }
+  .quick .nums b { display: block; font-size: 22px; font-variant-numeric: tabular-nums; color: var(--teal); }
+  .quick .nums b.hot { color: var(--red); } .quick .nums b.cold { color: var(--grey); }
+  .quick .nums span { display: block; font-size: 13px; color: var(--dim); line-height: 1.4; margin-top: 2px; }
+  .toc { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--line); font-size: 13.5px; }
+  .toc a { text-decoration: none; } .toc a:hover { text-decoration: underline; }
+  details:target > summary { color: var(--amber); }
+  table.fltab { margin-top: 6px; }
+  #reportList { font-size: 13px; align-self: center; margin-left: 6px; }
+  ul.corr { margin: 0; padding-left: 20px; font-size: 14px; }
+  .gtools button[aria-pressed="true"] { color: var(--fg); border-style: solid; border-color: var(--teal); }
+  #fl { margin-top: 6px; }
+  table.eqt { min-width: 640px; font-size: 14px; }
+  table.eqt th { text-align: left; color: var(--dim); font-weight: 600; font-size: 13px; padding: 0 10px 8px 0; border-bottom: 1px solid var(--line); }
+  table.eqt td { text-align: left; white-space: normal; padding: 9px 10px 9px 0; }
+  table.eqt td:first-child { width: 34%; }
+  table.eqt .f { display: block; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px; color: var(--dim); }
+  table.eqt .m { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; }
+  table.eqt tr.rule td { background: rgba(255,107,107,0.07); }
+  @media (max-width: 600px) { table.eqt { min-width: 0; font-size: 13.5px; } table.eqt td:first-child { width: 38%; } table.eqt .m, table.eqt .f { font-size: 12px; overflow-wrap: anywhere; } }
+  .bad { color: var(--red); font-weight: 700; }
+  footer { margin-top: 24px; color: var(--dim); font-size: 13px; }
+  footer p { margin: 0 0 6px; }
+</style>
+
+</head>
+<body>
+<main>
+  <h1>The Earth Test</h1>
+  <p class="sub">Earth's surface averages 288 K, 15 °C. Is that set by the pressure and the lapse rate, or by the greenhouse effect?
+  Same planet, same sunlight, same air, same lapse rate. Two runs, and an energy ledger that has to balance.</p>
+
+  <section class="card quick" id="quick" aria-label="In 60 seconds">
+    <h2>In 60 seconds</h2>
+    <div class="nums">
+      <div><b>396 W/m²</b><span>infrared emitted by the surface, measured</span></div>
+      <div><b>240 W/m²</b><span>leave Earth: the same as the sunlight it absorbs</span></div>
+      <div><b class="hot">156 W/m²</b><span>never reach space: the air traps them. That is the greenhouse effect</span></div>
+      <div><b class="cold">255 K</b><span>the surface with the same air but no infrared absorbers (278 K even reflecting nothing)</span></div>
+    </div>
+    <nav class="toc" aria-label="Contents">
+      <a href="#tool">The two runs</a><a href="#ledger">Energy ledger</a><a href="#attribution">Who does what</a><a href="#spectrum">Spectrum</a><a href="#argument">The argument</a><a href="#coincidence">The 5 km coincidence</a><a href="#compression">Compression</a><a href="#moon">The Moon test</a><a href="#objections">Objections</a><a href="#report">Found an error?</a>
+    </nav>
+  </section>
+
+  <div class="grid">
+    <section class="card" id="tool" aria-label="Runs">
+      <h2>Run</h2>
+      <div class="mode" role="group" aria-label="Run">
+        <button data-m="pressure" aria-pressed="false">Pressure only<span class="k">1 bar of air that doesn't absorb infrared</span></button>
+        <button data-m="greenhouse" aria-pressed="true">Pressure + infrared absorbers<span class="k">water vapour, CO₂, clouds, ozone, methane</span></button>
+      </div>
+      <p class="explain" id="explain"></p>
+      <div id="ctlP">
+        <span class="lab" id="albL">Sunlight reflected</span>
+        <div class="seg" role="group" aria-labelledby="albL">
+          <button data-a="0.294" aria-pressed="true">Earth, 29%</button>
+          <button data-a="0" aria-pressed="false">None at all</button>
+        </div>
+        <p class="note">With nothing reflected Earth absorbs all 340 W/m² that reach it, the most it could ever get.</p>
+        <label for="h0">Emission height <output>0 km, fixed</output></label>
+        <input id="h0" type="range" min="0" max="11" value="0" disabled>
+        <p class="note">Nothing in the air can radiate: air that doesn't absorb infrared doesn't emit it either, so the ground is the only thing radiating to space.</p>
+      </div>
+      <div id="ctlG">
+        <label for="h">Emission height <output id="hO"></output></label>
+        <input id="h" type="range" min="0.5" max="11" step="0.05" value="5.1">
+        <p class="note">More absorbing gas, higher emission level. The measured profile reaches the emission temperature at 5.1 km. Above 11 km the troposphere ends and the profile stops cooling, so the model stops there.</p>
+      </div>
+    </section>
+
+    <section class="card" aria-label="Result">
+      <div class="big" id="ts"></div>
+      <p class="bigcap" id="tsC"></p>
+      <p class="eq" id="eq"></p>
+      <svg id="chart" viewBox="0 0 640 430" role="img" aria-label="Temperature against altitude: model and measured Earth profile"></svg>
+      <div class="chartbar"><button id="copyLink">Copy link to this view</button>
+        <input id="linkBox" type="text" readonly hidden aria-label="Link to this view">
+        <p class="note">Hover or touch the measured curve to read altitude, temperature and pressure; click or tap to pin the reading.</p></div>
+    </section>
+  </div>
+
+  <div class="grid2">
+    <section class="card" id="ledger" aria-label="Energy ledger">
+      <h2>Energy ledger, per square metre, planet average</h2>
+      <table>
+        <tr class="head"><td colspan="2">Earth as a whole</td></tr>
+        <tr><td>Sunlight absorbed</td><td id="lIn"></td></tr>
+        <tr><td>Infrared sent to space <small id="lFrom"></small></td><td id="lOut"></td></tr>
+        <tr class="total"><td>Sent − absorbed</td><td id="lBal" class="ok"></td></tr>
+        <tr class="head"><td colspan="2">The surface</td></tr>
+        <tr><td>Infrared emitted by the surface, σT⁴</td><td id="lEmit"></td></tr>
+        <tr><td>Sunlight absorbed by the surface <small id="lSunN"></small></td><td id="lSun"></td></tr>
+        <tr class="total"><td>Must come back from the air</td><td id="lBack"></td></tr>
+        <tr><td>Measured back radiation <small>(Trenberth et al. 2009; Wild et al. 2013: 342)</small></td><td id="lBackM"></td></tr>
+        <tr class="head"><td colspan="2">Greenhouse effect</td></tr>
+        <tr class="total"><td>Surface infrared that never reaches space <small>(emitted − sent to space)</small></td><td id="lG"></td></tr>
+        <tr><td>Measured <small>(396 − 240)</small></td><td>156 W/m²</td></tr>
+      </table>
+      <p class="verdict" id="verdict"></p>
+    </section>
+
+    <section class="card" id="attribution" aria-label="Who does what">
+      <h2>Who does what: the published attribution</h2>
+      <p class="note" style="margin:0 0 10px">Share of the present-day greenhouse effect, GISS ModelE (Schmidt et al. 2010; Lacis et al. 2010).</p>
+      <div class="bars">
+        <div class="bar on"><span>Water vapour</span><span class="t"><span class="f" style="width:100%"></span></span><span class="n">~50%</span></div>
+        <div class="bar on"><span>Clouds</span><span class="t"><span class="f" style="width:50%"></span></span><span class="n">~25%</span></div>
+        <div class="bar on"><span>CO₂</span><span class="t"><span class="f" style="width:40%"></span></span><span class="n">~20%</span></div>
+        <div class="bar on"><span>Other gases</span><span class="t"><span class="f" style="width:10%"></span></span><span class="n">~5%</span></div>
+      </div>
+      <p class="verdict">Water vapour and clouds do most of the absorbing, but they condense and rain out: their amount follows the temperature. CO₂, methane and ozone don't. In the GISS model, removing those non-condensing gases makes the water follow them out: within 50 years the global mean falls to <b>−21 °C</b>, 34.8 K colder, and sea ice grows from 4.6% to 46.7% of the globe.</p>
+      <p class="note">"Other gases" is the 25% of the non-condensing gases minus CO₂'s 20%. Lacis et al. 2010, GISS research brief.</p>
+    </section>
+  </div>
+
+  <section class="card wide prose" id="spectrum" aria-label="What leaves the surface, what leaves Earth">
+    <h2>What leaves the surface, what leaves Earth</h2>
+    <p id="spT"></p>
+    <svg id="sp" viewBox="0 0 900 330" role="img" aria-label="Planck spectra: infrared emitted by the surface and infrared that leaves Earth"></svg>
+    <p class="note" style="margin-top:6px">Planck's law, M<sub>λ</sub> = 2πhc² / λ⁵ / (e<sup>hc/λkT</sup> − 1), per square metre; the area under each curve is σT⁴. Both curves follow the run and the emission height above. Grey picture: the real spectrum has the CO₂ band at 15 µm and a window near 10 µm, but the totals are set by the temperatures.</p>
+  </section>
+
+  <section class="card wide prose" id="argument" aria-label="The argument">
+    <h2>The argument, step by step</h2>
+    <ol class="steps">
+      <li><b>Earth is in energy balance.</b> It absorbs about 240 W/m² of sunlight, averaged over the planet, and sends about the same back to space as infrared. The small difference, under 1 W/m², is the warming now under way.</li>
+      <li><b>Without infrared absorbers, the surface can't be warmer than 255 K.</b> Air that doesn't absorb infrared doesn't emit it either: the surface is the only thing that radiates, and all of its radiation escapes. So σT⁴, averaged over the surface, equals the 240 W/m² absorbed: 255 K, −18 °C, whatever the pressure, the winds, the convection or the lapse rate. A surface with hot and cold patches averages lower, not higher. Even reflecting nothing, the limit would be 278 K.</li>
+      <li><b>The real surface emits 396 W/m², and only 240 leave.</b> The other 156 W/m² of the surface's infrared is absorbed by the air. That is the greenhouse effect: <q>the infrared radiation energy trapped by atmospheric gases and clouds</q>. <span class="ref">Raval &amp; Ramanathan 1989</span> This step doesn't depend on how energy moves inside the atmosphere, only on how much leaves the surface and how much leaves Earth.</li>
+      <li><b>The surface lives on what the air sends back.</b> The surface absorbs about 161 W/m² of sunlight and emits 396. The air sends back down 333 W/m² of infrared, measured; the rest leaves the surface as rising warm air and evaporation. <span class="ref">Trenberth et al. 2009; Wild et al. 2013</span></li>
+      <li><b>The lapse rate fills in the shape.</b> Earth radiates to space from about 5.1 km, where the air is at 255 K; below it the troposphere warms by 6.5 K per km: 255.02 + 6.5 × 5.097 = 288.15 K. The absorbers set the height, the lapse rate sets the slope. This step explains the profile; the 5.1 km and the slope are read from the measured profile, so 288 K comes out by construction. The proof is in steps 1 to 4.</li>
+    </ol>
+  </section>
+
+  <section class="card wide prose" id="coincidence" aria-label="The 5 km coincidence">
+    <h2>The 5 km coincidence</h2>
+    <p>A popular rule puts Earth's −18 °C at the "average" height of the atmosphere, the middle of its mass, and adds the lapse rate: no greenhouse effect needed. On Earth it almost works, because two different heights happen to be close.</p>
+    <div class="eqwrap">
+    <table class="eqt">
+      <tr><th></th><th>Earth</th><th>Venus</th></tr>
+      <tr><td><b>Emission level</b><span class="f">where the measured profile reaches T<sub>em</sub></span></td><td class="m">5.10 km</td><td class="m">71.38 km</td></tr>
+      <tr><td><b>Middle of the mass</b><span class="f">half of the air above</span></td><td class="m">5.48 km</td><td class="m">10.40 km</td></tr>
+      <tr class="rule"><td><b>Middle-of-the-mass rule</b><span class="f">T<sub>e</sub> + Γ z<sub>half</sub></span></td><td class="m">255.12 + 6.5 × 5.477 = 290.72 K<span class="f">off by <span class="bad">−2.6&nbsp;K</span></span></td><td class="m">226.63 + 7.145 × 10.40 = 300.94 K<span class="f">off by <span class="bad">+434.4&nbsp;K</span></span></td></tr>
+      <tr><td><b>Emission-level rule</b><span class="f">T<sub>em</sub> + Γ z<sub>e</sub></span></td><td class="m"><span class="ok">288.15 K</span><span class="f">measured 288.15 K</span></td><td class="m"><span class="ok">735.3 K</span><span class="f">measured 735.3 K</span></td></tr>
+    </table>
+    </div>
+    <p style="margin-top:10px">On Earth the two heights are 0.4 km apart; on Venus, 61 km. The rule that works on both planets is the one where the absorbers set the height. Venus, in detail: <a href="https://davey811.github.io/venus-greenhouse/#equations">The Venus Test</a>.</p>
+  </section>
+
+  <section class="card wide prose" id="compression" aria-label="If compression paid the bill">
+    <h2>If compression paid the bill</h2>
+    <p>Suppose there were no greenhouse effect and the surface were kept at 288 K by the pressure. The surface loses <b id="cmBill"></b> more than the sunlight it absorbs, every second. Compression supplies energy only while the air is being compressed: gravity does work p₀ × v per square metre as the column sinks.</p>
+    <table class="fltab">
+      <tr><td>The air would have to sink at</td><td id="cmV"></td></tr>
+      <tr><td>That is, every year</td><td id="cmY"></td></tr>
+      <tr><td>Gravitational energy of the whole atmosphere, ∫ p dz</td><td id="cmE"></td></tr>
+      <tr><td>Its centre of mass sits at</td><td id="cmZ"></td></tr>
+      <tr><td>All of it would pay the surface's bill for</td><td id="cmD"></td></tr>
+    </table>
+    <p class="note" style="margin-top:8px">A static atmosphere does no work: compression heats only while it lasts. Energy from the U.S. Standard Atmosphere 1976, 0–50 km, log-linear between levels, the column above 50 km added with a 7 km scale height; the bill is σT⁴ at 288.15 K minus the 161 W/m² of sunlight absorbed by the surface.</p>
+  </section>
+
+  <section class="card wide prose" id="moon" aria-label="The Moon test">
+    <h2>The Moon test: same distance from the Sun, no air</h2>
+    <p>The Moon gets the same sunlight as Earth, reflects less of it and has no atmosphere.</p>
+    <div class="eqwrap">
+    <table class="eqt">
+      <tr><th></th><th>Moon</th><th>Earth</th></tr>
+      <tr><td>Sunlight arriving</td><td class="m">1,361 W/m²</td><td class="m">1,361 W/m²</td></tr>
+      <tr><td>Bond albedo (reflected)</td><td class="m">0.11</td><td class="m">0.294</td></tr>
+      <tr><td>Sunlight absorbed, planet average<span class="f">S (1 − A) / 4</span></td><td class="m">303 W/m² <span class="f">26% more than Earth</span></td><td class="m">240 W/m²</td></tr>
+      <tr><td>Black-body temperature</td><td class="m">270.4 K <span class="f">its average can't be higher</span></td><td class="m">254.0 K <span class="f">NASA, older albedo; 255.1 K with 0.294</span></td></tr>
+      <tr><td>Average surface temperature</td><td class="m">below 270 K</td><td class="m"><span class="ok">288 K</span></td></tr>
+      <tr><td>Day–night temperature range</td><td class="m">95–390 K <span class="f">at the equator</span></td><td class="m"><span class="ok">283–293 K</span></td></tr>
+    </table>
+    </div>
+    <p style="margin-top:10px">The Moon absorbs more sunlight than Earth and is colder on average, swinging by almost 300 K between day and night. Earth is warmer and swings by 10 K. Same Sun, same distance: the difference is an atmosphere that absorbs infrared.</p>
+    <p class="note">NASA NSSDC Planetary Fact Sheets, Moon and Earth. "Its average can't be higher": for a body radiating what it absorbs, the mean of T is at most the fourth root of the mean of T⁴.</p>
+  </section>
+
+  <section class="card wide prose" id="objections" aria-label="Objections">
+    <h2>Objections</h2>
+    <details id="o-pressure">
+      <summary>"It's the pressure: 1 bar of air keeps the surface warm."</summary>
+      <p>Same 1 bar, same lapse rate, air that doesn't absorb infrared: 255 K. Press "Pressure only". Pressure decides how the air is arranged above the surface; it can't make the surface send more to space than Earth absorbs. A pressure that doesn't change does no work: see "If compression paid the bill".</p>
+    </details>
+    <details id="o-mid-mass">
+      <summary>"−18 °C sits at the average height of the air, about 5 km: the lapse rate does the rest."</summary>
+      <p>On Earth the middle of the mass (5.5 km) and the emission level (5.1 km) happen to be close, so the rule almost works. On Venus they are 10.4 and 71 km, and the same rule misses by 434 K. See "The 5 km coincidence".</p>
+    </details>
+    <details id="o-co2-trace">
+      <summary>"CO₂ is only 0.04% of the air."</summary>
+      <p>0.04% of a lot of air. Above every square metre of Earth there are about 10 tonnes of air and 6.6 kg of CO₂. What matters for absorbing infrared is how much absorber there is, not its share of the air. In the published attribution CO₂ is about 20% of the greenhouse effect.</p>
+    </details>
+    <details id="o-water">
+      <summary>"Water vapour does it all, not CO₂."</summary>
+      <p>Water vapour and clouds do most of the absorbing, about 75%. But water condenses: its amount follows the temperature. In the GISS model, removing CO₂ and the other non-condensing gases makes the water rain out too, and the global mean falls to −21 °C in 50 years. See "Who does what".</p>
+    </details>
+    <details id="o-cold-warm">
+      <summary>"Cold air can't warm a warmer surface."</summary>
+      <p>It doesn't heat it: heat, the net flow, always goes from the warm surface up. What the air does is send back 333 W/m² of infrared, so the surface loses less. The surface balances what it emits with what it absorbs, from the Sun and from the air. Take the air's share away and the net loss jumps; the surface cools to 255 K.</p>
+    </details>
+    <details id="o-sun">
+      <summary>"It's the Sun."</summary>
+      <p>The Sun supplies the 240 W/m² that Earth absorbs, and Earth sends the same back. The Moon, at the same distance, absorbs 26% more sunlight and is colder. See "The Moon test".</p>
+    </details>
+    <details id="o-tuned">
+      <summary>"You tuned the second run to give 288 K."</summary>
+      <p>Yes: its height and slope are read from the measured profile, so it matches Earth by construction. It is there to show the shape. The proof doesn't use it: it uses the surface emission, the energy that leaves Earth and the sunlight the surface absorbs, all measured.</p>
+    </details>
+    <details id="o-saturated">
+      <summary>"The CO₂ band is saturated: adding more changes nothing."</summary>
+      <p>Saturation would matter if Earth radiated from the surface. It radiates from aloft, and more CO₂ lifts the level where the band escapes to space to colder air: less leaves, the column warms. The effect grows with the logarithm of the concentration and doesn't stop. In The Venus Test the optical-depth slider shows it: doubling the absorber always lifts the level by H ln 2.</p>
+    </details>
+  </section>
+
+  <section class="card wide prose" id="report" aria-label="Found an error?">
+    <h2>Found an error?</h2>
+    <p>Every number on this page comes from the equations and data listed below, and the code is public. If one is wrong, show which one, the value you get instead and how you get it. The report opens on GitHub, already filled in with a link to the view you are looking at.</p>
+    <div class="gtools"><button id="reportBtn">Report an error</button><a id="reportList" href="https://github.com/Davey811/earth-greenhouse/issues?q=is%3Aissue+in%3Atitle+%22Error+report%22">See the reports</a></div>
+    <p id="reportCount" class="note"></p>
+  </section>
+
+  <footer>
+    <p><b>Sources.</b> NASA NSSDC Planetary Fact Sheets, Earth and Moon: solar irradiance 1361 W/m², Bond albedo 0.294 (Moon 0.11), black-body temperature, average temperature 288 K, diurnal range 283–293 K (Moon, equator 95–390 K).
+      U.S. Standard Atmosphere 1976: 288.15 K at the surface, 6.5 K/km to 11 km, pressures from the hydrostatic equation.
+      K. E. Trenberth, J. T. Fasullo and J. Kiehl (2009), <i>Earth's global energy budget</i>, Bull. Amer. Meteor. Soc. 90, 311–323, <a href="https://doi.org/10.1175/2008BAMS2634.1">doi:10.1175/2008BAMS2634.1</a>: surface emission 396 W/m², back radiation 333 W/m², sunlight absorbed by the surface 161 W/m² (values as cited by Wild et al. 2013).
+      M. Wild et al. (2013), <i>The global energy balance from a surface perspective</i>, Clim. Dyn. 40, 3107–3134: surface absorbed solar 161, thermal emission 397, downward thermal 342 W/m².
+      K. E. Trenberth and J. T. Fasullo (2012), Surv. Geophys. 33, 413–426, <a href="https://doi.org/10.1007/s10712-011-9150-2">doi:10.1007/s10712-011-9150-2</a>.
+      G. A. Schmidt, R. Ruedy, R. L. Miller and A. A. Lacis (2010), <i>The attribution of the present-day total greenhouse effect</i>, J. Geophys. Res. 115, D20106, <a href="https://doi.org/10.1029/2010JD014287">doi:10.1029/2010JD014287</a>.
+      A. A. Lacis, G. A. Schmidt, D. Rind and R. A. Ruedy (2010), <i>Atmospheric CO₂: principal control knob governing Earth's temperature</i>, Science 330, 356–359, <a href="https://doi.org/10.1126/science.1190653">doi:10.1126/science.1190653</a>.
+      A. Raval and V. Ramanathan (1989), Nature 342, <a href="https://doi.org/10.1038/342758a0">doi:10.1038/342758a0</a>.</p>
+    <p><b>Method.</b> Sunlight absorbed: 1361 × (1 − albedo) / 4. The emission level is a sphere of radius R + h radiating the same power, at T<sub>em</sub> = T<sub>e</sub> (R / (R + h))<sup>½</sup>, R = 6371 km. Lapse rate 6.5 K/km, the U.S. Standard Atmosphere's troposphere. The surface is treated as black in the infrared, so σT⁴ at 288.15 K gives 391 W/m²; the measured 396 is higher because the surface is not uniform. This is a test of energy bookkeeping, not a climate model.</p>
+    <p>Same test on Venus: <a href="https://davey811.github.io/venus-greenhouse/">The Venus Test</a>. Code and data: <a href="https://github.com/Davey811/earth-greenhouse">github.com/Davey811/earth-greenhouse</a> · by <a href="https://x.com/splugged">@splugged</a></p>
+  </footer>
+</main>
+<script>
+(() => {
+  const SIGMA = 5.670374419e-8, S = 1361, A = 0.294, SUN_SURF = 161, BACK_MEAS = 333;
+  const Q = S * (1 - A) / 4;                        // 240.2 W/m², planet average
+  const TE = Math.pow(Q / SIGMA, 0.25);             // 255.1 K
+  // U.S. Standard Atmosphere 1976, 0-30 km (data/earth_us1976.csv)
+  const EZ = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 24, 26, 28, 30];
+  const ET = [288.15, 281.65, 275.15, 268.65, 262.15, 255.65, 249.15, 242.65, 236.15, 229.65, 223.15, 216.65, 216.65, 216.65, 216.65, 216.65, 216.65, 216.65, 216.65, 216.65, 216.65, 218.65, 220.65, 222.65, 224.65, 226.65];
+  const EP = [1.01325, 0.898748, 0.794955, 0.70109, 0.616408, 0.540205, 0.471816, 0.410614, 0.356004, 0.307431, 0.264369, 0.226326, 0.193309, 0.165109, 0.141023, 0.12045, 0.102879, 0.0878704, 0.0750517, 0.064103, 0.0547516, 0.0400001, 0.0293067, 0.0215323, 0.015864, 0.0117195];
+  const R = 6371.0, TEM = h => TE * Math.sqrt(R / (R + h));
+  const G = 6.5, T0S = 288.15;
+  let ZE = 5; for (let i = 0; i < 40; i++) ZE = (T0S - TEM(ZE)) / G;   // emission level on the measured troposphere
+  const atZ = z => { for (let i = 0; i < EZ.length - 1; i++) if (EZ[i] <= z && z <= EZ[i + 1]) { const f = (z - EZ[i]) / (EZ[i + 1] - EZ[i]); return { T: ET[i] + f * (ET[i + 1] - ET[i]), p: Math.exp(Math.log(EP[i]) + f * Math.log(EP[i + 1] / EP[i])) }; } };
+  const $ = id => document.getElementById(id);
+  const NS = "http://www.w3.org/2000/svg";
+  let mode = "greenhouse", hG = ZE, alb = A, readZ = null, pinned = false, geo = null;
+  const fmtW = w => `${(Math.round(w) || 0).toLocaleString("en-US")} W/m²`;
+  const K = t => `${t.toFixed(0)} K (${(t - 273.15).toFixed(0).replace("-", "−")} °C)`;
+  function el(tag, attrs, parent, text) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; parent.appendChild(e); return e; }
+
+  function state() {
+    if (mode === "pressure") { const q = S * (1 - alb) / 4; return { q, Ts: Math.pow(q / SIGMA, 0.25), h: 0, sun: q }; }
+    return { q: Q, Ts: TEM(hG) + G * hG, h: hG, sun: SUN_SURF };
+  }
+
+  function drawChart(st) {
+    const svg = $("chart"); svg.innerHTML = "";
+    const narrow = (svg.parentElement.clientWidth || 640) < 520;
+    const W = narrow ? 380 : 640, H = narrow ? 400 : 430, L = narrow ? 44 : 56, Rm = 12, T0 = 14, B = 42;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    const xmin = 200, xmax = 330, zmax = 20;
+    const X = t => L + (W - L - Rm) * (t - xmin) / (xmax - xmin), Y = z => T0 + (H - T0 - B) * (1 - z / zmax);
+    for (let t = 210; t <= 320; t += 20) {
+      el("line", { x1: X(t), x2: X(t), y1: T0, y2: H - B, stroke: "#2a333d" }, svg);
+      el("text", { x: X(t), y: H - B + 17, fill: "#8b98a5", "font-size": 12, "text-anchor": "middle" }, svg, t);
+    }
+    for (let z = 0; z <= zmax; z += 2) {
+      el("line", { x1: L, x2: W - Rm, y1: Y(z), y2: Y(z), stroke: "#2a333d" }, svg);
+      if (z % 4 === 0) el("text", { x: L - 8, y: Y(z) + 4, fill: "#8b98a5", "font-size": 12, "text-anchor": "end" }, svg, z);
+    }
+    el("text", { x: (L + W - Rm) / 2, y: H - 6, fill: "#8b98a5", "font-size": 12.5, "text-anchor": "middle" }, svg, "temperature (K)");
+    el("text", { x: 13, y: (T0 + H - B) / 2, fill: "#8b98a5", "font-size": 12.5, "text-anchor": "middle", transform: `rotate(-90 13 ${(T0 + H - B) / 2})` }, svg, "altitude (km)");
+    el("line", { x1: X(TE), x2: X(TE), y1: T0, y2: H - B, stroke: "#8b98a5", "stroke-dasharray": "4 4" }, svg);
+    el("text", { x: X(TE) + 6, y: T0 + 13, fill: "#8b98a5", "font-size": 12 }, svg, `Tₑ = ${TE.toFixed(1)} K`);
+    const zz = EZ.filter(z => z <= zmax);
+    el("polyline", { points: zz.map((z, i) => `${X(ET[i])},${Y(z)}`).join(" "), fill: "none", stroke: "#e7e9ea", "stroke-opacity": 0.45, "stroke-width": 2.4 }, svg);
+    el("text", { x: X(ET[14]) + 8, y: Y(14) + 4, fill: "#8b98a5", "font-size": 12 }, svg, narrow ? "measured" : "U.S. Standard Atmosphere");
+    const col = mode === "pressure" ? "#a0aec0" : "#4fd1c5";
+    if (st.h > 0) {
+      el("line", { x1: X(TEM(st.h)), y1: Y(st.h), x2: X(st.Ts), y2: Y(0), stroke: col, "stroke-width": 3 }, svg);
+      el("circle", { cx: X(TEM(st.h)), cy: Y(st.h), r: 6, fill: col }, svg);
+      el("text", { x: X(TEM(st.h)) - 12, y: Y(st.h) - 9, fill: col, "font-size": 12.5, "text-anchor": "end", "paint-order": "stroke", stroke: "#161d24", "stroke-width": 4 }, svg, `${narrow ? "to space from" : "radiates to space from"} ${st.h.toFixed(1)} km`);
+    }
+    el("circle", { cx: X(st.Ts), cy: Y(0), r: 8, fill: col, stroke: "#161d24", "stroke-width": 2 }, svg);
+    el("text", { x: X(st.Ts) + 12, y: Y(0) - 12, fill: col, "font-size": 13, "font-weight": 700, "paint-order": "stroke", stroke: "#161d24", "stroke-width": 4 }, svg, `surface ${st.Ts.toFixed(0)} K`);
+    geo = { W, H, L, Rm, T0, B, zmax };
+    if (readZ != null) {
+      const r = atZ(Math.min(readZ, 30)), x = X(r.T), y = Y(readZ);
+      el("line", { x1: L, x2: W - Rm, y1: y, y2: y, stroke: "#e7e9ea", "stroke-opacity": 0.35, "stroke-dasharray": "2 3" }, svg);
+      el("circle", { cx: x, cy: y, r: 5.5, fill: "#e7e9ea", stroke: "#161d24", "stroke-width": 2 }, svg);
+      const g = el("g", {}, svg), fs = narrow ? 11.5 : 12.5, lines = [`${readZ.toFixed(1)} km${pinned ? " (pinned)" : ""}`, `${r.T.toFixed(1)} K = ${(r.T - 273.15).toFixed(1)} °C`, `${r.p.toFixed(3)} bar`];
+      const box = el("rect", { rx: 6, fill: "#0b1015", stroke: "#8b98a5", "stroke-opacity": 0.6 }, g);
+      const tx = lines.map((t, i) => el("text", { "font-size": fs, fill: "#e7e9ea", "font-weight": i === 0 ? 700 : 400 }, g, t));
+      const wBox = Math.max(...tx.map(t => t.getComputedTextLength())) + 16, hBox = lines.length * (fs + 4) + 10;
+      const bx = x + 12 + wBox < W - Rm ? x + 12 : x - 12 - wBox, by = Math.min(Math.max(y - hBox - 8, T0), H - B - hBox);
+      box.setAttribute("x", bx); box.setAttribute("y", by); box.setAttribute("width", wBox); box.setAttribute("height", hBox);
+      tx.forEach((t, i) => { t.setAttribute("x", bx + 8); t.setAttribute("y", by + 6 + (i + 1) * (fs + 4) - 3); });
+    }
+  }
+
+  // ---------- Planck spectra
+  const HP = 6.62607015e-34, CL = 2.99792458e8, KB = 1.380649e-23;
+  const Mlam = (um, T) => { const l = um * 1e-6; return 2 * Math.PI * HP * CL * CL / l ** 5 / (Math.exp(HP * CL / (l * KB * T)) - 1) * 1e-6; };
+  function drawSpectrum(st) {
+    const svg = $("sp"); svg.innerHTML = "";
+    const narrow = (svg.parentElement.clientWidth || 900) < 620;
+    const W = narrow ? 380 : 900, H = narrow ? 300 : 330, L = narrow ? 52 : 60, Rm = 14, T0 = 16, B = 44;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    const tg = st.Ts, te = st.h > 0 ? TEM(st.h) : st.Ts, green = st.h > 0, lmax = 60;
+    const peak = Mlam(2898 / tg, tg) * 1.08, nice = v => { const m = Math.pow(10, Math.floor(Math.log10(v))); return [1, 2, 2.5, 5, 10].map(x => x * m).find(x => x >= v); };
+    const step = nice(peak / 5), ymax = Math.ceil(peak / step) * step;
+    const X = l => L + (W - L - Rm) * l / lmax, Y = v => T0 + (H - T0 - B) * (1 - v / ymax);
+    for (let v = 0; v <= ymax + 1e-9; v += step) {
+      el("line", { x1: L, x2: W - Rm, y1: Y(v), y2: Y(v), stroke: "#2a333d" }, svg);
+      el("text", { x: L - 8, y: Y(v) + 4, fill: "#8b98a5", "font-size": 12, "text-anchor": "end" }, svg, Math.round(v));
+    }
+    for (let l = 0; l <= lmax; l += 10) el("text", { x: X(l), y: H - B + 17, fill: "#8b98a5", "font-size": 12, "text-anchor": "middle" }, svg, l);
+    el("text", { x: (L + W - Rm) / 2, y: H - 6, fill: "#8b98a5", "font-size": 12.5, "text-anchor": "middle" }, svg, "wavelength (µm)");
+    el("text", { x: 11, y: (T0 + H - B) / 2, fill: "#8b98a5", "font-size": narrow ? 11 : 12, "text-anchor": "middle", transform: `rotate(-90 11 ${(T0 + H - B) / 2})` }, svg, "W/m² per µm");
+    const curve = T => { const pts = [`${X(0.5)},${Y(0)}`]; for (let l = 0.5; l <= lmax; l += 0.1) pts.push(`${X(l)},${Y(Mlam(l, T))}`); pts.push(`${X(lmax)},${Y(0)}`); return pts.join(" "); };
+    el("polygon", { points: curve(tg), fill: "#ff6b6b", "fill-opacity": 0.22, stroke: "#ff6b6b", "stroke-width": 2.2 }, svg);
+    const halo = { "paint-order": "stroke", stroke: "#161d24", "stroke-width": 4, "font-size": narrow ? 11.5 : 13, "font-weight": 700 };
+    const pk = 2898 / tg;
+    el("text", { x: X(pk) + 18, y: Y(Mlam(pk, tg)) - 6, fill: "#ff6b6b", ...halo }, svg, narrow ? `surface, ${tg.toFixed(0)} K` : `surface, ${tg.toFixed(0)} K: ${fmtW(SIGMA * tg ** 4)}`);
+    if (green) {
+      el("polygon", { points: curve(te), fill: "#4fd1c5", "fill-opacity": 0.5, stroke: "#4fd1c5", "stroke-width": 2 }, svg);
+      const pe = 2898 / te;
+      el("text", { x: X(pe) + 30, y: Y(Mlam(pe, te) * 0.55), fill: "#4fd1c5", ...halo }, svg, narrow ? `to space, ${te.toFixed(0)} K` : `to space, ${te.toFixed(0)} K: ${fmtW(st.q)}`);
+    }
+    const emit = SIGMA * tg ** 4;
+    $("spT").innerHTML = green
+      ? `The surface glows at ${tg.toFixed(0)} K and emits <b>${fmtW(emit)}</b>, peaking near ${(2898 / tg).toFixed(0)} µm. Earth glows to space from about ${st.h.toFixed(0)} km, at ${te.toFixed(0)} K, and sends out <b>${fmtW(st.q)}</b>: the green area. The difference, <b class="bad">${fmtW(emit - st.q)}</b>, is absorbed by the air. Same Planck law, two temperatures, set by where the radiation leaves.`
+      : `No infrared absorbers: Earth radiates straight from the surface, at ${tg.toFixed(0)} K. What the surface emits, ${fmtW(emit)}, is what leaves. One curve, no difference, no greenhouse effect.`;
+  }
+
+  function render() {
+    const st = state(), emit = SIGMA * st.Ts ** 4, back = emit - st.sun;
+    const col = mode === "pressure" ? "var(--grey)" : "var(--teal)";
+    $("ts").textContent = K(st.Ts); $("ts").style.color = col;
+    $("tsC").textContent = `Surface temperature in this run. Measured on Earth: 288 K (15 °C).`;
+    $("eq").textContent = mode === "pressure" ? `σT⁴ = ${st.q.toFixed(1)} W/m²  →  T = ${st.Ts.toFixed(1)} K`
+      : `T_em + Γ × h = ${TEM(st.h).toFixed(2)} + ${G} × ${st.h.toFixed(2)} = ${st.Ts.toFixed(2)} K`;
+    $("lIn").textContent = fmtW(st.q); $("lOut").textContent = fmtW(st.q); $("lBal").textContent = "0 W/m²";
+    $("lFrom").textContent = mode === "pressure" ? "from the surface" : `from about ${st.h.toFixed(1)} km`;
+    $("lEmit").textContent = fmtW(emit);
+    $("lSun").textContent = mode === "pressure" ? fmtW(st.sun) : `≈ ${fmtW(st.sun)}`;
+    $("lSunN").textContent = mode === "pressure" ? "(all of Earth's share: the air is clear)" : "(measured)";
+    $("lBack").textContent = mode === "pressure" ? "0 W/m²" : `≥ ${fmtW(back)}`;
+    const atMeasured = mode === "greenhouse" && hG === ZE;
+    $("lBackM").textContent = atMeasured ? fmtW(BACK_MEAS) : "—";
+    $("lG").textContent = fmtW(emit - st.q);
+    $("explain").textContent = mode === "pressure"
+      ? "Same 1 bar, same lapse rate, but the air neither absorbs nor emits infrared. The surface radiates straight to space."
+      : "The air absorbs the surface's infrared and sends much of it back down; Earth radiates to space from aloft. Move the emission height. At 5.1 km, with the measured slope, the run matches Earth by construction: the proof is in the ledger.";
+    $("verdict").innerHTML = mode === "pressure"
+      ? (alb > 0 ? `<span class="ok"><b>Balanced at ${st.Ts.toFixed(0)} K</b></span>, −18 °C, 33 K colder than the real Earth. Pressure can arrange the air above; it can't make the surface send more to space than Earth absorbs.`
+               : `<span class="ok"><b>Balanced at ${st.Ts.toFixed(0)} K.</b></span> Every photon from the Sun absorbed, nothing reflected, and the surface is still ${(288.15 - st.Ts).toFixed(0)} K colder than Earth. This is the ceiling for a surface that radiates freely to space.`)
+      : `<span class="ok"><b>Balanced.</b></span> The surface emits ${fmtW(emit)}, but only ${fmtW(Q)} leave Earth: the air traps the other ${fmtW(emit - Q)}. About 161 W/m² of sunlight reaches and warms the surface, so at least ${fmtW(back)} must come back from the air.${atMeasured ? " Measured: 333 W/m²; the rest of the surface's energy leaves as rising warm air and evaporation." : ""}`;
+    $("ctlP").hidden = mode !== "pressure"; $("ctlG").hidden = mode !== "greenhouse";
+    $("h").value = hG; $("hO").textContent = hG === ZE ? `${ZE.toFixed(2)} km (measured)` : `${hG.toFixed(1)} km`;
+    document.querySelectorAll(".mode button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.m === mode)));
+    document.querySelectorAll(".seg button").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.a === alb)));
+    drawChart(st); drawSpectrum(st); syncURL();
+  }
+
+  // ---------- links to every view
+  function query() {
+    const q = new URLSearchParams();
+    q.set("run", mode === "pressure" ? "pressure" : "absorbers");
+    if (mode === "pressure" && alb === 0) q.set("reflect", "0");
+    if (mode === "greenhouse" && hG !== ZE) q.set("h", hG.toFixed(2));
+    if (pinned && readZ != null) q.set("at", readZ.toFixed(1));
+    return q.toString();
+  }
+  function linkHere() { return location.href.split(/[?#]/)[0] + "?" + query() + location.hash; }
+  function syncURL() { try { history.replaceState(null, "", "?" + query() + location.hash); } catch (e) { /* not available here */ } }
+  function readURL() {
+    let q; try { q = new URLSearchParams(location.search); } catch (e) { return; }
+    if (q.get("run") === "pressure") mode = "pressure";
+    if (q.get("reflect") === "0") alb = 0;
+    const h = parseFloat(q.get("h")); if (h >= 0.5 && h <= 11) hG = Math.abs(h - ZE) < 0.08 ? ZE : h;
+    const at = parseFloat(q.get("at")); if (at >= 0 && at <= 20) { readZ = at; pinned = true; }
+  }
+  function zFromEvent(ev) {
+    const svg = $("chart"); if (!geo || !svg.getScreenCTM()) return null;
+    const pt = svg.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY;
+    const q = pt.matrixTransform(svg.getScreenCTM().inverse());
+    if (q.x < geo.L || q.x > geo.W - geo.Rm || q.y < geo.T0 - 4 || q.y > geo.H - geo.B + 4) return null;
+    return Math.min(geo.zmax, Math.max(0, geo.zmax * (1 - (q.y - geo.T0) / (geo.H - geo.T0 - geo.B))));
+  }
+
+  // ---------- if compression paid the bill (U.S. Standard Atmosphere, 0-50 km)
+  {
+    const z = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50];
+    const p = [1.01325, 0.898748, 0.794955, 0.70109, 0.616408, 0.540205, 0.471816, 0.410614, 0.356004, 0.307431, 0.264369, 0.226326, 0.193309, 0.165109, 0.141023, 0.12045, 0.102879, 0.0878704, 0.0750517, 0.064103, 0.0547516, 0.0467813, 0.0400001, 0.0342263, 0.0293067, 0.0251118, 0.0215323, 0.0184758, 0.015864, 0.0136306, 0.0117195, 0.0100831, 0.00868088, 0.0074829, 0.00646177, 0.00558972, 0.0048436, 0.00420406, 0.00365489, 0.00318251, 0.00277549, 0.0024242, 0.00212052, 0.00185758, 0.00162955, 0.00143151, 0.00125924, 0.00110919, 0.000977659, 0.000861726, 0.00075954];
+    let E = 0; for (let i = 0; i < z.length - 1; i++) E += (z[i + 1] - z[i]) * 1e3 / Math.log(p[i] / p[i + 1]) * (p[i] - p[i + 1]) * 1e5;
+    E += p[p.length - 1] * 1e5 * 7e3;
+    const p0 = p[0] * 1e5, bill = SIGMA * T0S ** 4 - SUN_SURF, v = bill / p0;
+    $("cmBill").textContent = fmtW(bill);
+    $("cmV").textContent = `${(v * 1e3).toFixed(1)} mm/s`;
+    $("cmY").textContent = `${(v * 3.156e7 / 1e3).toFixed(0)} km`;
+    $("cmE").textContent = `${(E / 1e6).toFixed(0)} MJ/m²`;
+    $("cmZ").textContent = `${(E / p0 / 1e3).toFixed(1)} km`;
+    $("cmD").textContent = `${(E / bill / 86400).toFixed(0)} days`;
+  }
+
+  // ---------- report an error
+  const REPO = "Davey811/earth-greenhouse";
+  $("reportBtn").addEventListener("click", () => {
+    const body = ["**View:** " + linkHere(), "", "**Which number or line is wrong** (section, row or line of earth_test.py):", "", "",
+      "**The value the tool gives:**", "", "", "**The correct value:**", "", "", "**How you get it** (equation, data, source):", "", ""].join("\n");
+    window.open(`https://github.com/${REPO}/issues/new?title=${encodeURIComponent("Error report: ")}&body=${encodeURIComponent(body)}`, "_blank", "noopener");
+  });
+  (async () => {
+    const q = t => fetch(`https://api.github.com/search/issues?q=${encodeURIComponent(`repo:${REPO} is:issue in:title "Error report" ${t}`)}`).then(r => r.ok ? r.json() : Promise.reject(r.status));
+    try { const [all, fixed] = await Promise.all([q(""), q("is:closed reason:completed")]);
+      $("reportCount").textContent = `Error reports so far: ${all.total_count}. Confirmed and fixed: ${fixed.total_count}.`;
+    } catch (e) { $("reportCount").textContent = "The list of reports is on GitHub."; }
+  })();
+
+  // ---------- events
+  document.querySelectorAll(".mode button").forEach(b => b.addEventListener("click", () => { mode = b.dataset.m; render(); }));
+  document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click", () => { alb = +b.dataset.a; render(); }));
+  $("h").addEventListener("input", () => { const v = +$("h").value; hG = Math.abs(v - ZE) < 0.08 ? ZE : v; render(); });
+  const chart = $("chart");
+  chart.addEventListener("pointermove", ev => { if (pinned) return; readZ = zFromEvent(ev); drawChart(state()); });
+  chart.addEventListener("pointerleave", ev => { if (pinned || ev.pointerType === "touch") return; readZ = null; drawChart(state()); });
+  chart.addEventListener("click", ev => {
+    const z = zFromEvent(ev); if (z == null) return;
+    if (pinned && readZ != null && Math.abs(z - readZ) < 0.4) { pinned = false; readZ = null; } else { pinned = true; readZ = z; }
+    drawChart(state()); syncURL();
+  });
+  $("copyLink").addEventListener("click", async () => {
+    const url = linkHere(), btn = $("copyLink"), box = $("linkBox");
+    try { await navigator.clipboard.writeText(url); btn.textContent = "Link copied"; box.hidden = true; }
+    catch (e) { box.value = url; box.hidden = false; box.focus(); box.select(); btn.textContent = "Copy the link below"; }
+    setTimeout(() => { btn.textContent = "Copy link to this view"; }, 2500);
+  });
+  let rz; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(render, 120); });
+  function openFromHash() {
+    const id = decodeURIComponent(location.hash.slice(1)); if (!id) return;
+    const t = document.getElementById(id); if (!t) return;
+    if (t.tagName === "DETAILS") t.open = true;
+    t.scrollIntoView();
+  }
+  window.addEventListener("hashchange", openFromHash);
+  readURL(); render(); openFromHash();
+})();
+</script>
+
+</body>
+</html>

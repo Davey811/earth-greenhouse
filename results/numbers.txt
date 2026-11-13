@@ -1,0 +1,22 @@
+absorbed sunlight (planet average)   240.2 W/m2, Te = 255.12 K
+emission level                       5.097 km, T_em = 255.02 K (curvature)
+surface, T_em + lapse x z_e         255.02 + 6.5 x 5.097 = 288.15 K (measured 288.15 K)
+ceiling, transparent air, nothing reflected: 278.3 K
+
+pressure only: surface at Te, emits = leaves = absorbed, greenhouse effect 0
+infrared absorbers:
+  surface emits sigma T^4 = 390.9 W/m2 (measured 396), leaves 240.2
+  greenhouse effect = 150.7 W/m2 (measured 156)
+  sunlight absorbed by the surface 161, must come back from the air >= 230 (measured back radiation 333)
+
+middle-of-the-mass rule:
+  half the mass above 5.477 km: 255.12 + 6.5 x 5.477 = 290.72 K, off by -2.57 K
+
+if compression paid the bill:
+  bill 230 W/m2 -> sinking speed 2.27 mm/s = 72 km/yr
+  gravitational energy 742 MJ/m2, centre of mass 7.3 km, lasts 37 days
+
+Moon test:
+  Moon absorbs 302.8 W/m2 (+26% vs Earth), black body 270.3 K (NASA Moon Fact Sheet: 270.4 K)
+
+CO2 above each m2 at 420 ppm: 6.6 kg, air 10.3 t
