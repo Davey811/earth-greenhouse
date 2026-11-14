@@ -98,6 +98,26 @@ The planet always sends 240 W/m² to space; the more uneven it is, the colder it
 
 Mars has 25 times more CO₂ above each square metre than Earth and a much smaller greenhouse effect. Absorption lines widen with pressure: at 6 millibar they are narrow and the infrared slips out between them. Mars also has almost no water vapour, and it absorbs less than half of Earth's sunlight. The share of CO₂ in the air says little; the amount, the pressure and the water decide. Mars's plain average surface temperature, about 202 K, is below its effective temperature, about 208 K, because its surface is so uneven: the fair comparison uses the fourth root of the average of T⁴ (Haberle 2013).
 
+## Objections answered on the page
+
+Each one opens directly from its link.
+
+- [It's the pressure: 1 bar of air keeps the surface warm.](https://davey811.github.io/earth-greenhouse/#o-pressure)
+- [PV = nRT: the pressure sets the temperature.](https://davey811.github.io/earth-greenhouse/#o-ideal-gas)
+- [−18 °C sits at the average height of the air, about 5 km: the lapse rate does the rest.](https://davey811.github.io/earth-greenhouse/#o-mid-mass)
+- [CO₂ is only 0.04% of the air.](https://davey811.github.io/earth-greenhouse/#o-co2-trace)
+- [Water vapour does it all, not CO₂.](https://davey811.github.io/earth-greenhouse/#o-water)
+- [Cold air can't warm a warmer surface.](https://davey811.github.io/earth-greenhouse/#o-cold-warm)
+- [Back radiation doesn't exist: it has never been measured.](https://davey811.github.io/earth-greenhouse/#o-back-radiation)
+- [The greenhouse effect is just a theory: nobody has ever seen it at work.](https://davey811.github.io/earth-greenhouse/#o-never-seen)
+- [Wood's 1909 experiment proved there is no greenhouse effect.](https://davey811.github.io/earth-greenhouse/#o-wood)
+- [It's the Sun.](https://davey811.github.io/earth-greenhouse/#o-sun)
+- [You tuned the second run to give 288 K.](https://davey811.github.io/earth-greenhouse/#o-tuned)
+- [The CO₂ band is saturated: adding more changes nothing.](https://davey811.github.io/earth-greenhouse/#o-saturated)
+- [CO₂ cools the planet: it radiates heat to space.](https://davey811.github.io/earth-greenhouse/#o-coolant)
+- [Dividing the sunlight by 4 means a flat Earth with no night.](https://davey811.github.io/earth-greenhouse/#o-flat-earth)
+- [Mars is 95% CO₂ and freezing.](https://davey811.github.io/earth-greenhouse/#o-mars)
+
 ## Using the page
 
 Hover or touch the measured curve to read altitude, temperature and pressure; click or tap to pin the reading. "Copy link to this view" copies a link that reopens the page exactly as it is. Every section and objection has its own address, for example `#moon`, `#mars`, `#saturated`, `#divide-by-4` or `#o-co2-trace`. "Report an error" opens a GitHub issue already filled in.
@@ -144,5 +164,9 @@ python3 earth_test.py
 - R. M. Haberle (2013), [*Estimating the power of Mars' greenhouse effect*](https://www.sciencedirect.com/science/article/pii/S0019103513000055), Icarus.
 - R. M. Haberle (2015), *Planetary atmospheres: Mars*, Encyclopedia of Atmospheric Sciences, 2nd ed., Academic Press.
 - D. C. Catling and J. F. Kasting (2017), *Atmospheric Evolution on Inhabited and Lifeless Worlds*, Cambridge University Press.
+- R. W. Wood (1909), *Note on the theory of the greenhouse*, Phil. Mag. 17, 319–320, doi:[10.1080/14786440208636602](https://doi.org/10.1080/14786440208636602).
+- D. R. Feldman, W. D. Collins, P. J. Gero, M. S. Torn, E. J. Mlawer and T. R. Shippert (2015), *Observational determination of surface radiative forcing by CO₂ from 2000 to 2010*, Nature 519, 339–343, doi:[10.1038/nature14240](https://doi.org/10.1038/nature14240).
+- M. Wild et al. (2019), *The cloud-free global energy balance and inferred cloud radiative effects*, Clim. Dyn., doi:[10.1007/s00382-018-4413-y](https://doi.org/10.1007/s00382-018-4413-y).
+- B. D. Santer et al. (2023), *Exceptional stratospheric contribution to human fingerprints on atmospheric temperature*, PNAS 120(20), doi:[10.1073/pnas.2300758120](https://doi.org/10.1073/pnas.2300758120).
 
 Code under the MIT licence. Made with Python by [@splugged](https://x.com/splugged).
