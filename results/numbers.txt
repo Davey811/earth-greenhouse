@@ -34,6 +34,14 @@ is CO2 saturated?
    1120 ppm: forcing  7.42 W/m2, emission level +303 m, surface +1.97 K before feedbacks, 6.0 K with them (3 K per doubling)
    2240 ppm: forcing 11.13 W/m2, emission level +454 m, surface +2.95 K before feedbacks, 9.0 K with them (3 K per doubling)
 
+the First Law in time (doubling, no feedbacks):
+  heat capacity 2.9e+08 J/(m2 K), time constant 2.44 years
+   0 years: imbalance 3.71 W/m2, surface +0.00 K, stored 0 MJ/m2
+   1 years: imbalance 2.46 W/m2, surface +0.33 K, stored 96 MJ/m2
+   3 years: imbalance 1.09 W/m2, surface +0.70 K, stored 202 MJ/m2
+  10 years: imbalance 0.06 W/m2, surface +0.97 K, stored 281 MJ/m2
+  measured 0.76 W/m2 (2006-2020) over 5.101e+14 m2: 12.2 ZJ a year
+
 surface emission at 288.15 K: window 8-13 um 31.2%, CO2 band 13-17 um 18.8%
 
 Mars test:

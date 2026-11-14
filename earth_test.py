@@ -76,6 +76,20 @@ def main():
         co2.append(f"  {c:5d} ppm: forcing {F:5.2f} W/m2, emission level +{F / planck / LAPSE * 1e3:3.0f} m, "
                    f"surface +{F / planck:.2f} K before feedbacks, {3 * np.log2(c / 280):.1f} K with them (3 K per doubling)")
 
+    # the First Law in time: CO2 doubled at once, no feedbacks, one heat store:
+    # the top 100 m of ocean over 71% of the planet
+    F2 = 5.35 * np.log(2)
+    C = 1025 * 3990 * 100 * 0.71
+    YEAR = 3.15576e7
+    tau = C / planck / YEAR
+    first_law = [f"  heat capacity {C:.3g} J/(m2 K), time constant {tau:.2f} years"]
+    for t in (0, 1, 3, 10):
+        e = np.exp(-t / tau)
+        first_law.append(f"  {t:2d} years: imbalance {F2 * e:.2f} W/m2, surface +{F2 / planck * (1 - e):.2f} K, "
+                         f"stored {C * F2 / planck * (1 - e) / 1e6:.0f} MJ/m2")
+    area = 4 * np.pi * (R_EARTH * 1e3) ** 2
+    first_law.append(f"  measured 0.76 W/m2 (2006-2020) over {area:.4g} m2: {0.76 * area * YEAR / 1e21:.1f} ZJ a year")
+
     # share of the surface's emission in the window and in the CO2 band, at 288.15 K
     HP, CL, KB = 6.62607015e-34, 2.99792458e8, 1.380649e-23
     lam = np.linspace(0.5, 300, 600000)
@@ -121,6 +135,9 @@ def main():
         "",
         "is CO2 saturated?",
         *co2,
+        "",
+        "the First Law in time (doubling, no feedbacks):",
+        *first_law,
         "",
         f"surface emission at {T[0]} K: window 8-13 um {band(8, 13):.1%}, CO2 band 13-17 um {band(13, 17):.1%}",
         "",

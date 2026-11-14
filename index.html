@@ -126,6 +126,21 @@
   table.eqt tr.rule td { background: rgba(255,107,107,0.07); }
   @media (max-width: 600px) { table.eqt { min-width: 0; font-size: 13.5px; } table.eqt td:first-child { width: 38%; } table.eqt .m, table.eqt .f { font-size: 12px; overflow-wrap: anywhere; } }
   .bad { color: var(--red); font-weight: 700; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 6px 0 16px; }
+  @media (max-width: 860px) { .stats { grid-template-columns: 1fr 1fr; } }
+  .stats b { display: block; font-size: 22px; font-variant-numeric: tabular-nums; color: var(--amber); }
+  .stats span { display: block; font-size: 13px; color: var(--dim); line-height: 1.4; margin-top: 2px; }
+  .sub2 { font-weight: 700; margin: 6px 0 6px; }
+  .tbars { display: grid; gap: 9px; margin: 8px 0 12px; max-width: 820px; }
+  .tbars .bar { grid-template-columns: 250px 1fr 64px; }
+  @media (max-width: 600px) { .tbars .bar { grid-template-columns: 1fr 64px; row-gap: 4px; } .tbars .bar > span:first-child { grid-column: 1 / -1; } }
+  .tbars .bar .t { height: 14px; }
+  .tbars .bar .n { color: var(--fg); font-weight: 600; }
+  ol.timeline { list-style: none; padding: 0; margin: 0; max-width: 820px; }
+  ol.timeline li { display: grid; grid-template-columns: 96px 1fr; gap: 12px; padding: 8px 0; border-top: 1px solid var(--line); }
+  ol.timeline li:first-child { border-top: none; padding-top: 2px; }
+  ol.timeline li > b { color: var(--teal); font-variant-numeric: tabular-nums; }
+  @media (max-width: 600px) { ol.timeline li { grid-template-columns: 1fr; gap: 2px; } }
   .split { display: grid; grid-template-columns: 300px 1fr; gap: 20px; align-items: start; margin: 4px 0 8px; }
   @media (max-width: 860px) { .split { grid-template-columns: 1fr; } }
   .split .seg { margin: 4px 0 2px; }
@@ -151,7 +166,7 @@
       <div><b class="cold">255 K</b><span>the surface with the same air but no infrared absorbers (278 K even reflecting nothing)</span></div>
     </div>
     <nav class="toc" aria-label="Contents">
-      <a href="#tool">The two runs</a><a href="#ledger">Energy ledger</a><a href="#attribution">Who does what</a><a href="#spectrum">Spectrum</a><a href="#saturated">Saturated?</a><a href="#argument">The argument</a><a href="#coincidence">The 5 km coincidence</a><a href="#compression">Compression</a><a href="#divide-by-4">Dividing by 4</a><a href="#moon">The Moon test</a><a href="#mars">The Mars test</a><a href="#objections">Objections</a><a href="#report">Found an error?</a>
+      <a href="#tool">The two runs</a><a href="#ledger">Energy ledger</a><a href="#attribution">Who does what</a><a href="#spectrum">Spectrum</a><a href="#saturated">Saturated?</a><a href="#imbalance">Out of balance</a><a href="#argument">The argument</a><a href="#coincidence">The 5 km coincidence</a><a href="#compression">Compression</a><a href="#radiation-only">Radiation alone</a><a href="#divide-by-4">Dividing by 4</a><a href="#moon">The Moon test</a><a href="#mars">The Mars test</a><a href="#history">History</a><a href="#objections">Objections</a><a href="#report">Found an error?</a>
     </nav>
   </section>
 
@@ -257,6 +272,33 @@
     <p class="note">Forcing: 5.35 × ln(C / 280) W/m² (Myhre et al. 1998); the IPCC AR6 assesses 3.93 ± 0.47 W/m² per doubling, including fast adjustments. Before feedbacks: right after the CO₂ is added, Earth radiates from higher and colder air and sends out less; balance comes back when the column has warmed by forcing / (4σT<sub>e</sub>³) = forcing / 3.77, and the emission level has risen by that warming divided by the lapse rate, 6.5 K/km. In the run above: emission height 5.25 km instead of 5.10, and the surface goes from 288.2 to 289.1 K. With feedbacks, mostly water vapour: about 3 K per doubling, likely range 2.5–4 K (IPCC AR6), for CO₂ alone once the oceans have caught up; the warming measured so far also depends on the other gases, the aerosols and the oceans' delay.</p>
   </section>
 
+  <section class="card wide prose" id="imbalance" aria-label="Out of balance">
+    <h2>Out of balance: the warming in progress</h2>
+    <p>The runs above show a planet in balance. The real Earth isn't, quite: it absorbs more than it sends back to space, and the difference is measured from orbit and in the oceans.</p>
+    <div class="stats">
+      <div><b>0.76 W/m²</b><span>absorbed minus emitted, Earth's average for 2006–2020</span></div>
+      <div><b>×2</b><span>the imbalance roughly doubled from 2005 to 2019, seen by satellites and by ocean floats alike</span></div>
+      <div><b>12 ZJ</b><span>a year, stored at that rate: 0.76 W/m² over the whole planet</span></div>
+      <div><b>89%</b><span>of the heat gained since 1971 is in the oceans; 6% land, 4% melting ice, 1% air</span></div>
+    </div>
+    <p class="sub2">The First Law, in time</p>
+    <p>Why does an imbalance last? Double CO₂ at once. Earth now radiates from 151 m higher, colder air, and sends out 3.7 W/m² less than it absorbs. That energy stays: it warms the ocean, and the surface with it, until the surface is 0.98 K warmer and the balance is back. Move the years.</p>
+    <div class="split">
+      <div>
+        <label for="yrs">Years after doubling CO₂ <output id="yrsO"></output></label>
+        <input id="yrs" type="range" min="0" max="15" step="0.1" value="3">
+        <table class="fltab">
+          <tr><td>Imbalance, absorbed − emitted</td><td id="iN"></td></tr>
+          <tr><td>Surface warmer by</td><td id="iT"></td></tr>
+          <tr class="total"><td>Energy stored, per m² of Earth</td><td id="iE"></td></tr>
+        </table>
+        <p class="verdict" id="iV"></p>
+      </div>
+      <svg id="imbc" viewBox="0 0 640 320" role="img" aria-label="Imbalance and warming after a sudden doubling of CO₂"></svg>
+    </div>
+    <p class="note">No feedbacks, one heat store: the top 100 m of ocean over 71% of the planet, C = 1025 × 3990 × 100 × 0.71 = 2.90 × 10⁸ J/(m²·K). The imbalance decays as 3.71 × e<sup>−t/τ</sup> W/m², with τ = C / (4σT<sub>e</sub>³) = 2.4 years; the energy stored is C × ΔT, the area under the imbalance curve. The real ocean is deeper and slower, and feedbacks, mostly water vapour, bring the final warming to about 3 K: the full response takes decades, and meanwhile CO₂ keeps rising. That is why the measured imbalance persists. Measured values: von Schuckmann et al. 2023 (0.76 ± 0.2 W/m², 2006–2020; 381 ZJ gained 1971–2020), Loeb et al. 2021 (CERES satellites and Argo ocean floats).</p>
+  </section>
+
   <section class="card wide prose" id="argument" aria-label="The argument">
     <h2>The argument, step by step</h2>
     <ol class="steps">
@@ -294,6 +336,20 @@
       <tr><td>All of it would pay the surface's bill for</td><td id="cmD"></td></tr>
     </table>
     <p class="note" style="margin-top:8px">A static atmosphere does no work: compression heats only while it lasts. Energy from the U.S. Standard Atmosphere 1976, 0–50 km, log-linear between levels, the column above 50 km added with a 7 km scale height; the bill is σT⁴ at 288.15 K minus the 161 W/m² of sunlight absorbed by the surface.</p>
+  </section>
+
+  <section class="card wide prose" id="radiation-only" aria-label="Radiation alone would be hotter">
+    <h2>Radiation alone would be hotter</h2>
+    <p>If the lapse rate set the temperature, taking convection away should cool the surface. It does the opposite. Manabe and Strickler computed it in 1964, with the water vapour, CO₂ and ozone of Earth's air:</p>
+    <div class="tbars">
+      <div class="bar"><span>Radiation only, clear sky</span><span class="t"><span class="f" style="width:94.5%;background:var(--red)"></span></span><span class="n">332.3 K</span></div>
+      <div class="bar"><span>Radiation + convection at 6.5 K/km, clear sky</span><span class="t"><span class="f" style="width:71.6%;background:var(--amber)"></span></span><span class="n">300.3 K</span></div>
+      <div class="bar"><span>Radiation + convection, average clouds</span><span class="t"><span class="f" style="width:62.1%;background:var(--teal)"></span></span><span class="n">286.9 K</span></div>
+      <div class="bar"><span>Measured</span><span class="t"><span class="f" style="width:62.9%;background:#e7e9ea"></span></span><span class="n">288 K</span></div>
+      <div class="bar"><span>No infrared absorbers, any lapse rate</span><span class="t"><span class="f" style="width:39.4%;background:var(--grey)"></span></span><span class="n">255.1 K</span></div>
+    </div>
+    <p>Convection doesn't heat the surface: it cools it, carrying heat up to where the air can radiate it away. The lapse rate is a cap, not a stove. And without infrared absorbers there is nothing to cap: 255 K. Venus shows the same at scale: 1603 K with radiation alone, 735 K with convection, in <a href="https://davey811.github.io/venus-greenhouse/?rad=1">The Venus Test</a>.</p>
+    <p class="note">S. Manabe and R. F. Strickler (1964), <i>Thermal equilibrium of the atmosphere with a convective adjustment</i>, J. Atmos. Sci. 21, 361–385: clear sky, Fig. 4 and summary; average cloudiness, Fig. 8a. The last row is the "Pressure only" run above. Bars start at 200 K.</p>
   </section>
 
   <section class="card wide prose" id="divide-by-4" aria-label="Dividing by 4">
@@ -357,6 +413,24 @@
     </ul>
     <p>The share of CO₂ in the air says little. The amount, the pressure it sits at and the water around it decide. Same CO₂ physics on three planets: about 5 K, 33 K, about 510 K.</p>
     <p class="note">NASA NSSDC Fact Sheets. Mars: 586.2 W/m², Bond albedo 0.250, 6.36 mbar, g = 3.73 m/s², CO₂ 95.1% by volume, mean molecular weight 43.49, water 210 ppm. Venus: 2601.3 W/m², Bond albedo 0.77, 92 bar, g = 8.87 m/s², CO₂ 96.5%, 43.45, water 20 ppm, average 737 K. Mars's greenhouse effect, about 5 K: Haberle 2015; Catling &amp; Kasting 2017. Mars's plain average surface temperature, about 202 K, is below its effective temperature, about 208 K, because its surface is so uneven; the fair comparison uses the fourth root of the average of T⁴ (Haberle 2013). See "Dividing by 4".</p>
+  </section>
+
+  <section class="card wide prose" id="history" aria-label="Two centuries of the same physics">
+    <h2>Two centuries of the same physics</h2>
+    <ol class="timeline">
+      <li><b>1824</b><span>Joseph Fourier: sunlight gets through the air more easily than the ground's "dark heat" gets back out, so the air keeps Earth warmer.</span></li>
+      <li><b>1856</b><span>Eunice Foote: in sunlight, a glass cylinder of CO₂ heats more than one of ordinary air, and stays hot longer. <q>An atmosphere of that gas would give to our earth a high temperature.</q></span></li>
+      <li><b>1859</b><span>John Tyndall measures in the laboratory that water vapour and CO₂ absorb and emit infrared, while oxygen and nitrogen hardly do.</span></li>
+      <li><b>1879–1884</b><span>Josef Stefan and Ludwig Boltzmann: a body radiates σT⁴.</span></li>
+      <li><b>1896</b><span>Svante Arrhenius: the first calculation of how much warmer Earth gets with more CO₂.</span></li>
+      <li><b>1900</b><span>Max Planck: the spectrum of thermal radiation, the curves on this page.</span></li>
+      <li><b>1964</b><span>Syukuro Manabe and Robert Strickler: radiation and convection together. Convection cools the surface; see "Radiation alone would be hotter".</span></li>
+      <li><b>1967</b><span>Manabe and Richard Wetherald: doubling CO₂ warms the surface by about 2.4 K. Manabe shared the 2021 Nobel Prize in Physics for modelling Earth's climate.</span></li>
+      <li><b>1989</b><span>Raval and Ramanathan: the greenhouse effect measured from satellites, as the infrared trapped by the air.</span></li>
+      <li><b>2001</b><span>Harries et al.: Earth's infrared spectrum seen from space in 1970 and in 1997. The difference shows the greenhouse effect growing, gas by gas.</span></li>
+      <li><b>2015</b><span>Feldman et al.: CO₂'s infrared reaching the ground, measured growing by 0.2 W/m² per decade.</span></li>
+      <li><b>2021</b><span>Loeb et al.: Earth's energy imbalance roughly doubled from 2005 to 2019.</span></li>
+    </ol>
   </section>
 
   <section class="card wide prose" id="objections" aria-label="Objections">
@@ -442,6 +516,13 @@
       G. Myhre, E. J. Highwood, K. P. Shine and F. Stordal (1998), <i>New estimates of radiative forcing due to well mixed greenhouse gases</i>, Geophys. Res. Lett. 25, <a href="https://doi.org/10.1029/98GL01908">doi:10.1029/98GL01908</a>.
       IPCC AR6 WG1, <a href="https://www.ipcc.ch/report/ar6/wg1/chapter/chapter-7/">Chapter 7</a> (2021): CO₂ forcing 1750–2019 2.16 W/m², 3.93 ± 0.47 W/m² per doubling, equilibrium climate sensitivity 3 K, likely 2.5–4 K.
       NASA NSSDC Planetary Fact Sheets, Mars and Venus.
+      S. Manabe and R. F. Strickler (1964), <i>Thermal equilibrium of the atmosphere with a convective adjustment</i>, J. Atmos. Sci. 21, 361–385.
+      S. Manabe and R. T. Wetherald (1967), <i>Thermal equilibrium of the atmosphere with a given distribution of relative humidity</i>, J. Atmos. Sci. 24, 241–259, <a href="https://doi.org/10.1175/1520-0469(1967)024%3C0241:TEOTAW%3E2.0.CO;2">doi:10.1175/1520-0469(1967)024&lt;0241:TEOTAW&gt;2.0.CO;2</a>.
+      N. G. Loeb, G. C. Johnson, T. J. Thorsen, J. M. Lyman, F. G. Rose and S. Kato (2021), <i>Satellite and ocean data reveal marked increase in Earth's heating rate</i>, Geophys. Res. Lett., <a href="https://doi.org/10.1029/2021GL093047">doi:10.1029/2021GL093047</a>.
+      K. von Schuckmann et al. (2023), <i>Heat stored in the Earth system 1960–2020: where does the energy go?</i>, Earth Syst. Sci. Data 15, 1675–1709, <a href="https://doi.org/10.5194/essd-15-1675-2023">doi:10.5194/essd-15-1675-2023</a>.
+      J. E. Harries, H. E. Brindley, P. J. Sagoo and R. J. Bantges (2001), <i>Increases in greenhouse forcing inferred from the outgoing longwave radiation spectra of the Earth in 1970 and 1997</i>, Nature 410, 355–357, <a href="https://doi.org/10.1038/35066553">doi:10.1038/35066553</a>.
+      S. Arrhenius (1896), <i>On the influence of carbonic acid in the air upon the temperature of the ground</i>, Phil. Mag. 41, 237–276, <a href="https://doi.org/10.1080/14786449608620846">doi:10.1080/14786449608620846</a>.
+      E. Foote (1856), <i>Circumstances affecting the heat of the sun's rays</i>, American Journal of Science and Arts. J. Tyndall (1859), Proceedings of the Royal Society of London. J. Fourier (1824), Annales de Chimie et de Physique.
       R. W. Wood (1909), <i>Note on the theory of the greenhouse</i>, Phil. Mag. 17, 319–320, <a href="https://doi.org/10.1080/14786440208636602">doi:10.1080/14786440208636602</a>.
       D. R. Feldman, W. D. Collins, P. J. Gero, M. S. Torn, E. J. Mlawer and T. R. Shippert (2015), <i>Observational determination of surface radiative forcing by CO₂ from 2000 to 2010</i>, Nature 519, 339–343, <a href="https://doi.org/10.1038/nature14240">doi:10.1038/nature14240</a>.
       M. Wild et al. (2019), <i>The cloud-free global energy balance and inferred cloud radiative effects</i>, Clim. Dyn., <a href="https://doi.org/10.1007/s00382-018-4413-y">doi:10.1007/s00382-018-4413-y</a>: downward infrared at the surface 314 W/m² under clear skies, 342 W/m² with clouds.
@@ -590,7 +671,7 @@
     $("h").value = hG; $("hO").textContent = hG === ZE ? `${ZE.toFixed(2)} km (measured)` : `${hG.toFixed(1)} km`;
     document.querySelectorAll(".mode button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.m === mode)));
     document.querySelectorAll("#ctlP .seg button").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.a === alb)));
-    drawChart(st); drawSpectrum(st); drawSpread(); drawCO2(); syncURL();
+    drawChart(st); drawSpectrum(st); drawSpread(); drawCO2(); drawImb(); syncURL();
   }
 
   // ---------- links to every view
@@ -600,6 +681,9 @@
     if (mode === "pressure" && alb === 0) q.set("reflect", "0");
     if (mode === "greenhouse" && hG !== ZE) q.set("h", hG.toFixed(2));
     if (pinned && readZ != null) q.set("at", readZ.toFixed(1));
+    const sp = +$("spr").value; if (sp !== 30) q.set("spread", String(sp));
+    if (Math.abs(co2 - 420) > 0.5) q.set("co2", String(Math.round(co2)));
+    const yr = +$("yrs").value; if (Math.abs(yr - 3) > 1e-9) q.set("yr", yr.toFixed(1));
     return q.toString();
   }
   function linkHere() { return location.href.split(/[?#]/)[0] + "?" + query() + location.hash; }
@@ -610,6 +694,9 @@
     if (q.get("reflect") === "0") alb = 0;
     const h = parseFloat(q.get("h")); if (h >= 0.5 && h <= 11) hG = Math.abs(h - ZE) < 0.08 ? ZE : h;
     const at = parseFloat(q.get("at")); if (at >= 0 && at <= 20) { readZ = at; pinned = true; }
+    const sp = parseFloat(q.get("spread")); if (sp >= 0 && sp <= 100) $("spr").value = Math.round(sp);
+    const c = parseFloat(q.get("co2")); if (c >= 280 && c <= 2240) co2 = c;
+    const yr = parseFloat(q.get("yr")); if (yr >= 0 && yr <= 15) $("yrs").value = yr;
   }
   function zFromEvent(ev) {
     const svg = $("chart"); if (!geo || !svg.getScreenCTM()) return null;
@@ -731,13 +818,53 @@
     el("line", { x1: X(v), x2: X(v), y1: Y(F), y2: H - B, stroke: amber, "stroke-dasharray": "3 3" }, svg);
     el("circle", { cx: X(v), cy: Y(F), r: 7, fill: amber, stroke: "#161d24", "stroke-width": 2 }, svg);
   }
-  $("spr").addEventListener("input", drawSpread);
+  // ---------- the First Law in time: CO2 doubled at once, one ocean layer, no feedbacks
+  const F2X = 5.35 * Math.log(2), CML = 1025 * 3990 * 100 * 0.71, YR = 3.15576e7, TAU = CML / PLANCK / YR;   // TAU in years
+  function drawImb() {
+    const t = +$("yrs").value, e = Math.exp(-t / TAU), N = F2X * e, dT = F2X / PLANCK * (1 - e);
+    $("yrsO").textContent = `${t.toFixed(1)} years`;
+    $("iN").textContent = `${N.toFixed(2)} W/m²`;
+    $("iT").textContent = `${dT.toFixed(2)} K`;
+    $("iE").textContent = `${(CML * dT / 1e6).toFixed(0)} MJ`;
+    $("iV").innerHTML = t < 0.05
+      ? `<b>Day one:</b> Earth sends out ${F2X.toFixed(1)} W/m² less than it absorbs. Nothing has warmed yet.`
+      : `<b>${Math.round((1 - e) * 100)}% of the way</b> to the new balance. The energy stored is exactly the imbalance added up over time: the First Law.`;
+    const svg = $("imbc"); svg.innerHTML = "";
+    const narrow = (svg.getBoundingClientRect().width || 640) < 480;
+    const W = narrow ? 380 : 640, H = 320, L = narrow ? 40 : 48, Rm = narrow ? 58 : 56, T0 = 18, B = 46;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    const X = u => L + (W - L - Rm) * u / 15, Y = w => T0 + (H - T0 - B) * (1 - w / 4);
+    const dim = "#8b98a5", teal = "#4fd1c5", red = "#ff6b6b", amber = "#f6ad55", fs = narrow ? 11.5 : 12.5;
+    const Nt = u => F2X * Math.exp(-u / TAU), Tt = u => 4 * F2X / PLANCK * (1 - Math.exp(-u / TAU));   // warming drawn on the 0-1 K axis
+    for (let w = 0; w <= 4; w++) {
+      el("line", { x1: L, x2: W - Rm, y1: Y(w), y2: Y(w), stroke: "#2a333d" }, svg);
+      el("text", { x: L - 8, y: Y(w) + 4, fill: teal, "font-size": 12, "text-anchor": "end" }, svg, w);
+      el("text", { x: W - Rm + 6, y: Y(w) + 4, fill: red, "font-size": narrow ? 11 : 12 }, svg, (w / 4).toFixed(2));
+    }
+    for (let u = 0; u <= 15; u += 3) el("text", { x: X(u), y: H - B + 17, fill: dim, "font-size": 12, "text-anchor": "middle" }, svg, u);
+    el("text", { x: (L + W - Rm) / 2, y: H - 6, fill: dim, "font-size": 12.5, "text-anchor": "middle" }, svg, "years after doubling CO₂");
+    el("text", { x: 12, y: (T0 + H - B) / 2, fill: teal, "font-size": 12.5, "text-anchor": "middle", transform: `rotate(-90 12 ${(T0 + H - B) / 2})` }, svg, "imbalance (W/m²)");
+    el("text", { x: W - 5, y: (T0 + H - B) / 2, fill: red, "font-size": 12.5, "text-anchor": "middle", transform: `rotate(-90 ${W - 5} ${(T0 + H - B) / 2})` }, svg, "warming (K)");
+    const area = [`${X(0)},${Y(0)}`]; for (let i = 0; i <= 120; i++) { const u = t * i / 120; area.push(`${X(u)},${Y(Nt(u))}`); } area.push(`${X(t)},${Y(0)}`);
+    el("polygon", { points: area.join(" "), fill: amber, "fill-opacity": 0.22 }, svg);
+    const line = f => { const pts = []; for (let i = 0; i <= 150; i++) { const u = 15 * i / 150; pts.push(`${X(u)},${Y(f(u))}`); } return pts.join(" "); };
+    el("polyline", { points: line(Nt), fill: "none", stroke: teal, "stroke-width": 2.6 }, svg);
+    el("polyline", { points: line(Tt), fill: "none", stroke: red, "stroke-width": 2.6 }, svg);
+    el("line", { x1: X(t), x2: X(t), y1: T0, y2: H - B, stroke: amber, "stroke-dasharray": "3 3" }, svg);
+    const halo = { "paint-order": "stroke", stroke: "#161d24", "stroke-width": 4, "font-size": fs, "font-weight": 700 };
+    el("text", { x: X(0) + 8, y: Y(Nt(0)) + 18, fill: teal, ...halo }, svg, "imbalance");
+    el("text", { x: X(15) - 4, y: Y(Tt(15)) - 9, fill: red, "text-anchor": "end", ...halo }, svg, "warming");
+    if (t >= 3) el("text", { x: X(t / 2), y: Y(Nt(t / 2) / 3) + 4, fill: amber, "text-anchor": "middle", ...halo }, svg, narrow ? "stored" : "stored in the ocean");
+  }
+  $("yrs").addEventListener("input", () => { drawImb(); syncURL(); });
+
+  $("spr").addEventListener("input", () => { drawSpread(); syncURL(); });
   $("co2").addEventListener("input", () => {
     let c = C0 * 2 ** +$("co2").value;
     for (const p of [280, 420, 560, 1120, 2240]) if (Math.abs(Math.log2(c / p)) < 0.004) c = p;
-    co2 = c; drawCO2();
+    co2 = c; drawCO2(); syncURL();
   });
-  document.querySelectorAll("#co2P button").forEach(b => b.addEventListener("click", () => { co2 = +b.dataset.c; drawCO2(); }));
+  document.querySelectorAll("#co2P button").forEach(b => b.addEventListener("click", () => { co2 = +b.dataset.c; drawCO2(); syncURL(); }));
 
   // ---------- events
   document.querySelectorAll(".mode button").forEach(b => b.addEventListener("click", () => { mode = b.dataset.m; render(); }));

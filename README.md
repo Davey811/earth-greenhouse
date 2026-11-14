@@ -42,6 +42,19 @@ Today's 2.17 W/m² matches the IPCC AR6 assessed CO₂ forcing for 1750–2019, 
 
 The spectrum on the page shades the CO₂ band, about 13–17 µm, which holds 19% of what a 288 K surface emits, next to its peak, and the window, 8–13 µm, which holds 31%.
 
+## Out of balance: the warming in progress
+
+The real Earth absorbs more than it emits: 0.76 ± 0.2 W/m² on average for 2006–2020 (von Schuckmann et al. 2023), about 12 ZJ a year over the whole planet. The imbalance roughly doubled from 2005 to 2019, seen by CERES satellites and Argo ocean floats alike (Loeb et al. 2021). Of the 381 ZJ gained from 1971 to 2020, 89% is in the oceans, 6% in land, 4% went into melting ice and 1% into the air.
+
+Why it lasts: double CO₂ at once and Earth sends out 3.7 W/m² less than it absorbs. With no feedbacks and one heat store, the top 100 m of ocean over 71% of the planet (C = 2.90 × 10⁸ J/(m²·K)), the imbalance decays as 3.71 × e^(−t/τ) W/m² with τ = C / (4σT_e³) = 2.4 years, while the surface warms towards 0.98 K. The energy stored is the imbalance added up over time. The real ocean is deeper and slower, and feedbacks bring the final warming to about 3 K: the response takes decades.
+
+| Years after doubling | Imbalance | Surface warmer by | Stored per m² |
+|---|---|---|---|
+| 0 | 3.71 W/m² | 0.00 K | 0 MJ |
+| 1 | 2.46 W/m² | 0.33 K | 96 MJ |
+| 3 | 1.09 W/m² | 0.70 K | 202 MJ |
+| 10 | 0.06 W/m² | 0.97 K | 281 MJ |
+
 ## The 5 km coincidence
 
 | | Earth | Venus |
@@ -69,6 +82,20 @@ Suppose the surface were kept at 288 K by the pressure, with no greenhouse effec
 | Day–night range | 95–390 K at the equator | 283–293 K |
 
 Same Sun, same distance: the Moon absorbs more and is colder. For a body radiating what it absorbs, the mean of T is at most the fourth root of the mean of T⁴, so its average can't exceed its black-body temperature.
+
+## Radiation alone would be hotter
+
+If the lapse rate set the temperature, taking convection away should cool the surface. Manabe and Strickler (1964), with the water vapour, CO₂ and ozone of Earth's air:
+
+| | Surface |
+|---|---|
+| Radiation only, clear sky | 332.3 K |
+| Radiation + convection at 6.5 K/km, clear sky | 300.3 K |
+| Radiation + convection, average clouds | 286.9 K |
+| Measured | 288 K |
+| No infrared absorbers, any lapse rate | 255.1 K |
+
+Convection cools the surface by carrying heat up to where the air can radiate it away. The lapse rate is a cap, not a stove.
 
 ## Dividing by 4 is not a flat Earth
 
@@ -98,6 +125,21 @@ The planet always sends 240 W/m² to space; the more uneven it is, the colder it
 
 Mars has 25 times more CO₂ above each square metre than Earth and a much smaller greenhouse effect. Absorption lines widen with pressure: at 6 millibar they are narrow and the infrared slips out between them. Mars also has almost no water vapour, and it absorbs less than half of Earth's sunlight. The share of CO₂ in the air says little; the amount, the pressure and the water decide. Mars's plain average surface temperature, about 202 K, is below its effective temperature, about 208 K, because its surface is so uneven: the fair comparison uses the fourth root of the average of T⁴ (Haberle 2013).
 
+## Two centuries of the same physics
+
+- **1824** Joseph Fourier: sunlight gets through the air more easily than the ground's "dark heat" gets back out.
+- **1856** Eunice Foote: in sunlight, CO₂ heats more than ordinary air, and stays hot longer.
+- **1859** John Tyndall: water vapour and CO₂ absorb and emit infrared; oxygen and nitrogen hardly do.
+- **1879–1884** Stefan and Boltzmann: σT⁴.
+- **1896** Svante Arrhenius: the first calculation of the warming from more CO₂.
+- **1900** Max Planck: the spectrum of thermal radiation.
+- **1964** Manabe and Strickler: radiation and convection together.
+- **1967** Manabe and Wetherald: doubling CO₂ warms the surface by about 2.4 K. Manabe shared the 2021 Nobel Prize in Physics.
+- **1989** Raval and Ramanathan: the greenhouse effect measured from satellites.
+- **2001** Harries et al.: Earth's infrared spectrum from space, 1970 vs 1997: the greenhouse effect growing.
+- **2015** Feldman et al.: CO₂'s infrared at the ground growing, 0.2 W/m² per decade.
+- **2021** Loeb et al.: Earth's energy imbalance roughly doubled from 2005 to 2019.
+
 ## Objections answered on the page
 
 Each one opens directly from its link.
@@ -120,7 +162,7 @@ Each one opens directly from its link.
 
 ## Using the page
 
-Hover or touch the measured curve to read altitude, temperature and pressure; click or tap to pin the reading. "Copy link to this view" copies a link that reopens the page exactly as it is. Every section and objection has its own address, for example `#moon`, `#mars`, `#saturated`, `#divide-by-4` or `#o-co2-trace`. "Report an error" opens a GitHub issue already filled in.
+Hover or touch the measured curve to read altitude, temperature and pressure; click or tap to pin the reading. "Copy link to this view" copies a link that reopens the page exactly as it is. Every section and objection has its own address, for example `#moon`, `#mars`, `#saturated`, `#imbalance`, `#divide-by-4` or `#o-co2-trace`. The sliders can be linked too: `?spread=0#divide-by-4`, `?co2=560#saturated`, `?yr=10#imbalance`. "Report an error" opens a GitHub issue already filled in.
 
 ## Files
 
@@ -164,6 +206,13 @@ python3 earth_test.py
 - R. M. Haberle (2013), [*Estimating the power of Mars' greenhouse effect*](https://www.sciencedirect.com/science/article/pii/S0019103513000055), Icarus.
 - R. M. Haberle (2015), *Planetary atmospheres: Mars*, Encyclopedia of Atmospheric Sciences, 2nd ed., Academic Press.
 - D. C. Catling and J. F. Kasting (2017), *Atmospheric Evolution on Inhabited and Lifeless Worlds*, Cambridge University Press.
+- S. Manabe and R. F. Strickler (1964), *Thermal equilibrium of the atmosphere with a convective adjustment*, J. Atmos. Sci. 21, 361–385.
+- S. Manabe and R. T. Wetherald (1967), *Thermal equilibrium of the atmosphere with a given distribution of relative humidity*, J. Atmos. Sci. 24, 241–259, doi:[10.1175/1520-0469(1967)024<0241:TEOTAW>2.0.CO;2](https://doi.org/10.1175/1520-0469(1967)024%3C0241:TEOTAW%3E2.0.CO;2).
+- N. G. Loeb, G. C. Johnson, T. J. Thorsen, J. M. Lyman, F. G. Rose and S. Kato (2021), *Satellite and ocean data reveal marked increase in Earth's heating rate*, Geophys. Res. Lett., doi:[10.1029/2021GL093047](https://doi.org/10.1029/2021GL093047).
+- K. von Schuckmann et al. (2023), *Heat stored in the Earth system 1960–2020: where does the energy go?*, Earth Syst. Sci. Data 15, 1675–1709, doi:[10.5194/essd-15-1675-2023](https://doi.org/10.5194/essd-15-1675-2023).
+- J. E. Harries, H. E. Brindley, P. J. Sagoo and R. J. Bantges (2001), *Increases in greenhouse forcing inferred from the outgoing longwave radiation spectra of the Earth in 1970 and 1997*, Nature 410, 355–357, doi:[10.1038/35066553](https://doi.org/10.1038/35066553).
+- S. Arrhenius (1896), *On the influence of carbonic acid in the air upon the temperature of the ground*, Phil. Mag. 41, 237–276, doi:[10.1080/14786449608620846](https://doi.org/10.1080/14786449608620846).
+- E. Foote (1856), *Circumstances affecting the heat of the sun's rays*, American Journal of Science and Arts. J. Tyndall (1859), Proceedings of the Royal Society of London. J. Fourier (1824), Annales de Chimie et de Physique.
 - R. W. Wood (1909), *Note on the theory of the greenhouse*, Phil. Mag. 17, 319–320, doi:[10.1080/14786440208636602](https://doi.org/10.1080/14786440208636602).
 - D. R. Feldman, W. D. Collins, P. J. Gero, M. S. Torn, E. J. Mlawer and T. R. Shippert (2015), *Observational determination of surface radiative forcing by CO₂ from 2000 to 2010*, Nature 519, 339–343, doi:[10.1038/nature14240](https://doi.org/10.1038/nature14240).
 - M. Wild et al. (2019), *The cloud-free global energy balance and inferred cloud radiative effects*, Clim. Dyn., doi:[10.1007/s00382-018-4413-y](https://doi.org/10.1007/s00382-018-4413-y).
