@@ -20,3 +20,22 @@ Moon test:
   Moon absorbs 302.8 W/m2 (+26% vs Earth), black body 270.3 K (NASA Moon Fact Sheet: 270.4 K)
 
 CO2 above each m2 at 420 ppm: 6.6 kg, air 10.3 t
+
+dividing by 4: same sunlight, spread more or less evenly, no infrared absorbers:
+    0% spread: average  144.3 K, warmest 360.8 K, coldest   0.0 K, sent to space 240.2 W/m2
+   30% spread: average  236.2 K, warmest 338.5 K, coldest 188.8 K, sent to space 240.2 W/m2
+   50% spread: average  246.2 K, warmest 320.8 K, coldest 214.5 K, sent to space 240.2 W/m2
+   90% spread: average  254.7 K, warmest 272.4 K, coldest 248.5 K, sent to space 240.2 W/m2
+  100% spread: average  255.1 K, warmest 255.1 K, coldest 255.1 K, sent to space 240.2 W/m2
+
+is CO2 saturated?
+    420 ppm: forcing  2.17 W/m2, emission level + 89 m, surface +0.58 K before feedbacks, 1.8 K with them (3 K per doubling)
+    560 ppm: forcing  3.71 W/m2, emission level +151 m, surface +0.98 K before feedbacks, 3.0 K with them (3 K per doubling)
+   1120 ppm: forcing  7.42 W/m2, emission level +303 m, surface +1.97 K before feedbacks, 6.0 K with them (3 K per doubling)
+   2240 ppm: forcing 11.13 W/m2, emission level +454 m, surface +2.95 K before feedbacks, 9.0 K with them (3 K per doubling)
+
+surface emission at 288.15 K: window 8-13 um 31.2%, CO2 band 13-17 um 18.8%
+
+Mars test:
+  Mars : absorbs 109.9 W/m2, black body 209.8 K, CO2 above each m2 164 kg (25 x Earth's)
+  Venus: absorbs 149.6 W/m2, black body 226.6 K, CO2 above each m2 1,013,802 kg (153,782 x Earth's)

@@ -126,6 +126,11 @@
   table.eqt tr.rule td { background: rgba(255,107,107,0.07); }
   @media (max-width: 600px) { table.eqt { min-width: 0; font-size: 13.5px; } table.eqt td:first-child { width: 38%; } table.eqt .m, table.eqt .f { font-size: 12px; overflow-wrap: anywhere; } }
   .bad { color: var(--red); font-weight: 700; }
+  .split { display: grid; grid-template-columns: 300px 1fr; gap: 20px; align-items: start; margin: 4px 0 8px; }
+  @media (max-width: 860px) { .split { grid-template-columns: 1fr; } }
+  .split .seg { margin: 4px 0 2px; }
+  .split .verdict { max-width: none; }
+  .fltab td small { color: var(--dim); }
   footer { margin-top: 24px; color: var(--dim); font-size: 13px; }
   footer p { margin: 0 0 6px; }
 </style>
@@ -146,7 +151,7 @@
       <div><b class="cold">255 K</b><span>the surface with the same air but no infrared absorbers (278 K even reflecting nothing)</span></div>
     </div>
     <nav class="toc" aria-label="Contents">
-      <a href="#tool">The two runs</a><a href="#ledger">Energy ledger</a><a href="#attribution">Who does what</a><a href="#spectrum">Spectrum</a><a href="#argument">The argument</a><a href="#coincidence">The 5 km coincidence</a><a href="#compression">Compression</a><a href="#moon">The Moon test</a><a href="#objections">Objections</a><a href="#report">Found an error?</a>
+      <a href="#tool">The two runs</a><a href="#ledger">Energy ledger</a><a href="#attribution">Who does what</a><a href="#spectrum">Spectrum</a><a href="#saturated">Saturated?</a><a href="#argument">The argument</a><a href="#coincidence">The 5 km coincidence</a><a href="#compression">Compression</a><a href="#divide-by-4">Dividing by 4</a><a href="#moon">The Moon test</a><a href="#mars">The Mars test</a><a href="#objections">Objections</a><a href="#report">Found an error?</a>
     </nav>
   </section>
 
@@ -225,7 +230,31 @@
     <h2>What leaves the surface, what leaves Earth</h2>
     <p id="spT"></p>
     <svg id="sp" viewBox="0 0 900 330" role="img" aria-label="Planck spectra: infrared emitted by the surface and infrared that leaves Earth"></svg>
-    <p class="note" style="margin-top:6px">Planck's law, M<sub>λ</sub> = 2πhc² / λ⁵ / (e<sup>hc/λkT</sup> − 1), per square metre; the area under each curve is σT⁴. Both curves follow the run and the emission height above. Grey picture: the real spectrum has the CO₂ band at 15 µm and a window near 10 µm, but the totals are set by the temperatures.</p>
+    <p class="note" style="margin-top:6px">Planck's law, M<sub>λ</sub> = 2πhc² / λ⁵ / (e<sup>hc/λkT</sup> − 1), per square metre; the area under each curve is σT⁴. Both curves follow the run and the emission height above. Shaded: the main CO₂ band, about 13–17 µm, and the window, 8–13 µm, where clear air absorbs least; the percentages are the share of the surface's emission that falls in each. The curves are smooth Planck curves: the real spectrum leaving Earth has a bite where the CO₂ band is, but the totals are set by the temperatures.</p>
+  </section>
+
+  <section class="card wide prose" id="saturated" aria-label="Isn't CO₂ saturated?">
+    <h2>Isn't CO₂ saturated?</h2>
+    <p>At the centre of its 15 µm band the air is already opaque: there, more CO₂ changes little near the ground. But Earth doesn't radiate the band to space from the ground. It radiates it from aloft, from the level where the air above is thin enough to let it out. More CO₂ lifts that level to colder air, so less leaves, until the column below warms up; the edges of the band, not yet opaque, widen too. The result is a forcing that grows with the logarithm of the concentration: every doubling adds the same, about 3.7 W/m². A saturated band would give a flat line.</p>
+    <div class="split">
+      <div>
+        <label for="co2">CO₂ in the air <output id="co2O"></output></label>
+        <input id="co2" type="range" min="0" max="3" step="0.005" value="0.585">
+        <div class="seg" id="co2P" role="group" aria-label="CO₂ levels">
+          <button data-c="280">280</button><button data-c="420">420</button><button data-c="560">560</button><button data-c="1120">1,120</button><button data-c="2240">2,240</button>
+        </div>
+        <p class="note">ppm: pre-industrial, today, then one, two and three doublings.</p>
+        <table class="fltab">
+          <tr><td>Forcing since 1750</td><td id="cF"></td></tr>
+          <tr><td>Emission level higher by</td><td id="cDz"></td></tr>
+          <tr><td>Surface warmer, before feedbacks</td><td id="cDt"></td></tr>
+          <tr><td>With feedbacks, at equilibrium</td><td id="cEq"></td></tr>
+        </table>
+      </div>
+      <svg id="co2c" viewBox="0 0 640 340" role="img" aria-label="CO₂ forcing against concentration, log scale"></svg>
+    </div>
+    <p class="verdict">Today's 2.17 W/m² since 1750 matches the IPCC's assessed CO₂ forcing, 2.16 W/m². Each doubling then adds the same 3.7 W/m²: the line keeps climbing.</p>
+    <p class="note">Forcing: 5.35 × ln(C / 280) W/m² (Myhre et al. 1998); the IPCC AR6 assesses 3.93 ± 0.47 W/m² per doubling, including fast adjustments. Before feedbacks: right after the CO₂ is added, Earth radiates from higher and colder air and sends out less; balance comes back when the column has warmed by forcing / (4σT<sub>e</sub>³) = forcing / 3.77, and the emission level has risen by that warming divided by the lapse rate, 6.5 K/km. In the run above: emission height 5.25 km instead of 5.10, and the surface goes from 288.2 to 289.1 K. With feedbacks, mostly water vapour: about 3 K per doubling, likely range 2.5–4 K (IPCC AR6), for CO₂ alone once the oceans have caught up; the warming measured so far also depends on the other gases, the aerosols and the oceans' delay.</p>
   </section>
 
   <section class="card wide prose" id="argument" aria-label="The argument">
@@ -267,6 +296,26 @@
     <p class="note" style="margin-top:8px">A static atmosphere does no work: compression heats only while it lasts. Energy from the U.S. Standard Atmosphere 1976, 0–50 km, log-linear between levels, the column above 50 km added with a 7 km scale height; the bill is σT⁴ at 288.15 K minus the 161 W/m² of sunlight absorbed by the surface.</p>
   </section>
 
+  <section class="card wide prose" id="divide-by-4" aria-label="Dividing by 4">
+    <h2>Dividing by 4 is not a flat Earth</h2>
+    <p>The Sun lights Earth's disc, πR², and Earth radiates from its whole sphere, 4πR²: the ratio is 4. So 1361 × (1 − 0.294) / 4 = 240 W/m² is the sunlight absorbed, averaged over the sphere. It is bookkeeping, not a claim that Earth is flat or evenly lit. Here is a planet with no infrared absorbers, lit on one side. Each spot radiates what it gets: its own sunlight, plus a share spread evenly by winds and oceans.</p>
+    <div class="split">
+      <div>
+        <label for="spr">Sunlight spread evenly <output id="sprO"></output></label>
+        <input id="spr" type="range" min="0" max="100" step="1" value="30">
+        <table class="fltab">
+          <tr><td>Average temperature</td><td id="spAvg"></td></tr>
+          <tr><td>Warmest spot</td><td id="spMax"></td></tr>
+          <tr><td>Coldest spot</td><td id="spMin"></td></tr>
+          <tr class="total"><td>Infrared sent to space, average</td><td id="spOut"></td></tr>
+        </table>
+        <p class="verdict" id="spV"></p>
+      </div>
+      <svg id="spc" viewBox="0 0 640 340" role="img" aria-label="Surface temperature across the planet, from the point under the Sun to the opposite point"></svg>
+    </div>
+    <p class="note">No heat stored: each spot radiates what it receives, (1 − s) × 960.9 × cos θ on the day side, θ being the Sun's angle from overhead, plus s × 240.2 W/m² everywhere, s being the share spread evenly; 960.9 W/m² is 1361 × (1 − 0.294). The horizontal axis is area, so the average temperature is the average height of the curve, and the average of σT⁴ is always 240.2 W/m². On an uneven planet the average of T is below the fourth root of the average of T⁴, so below 255 K. With nothing spread, the night side is at 0 K: a body that stores heat, like the Moon, is less extreme, and still averages below its black-body temperature. Even reflecting nothing, the even planet would be at 278 K.</p>
+  </section>
+
   <section class="card wide prose" id="moon" aria-label="The Moon test">
     <h2>The Moon test: same distance from the Sun, no air</h2>
     <p>The Moon gets the same sunlight as Earth, reflects less of it and has no atmosphere.</p>
@@ -285,6 +334,31 @@
     <p class="note">NASA NSSDC Planetary Fact Sheets, Moon and Earth. "Its average can't be higher": for a body radiating what it absorbs, the mean of T is at most the fourth root of the mean of T⁴.</p>
   </section>
 
+  <section class="card wide prose" id="mars" aria-label="The Mars test">
+    <h2>The Mars test: 95% CO₂, and cold</h2>
+    <p>Mars's air is 95% CO₂, and Mars is cold. Proof that CO₂ doesn't warm? Look at how much CO₂ there is, at what pressure, and how much sunlight.</p>
+    <div class="eqwrap">
+    <table class="eqt">
+      <tr><th></th><th>Mars</th><th>Earth</th><th>Venus</th></tr>
+      <tr><td>Sunlight absorbed, planet average<span class="f">S (1 − A) / 4</span></td><td class="m">110 W/m²</td><td class="m">240 W/m²</td><td class="m">150 W/m²</td></tr>
+      <tr><td>Black-body temperature</td><td class="m">210 K</td><td class="m">255 K</td><td class="m">227 K</td></tr>
+      <tr><td><b>Greenhouse effect</b></td><td class="m"><b>about 5 K</b></td><td class="m"><b>33 K</b></td><td class="m"><b>about 510 K</b></td></tr>
+      <tr><td>Surface pressure</td><td class="m">0.006 bar</td><td class="m">1 bar</td><td class="m">92 bar</td></tr>
+      <tr><td>CO₂ share of the air</td><td class="m">95%</td><td class="m">0.04%</td><td class="m">96.5%</td></tr>
+      <tr><td>CO₂ above each m²<span class="f">p / g × CO₂ share by mass</span></td><td class="m">about 160 kg<span class="f">25 times Earth's</span></td><td class="m">6.6 kg</td><td class="m">about 1,000 t</td></tr>
+      <tr><td>Water vapour</td><td class="m">210 ppm</td><td class="m">about 1%, variable</td><td class="m">20 ppm</td></tr>
+    </table>
+    </div>
+    <p style="margin-top:10px">Mars has 25 times more CO₂ above each square metre than Earth, and a greenhouse effect about a sixth of Earth's. Three reasons:</p>
+    <ul>
+      <li><b>Pressure.</b> Each absorption line widens with pressure. At 6 millibar the lines are narrow and the surface's infrared slips out between them; at 1 bar they are broader; at 92 bar the band is closed.</li>
+      <li><b>Water.</b> Mars has almost no water vapour, which on Earth does about half of the greenhouse effect and amplifies whatever CO₂ does.</li>
+      <li><b>Distance.</b> Mars is cold first of all because it is far from the Sun: it absorbs 110 W/m², less than half of Earth's 240. Its black-body temperature is 210 K before any atmosphere.</li>
+    </ul>
+    <p>The share of CO₂ in the air says little. The amount, the pressure it sits at and the water around it decide. Same CO₂ physics on three planets: about 5 K, 33 K, about 510 K.</p>
+    <p class="note">NASA NSSDC Fact Sheets. Mars: 586.2 W/m², Bond albedo 0.250, 6.36 mbar, g = 3.73 m/s², CO₂ 95.1% by volume, mean molecular weight 43.49, water 210 ppm. Venus: 2601.3 W/m², Bond albedo 0.77, 92 bar, g = 8.87 m/s², CO₂ 96.5%, 43.45, water 20 ppm, average 737 K. Mars's greenhouse effect, about 5 K: Haberle 2015; Catling &amp; Kasting 2017. Mars's plain average surface temperature, about 202 K, is below its effective temperature, about 208 K, because its surface is so uneven; the fair comparison uses the fourth root of the average of T⁴ (Haberle 2013). See "Dividing by 4".</p>
+  </section>
+
   <section class="card wide prose" id="objections" aria-label="Objections">
     <h2>Objections</h2>
     <details id="o-pressure">
@@ -297,7 +371,7 @@
     </details>
     <details id="o-co2-trace">
       <summary>"CO₂ is only 0.04% of the air."</summary>
-      <p>0.04% of a lot of air. Above every square metre of Earth there are about 10 tonnes of air and 6.6 kg of CO₂. What matters for absorbing infrared is how much absorber there is, not its share of the air. In the published attribution CO₂ is about 20% of the greenhouse effect.</p>
+      <p>0.04% of a lot of air. Above every square metre of Earth there are about 10 tonnes of air and 6.6 kg of CO₂. What matters for absorbing infrared is how much absorber there is, and at what pressure, not its share of the air: see "The Mars test". In the published attribution CO₂ is about 20% of the greenhouse effect.</p>
     </details>
     <details id="o-water">
       <summary>"Water vapour does it all, not CO₂."</summary>
@@ -317,7 +391,15 @@
     </details>
     <details id="o-saturated">
       <summary>"The CO₂ band is saturated: adding more changes nothing."</summary>
-      <p>Saturation would matter if Earth radiated from the surface. It radiates from aloft, and more CO₂ lifts the level where the band escapes to space to colder air: less leaves, the column warms. The effect grows with the logarithm of the concentration and doesn't stop. In The Venus Test the optical-depth slider shows it: doubling the absorber always lifts the level by H ln 2.</p>
+      <p>The centre of the band is: there, more CO₂ changes little near the ground. But Earth radiates the band to space from aloft, and more CO₂ lifts that level to colder air: less leaves, the column warms. The forcing grows with the logarithm of the concentration and doesn't stop: about 3.7 W/m² for every doubling. See "Isn't CO₂ saturated?".</p>
+    </details>
+    <details id="o-flat-earth">
+      <summary>"Dividing the sunlight by 4 means a flat Earth with no night."</summary>
+      <p>4 is the ratio between the disc that catches the sunlight, πR², and the sphere that radiates, 4πR². It averages energy; it doesn't say the temperature is even. And the even planet is the warmest case: day and night make the average colder, never warmer. Move the slider in "Dividing by 4".</p>
+    </details>
+    <details id="o-mars">
+      <summary>"Mars is 95% CO₂ and freezing."</summary>
+      <p>Mars has about 25 times more CO₂ per square metre than Earth, at 160 times lower pressure, with almost no water vapour, and it absorbs less than half the sunlight. Its greenhouse effect is about 5 K; Earth's is 33 K, Venus's about 510 K. The share of CO₂ in the air says little. See "The Mars test".</p>
     </details>
   </section>
 
@@ -336,7 +418,13 @@
       K. E. Trenberth and J. T. Fasullo (2012), Surv. Geophys. 33, 413–426, <a href="https://doi.org/10.1007/s10712-011-9150-2">doi:10.1007/s10712-011-9150-2</a>.
       G. A. Schmidt, R. Ruedy, R. L. Miller and A. A. Lacis (2010), <i>The attribution of the present-day total greenhouse effect</i>, J. Geophys. Res. 115, D20106, <a href="https://doi.org/10.1029/2010JD014287">doi:10.1029/2010JD014287</a>.
       A. A. Lacis, G. A. Schmidt, D. Rind and R. A. Ruedy (2010), <i>Atmospheric CO₂: principal control knob governing Earth's temperature</i>, Science 330, 356–359, <a href="https://doi.org/10.1126/science.1190653">doi:10.1126/science.1190653</a>.
-      A. Raval and V. Ramanathan (1989), Nature 342, <a href="https://doi.org/10.1038/342758a0">doi:10.1038/342758a0</a>.</p>
+      A. Raval and V. Ramanathan (1989), Nature 342, <a href="https://doi.org/10.1038/342758a0">doi:10.1038/342758a0</a>.
+      G. Myhre, E. J. Highwood, K. P. Shine and F. Stordal (1998), <i>New estimates of radiative forcing due to well mixed greenhouse gases</i>, Geophys. Res. Lett. 25, <a href="https://doi.org/10.1029/98GL01908">doi:10.1029/98GL01908</a>.
+      IPCC AR6 WG1, <a href="https://www.ipcc.ch/report/ar6/wg1/chapter/chapter-7/">Chapter 7</a> (2021): CO₂ forcing 1750–2019 2.16 W/m², 3.93 ± 0.47 W/m² per doubling, equilibrium climate sensitivity 3 K, likely 2.5–4 K.
+      NASA NSSDC Planetary Fact Sheets, Mars and Venus.
+      R. M. Haberle (2013), <a href="https://www.sciencedirect.com/science/article/pii/S0019103513000055"><i>Estimating the power of Mars' greenhouse effect</i></a>, Icarus.
+      R. M. Haberle (2015), <i>Planetary atmospheres: Mars</i>, Encyclopedia of Atmospheric Sciences, 2nd ed., Academic Press.
+      D. C. Catling and J. F. Kasting (2017), <i>Atmospheric Evolution on Inhabited and Lifeless Worlds</i>, Cambridge University Press.</p>
     <p><b>Method.</b> Sunlight absorbed: 1361 × (1 − albedo) / 4. The emission level is a sphere of radius R + h radiating the same power, at T<sub>em</sub> = T<sub>e</sub> (R / (R + h))<sup>½</sup>, R = 6371 km. Lapse rate 6.5 K/km, the U.S. Standard Atmosphere's troposphere. The surface is treated as black in the infrared, so σT⁴ at 288.15 K gives 391 W/m²; the measured 396 is higher because the surface is not uniform. This is a test of energy bookkeeping, not a climate model.</p>
     <p>Same test on Venus: <a href="https://davey811.github.io/venus-greenhouse/">The Venus Test</a>. Code and data: <a href="https://github.com/Davey811/earth-greenhouse">github.com/Davey811/earth-greenhouse</a> · by <a href="https://x.com/splugged">@splugged</a></p>
   </footer>
@@ -417,12 +505,17 @@
   function drawSpectrum(st) {
     const svg = $("sp"); svg.innerHTML = "";
     const narrow = (svg.parentElement.clientWidth || 900) < 620;
-    const W = narrow ? 380 : 900, H = narrow ? 300 : 330, L = narrow ? 52 : 60, Rm = 14, T0 = 16, B = 44;
+    const W = narrow ? 380 : 900, H = narrow ? 316 : 346, L = narrow ? 52 : 60, Rm = 14, T0 = 32, B = 44;
     svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
     const tg = st.Ts, te = st.h > 0 ? TEM(st.h) : st.Ts, green = st.h > 0, lmax = 60;
     const peak = Mlam(2898 / tg, tg) * 1.08, nice = v => { const m = Math.pow(10, Math.floor(Math.log10(v))); return [1, 2, 2.5, 5, 10].map(x => x * m).find(x => x >= v); };
     const step = nice(peak / 5), ymax = Math.ceil(peak / step) * step;
     const X = l => L + (W - L - Rm) * l / lmax, Y = v => T0 + (H - T0 - B) * (1 - v / ymax);
+    const share = (a, b, T) => { let s = 0; const n = 400, d = (b - a) / n; for (let i = 0; i < n; i++) s += Mlam(a + (i + 0.5) * d, T) * d; return s / (SIGMA * T ** 4); };
+    el("rect", { x: X(8), y: T0, width: X(13) - X(8), height: H - B - T0, fill: "#8b98a5", "fill-opacity": 0.09 }, svg);
+    el("rect", { x: X(13), y: T0, width: X(17) - X(13), height: H - B - T0, fill: "#f6ad55", "fill-opacity": 0.16 }, svg);
+    el("text", { x: X(13) - 4, y: T0 - 7, fill: "#8b98a5", "font-size": narrow ? 11 : 12.5, "text-anchor": "end" }, svg, `window ${(share(8, 13, tg) * 100).toFixed(0)}%`);
+    el("text", { x: X(13) + 4, y: T0 - 7, fill: "#f6ad55", "font-size": narrow ? 11 : 12.5 }, svg, `CO₂ ${(share(13, 17, tg) * 100).toFixed(0)}%`);
     for (let v = 0; v <= ymax + 1e-9; v += step) {
       el("line", { x1: L, x2: W - Rm, y1: Y(v), y2: Y(v), stroke: "#2a333d" }, svg);
       el("text", { x: L - 8, y: Y(v) + 4, fill: "#8b98a5", "font-size": 12, "text-anchor": "end" }, svg, Math.round(v));
@@ -472,8 +565,8 @@
     $("ctlP").hidden = mode !== "pressure"; $("ctlG").hidden = mode !== "greenhouse";
     $("h").value = hG; $("hO").textContent = hG === ZE ? `${ZE.toFixed(2)} km (measured)` : `${hG.toFixed(1)} km`;
     document.querySelectorAll(".mode button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.m === mode)));
-    document.querySelectorAll(".seg button").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.a === alb)));
-    drawChart(st); drawSpectrum(st); syncURL();
+    document.querySelectorAll("#ctlP .seg button").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.a === alb)));
+    drawChart(st); drawSpectrum(st); drawSpread(); drawCO2(); syncURL();
   }
 
   // ---------- links to every view
@@ -531,9 +624,100 @@
     } catch (e) { $("reportCount").textContent = "The list of reports is on GitHub."; }
   })();
 
+  // ---------- dividing by 4: the same sunlight, spread more or less evenly
+  const SFACE = S * (1 - A);                       // 960.9 W/m² on ground facing the Sun
+  const spreadT = (f, x) => Math.pow(((1 - f) * SFACE * Math.max(0, 1 - 2 * x) + f * Q) / SIGMA, 0.25);
+  function spreadStats(f) {                        // x = share of the surface from the point under the Sun
+    const N = 4000; let sT = 0, sF = 0;
+    for (let i = 0; i < N; i++) { const t = spreadT(f, (i + 0.5) / N); sT += t; sF += SIGMA * t ** 4; }
+    return { avg: sT / N, out: sF / N, max: spreadT(f, 0), min: spreadT(f, 1) };
+  }
+  function drawSpread() {
+    const f = +$("spr").value / 100, st = spreadStats(f);
+    $("sprO").textContent = `${Math.round(f * 100)}%`;
+    $("spAvg").textContent = `${st.avg.toFixed(0)} K`;
+    $("spMax").textContent = `${st.max.toFixed(0)} K`;
+    $("spMin").textContent = f === 0 ? "0 K, no heat stored" : `${st.min.toFixed(0)} K`;
+    $("spOut").textContent = fmtW(st.out);
+    $("spV").innerHTML = f >= 1
+      ? `<b>Perfectly even: ${TE.toFixed(0)} K everywhere.</b> The warmest a planet with no infrared absorbers can be, with Earth's albedo. The real Earth is 288 K.`
+      : `<b>Still ${fmtW(st.out)} to space, but an average of ${st.avg.toFixed(0)} K</b>, ${(TE - st.avg).toFixed(0)} K below the even planet. Uneven means colder on average, never warmer.`;
+    const svg = $("spc"); svg.innerHTML = "";
+    const narrow = (svg.getBoundingClientRect().width || 640) < 480;
+    const W = narrow ? 380 : 640, H = narrow ? 320 : 340, L = narrow ? 44 : 52, Rm = 14, T0 = 24, B = 46;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    const X = x => L + (W - L - Rm) * x, Y = t => T0 + (H - T0 - B) * (1 - t / 400);
+    const fs = narrow ? 11.5 : 12.5, dim = "#8b98a5", amber = "#f6ad55";
+    el("rect", { x: X(0.5), y: T0, width: X(1) - X(0.5), height: H - B - T0, fill: "#0b1015", "fill-opacity": 0.7 }, svg);
+    for (let t = 0; t <= 400; t += 100) {
+      el("line", { x1: L, x2: W - Rm, y1: Y(t), y2: Y(t), stroke: "#2a333d" }, svg);
+      el("text", { x: L - 8, y: Y(t) + 4, fill: dim, "font-size": 12, "text-anchor": "end" }, svg, t);
+    }
+    el("text", { x: X(0.5) - 6, y: T0 - 8, fill: dim, "font-size": fs, "text-anchor": "end" }, svg, "day");
+    el("text", { x: X(0.5) + 6, y: T0 - 8, fill: dim, "font-size": fs }, svg, "night");
+    el("text", { x: X(0), y: H - B + 17, fill: dim, "font-size": fs }, svg, "under the Sun");
+    el("text", { x: X(0.5), y: H - B + 17, fill: dim, "font-size": fs, "text-anchor": "middle" }, svg, "edge of day");
+    el("text", { x: X(1), y: H - B + 17, fill: dim, "font-size": fs, "text-anchor": "end" }, svg, "far side");
+    el("text", { x: (L + W - Rm) / 2, y: H - 6, fill: dim, "font-size": 12.5, "text-anchor": "middle" }, svg, "share of the surface");
+    el("text", { x: 12, y: (T0 + H - B) / 2, fill: dim, "font-size": 12.5, "text-anchor": "middle", transform: `rotate(-90 12 ${(T0 + H - B) / 2})` }, svg, "temperature (K)");
+    const pts = [`${X(0)},${Y(0)}`]; for (let i = 0; i <= 400; i++) { const x = i / 400; pts.push(`${X(x)},${Y(spreadT(f, x))}`); } pts.push(`${X(1)},${Y(0)}`);
+    el("polygon", { points: pts.join(" "), fill: amber, "fill-opacity": 0.15, stroke: amber, "stroke-width": 2.4, "stroke-linejoin": "round" }, svg);
+    const halo = { "paint-order": "stroke", stroke: "#161d24", "stroke-width": 4, "font-size": narrow ? 11.5 : 13, "font-weight": 700 };
+    el("line", { x1: L, x2: W - Rm, y1: Y(TE), y2: Y(TE), stroke: "#e7e9ea", "stroke-opacity": 0.6, "stroke-dasharray": "2 4" }, svg);
+    el("text", { x: X(1) - 4, y: Y(TE) - 7, fill: "#e7e9ea", "text-anchor": "end", ...halo }, svg, `even planet: ${TE.toFixed(0)} K`);
+    el("line", { x1: L, x2: W - Rm, y1: Y(st.avg), y2: Y(st.avg), stroke: amber, "stroke-width": 1.6, "stroke-dasharray": "7 5" }, svg);
+    el("text", { x: X(0) + 6, y: Y(st.avg) + 17, fill: amber, ...halo }, svg, `average: ${st.avg.toFixed(0)} K`);
+  }
+
+  // ---------- is CO₂ saturated?
+  const C0 = 280, PLANCK = 4 * SIGMA * TE ** 3;   // 3.77 W/m² per K
+  const FCO2 = c => 5.35 * Math.log(c / C0);
+  let co2 = 420;
+  function drawCO2() {
+    const v = Math.log2(co2 / C0), F = FCO2(co2), dT = F / PLANCK, dz = dT / G;
+    $("co2").value = v;
+    $("co2O").textContent = `${Math.round(co2).toLocaleString("en-US")} ppm`;
+    $("cF").textContent = `${F.toFixed(2)} W/m²`;
+    $("cDz").textContent = `${Math.round(dz * 1000)} m`;
+    $("cDt").textContent = `${dT.toFixed(2)} K`;
+    $("cEq").innerHTML = v < 0.001 ? "0 K" : `≈ ${(3 * v).toFixed(1)} K <small>(${(2.5 * v).toFixed(1)}–${(4 * v).toFixed(1)})</small>`;
+    document.querySelectorAll("#co2P button").forEach(b => b.setAttribute("aria-pressed", String(Math.abs(+b.dataset.c - co2) < 0.5)));
+    const svg = $("co2c"); svg.innerHTML = "";
+    const narrow = (svg.getBoundingClientRect().width || 640) < 480;
+    const W = narrow ? 380 : 640, H = narrow ? 320 : 340, L = narrow ? 40 : 48, Rm = 16, T0 = 16, B = 46;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    const X = u => L + (W - L - Rm) * u / 3, Y = w => T0 + (H - T0 - B) * (1 - w / 12);
+    const dim = "#8b98a5", teal = "#4fd1c5", amber = "#f6ad55", fs = narrow ? 11.5 : 12.5;
+    for (let w = 0; w <= 12; w += 3) {
+      el("line", { x1: L, x2: W - Rm, y1: Y(w), y2: Y(w), stroke: "#2a333d" }, svg);
+      el("text", { x: L - 8, y: Y(w) + 4, fill: dim, "font-size": 12, "text-anchor": "end" }, svg, w);
+    }
+    [280, 420, 560, 1120, 2240].forEach(c => {
+      const u = Math.log2(c / C0);
+      el("line", { x1: X(u), x2: X(u), y1: T0, y2: H - B, stroke: "#2a333d" }, svg);
+      el("text", { x: X(u), y: H - B + 17, fill: dim, "font-size": 12, "text-anchor": c === 280 ? "start" : c === 2240 ? "end" : "middle" }, svg, c.toLocaleString("en-US"));
+    });
+    el("text", { x: (L + W - Rm) / 2, y: H - 6, fill: dim, "font-size": 12.5, "text-anchor": "middle" }, svg, "CO₂ (ppm), log scale");
+    el("text", { x: 12, y: (T0 + H - B) / 2, fill: dim, "font-size": 12.5, "text-anchor": "middle", transform: `rotate(-90 12 ${(T0 + H - B) / 2})` }, svg, "forcing (W/m²)");
+    const u0 = Math.log2(420 / C0), F0 = FCO2(420);
+    el("line", { x1: X(u0), x2: X(3), y1: Y(F0), y2: Y(F0), stroke: dim, "stroke-width": 1.8, "stroke-dasharray": "6 5" }, svg);
+    el("text", { x: X(3) - 4, y: Y(F0) + 18, fill: dim, "font-size": fs, "text-anchor": "end" }, svg, "if the band were saturated");
+    el("line", { x1: X(0), x2: X(3), y1: Y(0), y2: Y(FCO2(2240)), stroke: teal, "stroke-width": 3 }, svg);
+    [0.5, 1.5, 2.5].forEach(u => el("text", { x: X(u) - 8, y: Y(FCO2(C0 * 2 ** u)) - 10, "text-anchor": "end", fill: teal, "font-size": fs, "font-weight": 700, "paint-order": "stroke", stroke: "#161d24", "stroke-width": 4 }, svg, narrow ? "+3.7" : "+3.7 W/m²"));
+    el("line", { x1: X(v), x2: X(v), y1: Y(F), y2: H - B, stroke: amber, "stroke-dasharray": "3 3" }, svg);
+    el("circle", { cx: X(v), cy: Y(F), r: 7, fill: amber, stroke: "#161d24", "stroke-width": 2 }, svg);
+  }
+  $("spr").addEventListener("input", drawSpread);
+  $("co2").addEventListener("input", () => {
+    let c = C0 * 2 ** +$("co2").value;
+    for (const p of [280, 420, 560, 1120, 2240]) if (Math.abs(Math.log2(c / p)) < 0.004) c = p;
+    co2 = c; drawCO2();
+  });
+  document.querySelectorAll("#co2P button").forEach(b => b.addEventListener("click", () => { co2 = +b.dataset.c; drawCO2(); }));
+
   // ---------- events
   document.querySelectorAll(".mode button").forEach(b => b.addEventListener("click", () => { mode = b.dataset.m; render(); }));
-  document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click", () => { alb = +b.dataset.a; render(); }));
+  document.querySelectorAll("#ctlP .seg button").forEach(b => b.addEventListener("click", () => { alb = +b.dataset.a; render(); }));
   $("h").addEventListener("input", () => { const v = +$("h").value; hG = Math.abs(v - ZE) < 0.08 ? ZE : v; render(); });
   const chart = $("chart");
   chart.addEventListener("pointermove", ev => { if (pinned) return; readZ = zFromEvent(ev); drawChart(state()); });

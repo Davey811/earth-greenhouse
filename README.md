@@ -27,6 +27,21 @@
 
 In the GISS ModelE attribution (Schmidt et al. 2010; Lacis et al. 2010), water vapour does about 50% of the present-day greenhouse effect, clouds about 25%, CO₂ about 20% and the other non-condensing gases about 5%. Water vapour and clouds condense and rain out, so their amount follows the temperature. In the model, removing the non-condensing gases makes the water follow them out: within 50 years the global mean falls to −21 °C, 34.8 K colder, and sea ice grows from 4.6% to 46.7% of the globe.
 
+## Isn't CO₂ saturated?
+
+At the centre of its 15 µm band the air is already opaque. But Earth radiates the band to space from aloft, and more CO₂ lifts that level to colder air: less leaves, until the column below warms up. The forcing grows with the logarithm of the concentration, 5.35 × ln(C / 280) W/m² (Myhre et al. 1998): every doubling adds the same.
+
+| CO₂ | Forcing since 1750 | Emission level higher by | Surface warmer, before feedbacks | With feedbacks, 3 K per doubling |
+|---|---|---|---|---|
+| 420 ppm, today | 2.17 W/m² | 89 m | 0.58 K | 1.8 K |
+| 560 ppm | 3.71 W/m² | 151 m | 0.98 K | 3.0 K |
+| 1,120 ppm | 7.42 W/m² | 303 m | 1.97 K | 6.0 K |
+| 2,240 ppm | 11.13 W/m² | 454 m | 2.95 K | 9.0 K |
+
+Today's 2.17 W/m² matches the IPCC AR6 assessed CO₂ forcing for 1750–2019, 2.16 W/m². The IPCC assesses 3.93 ± 0.47 W/m² per doubling including fast adjustments, and an equilibrium climate sensitivity of 3 K, likely 2.5–4 K. Before feedbacks, the column warms by forcing / (4σT_e³) = forcing / 3.77, and the emission level rises by that warming divided by 6.5 K/km. A saturated band would give a flat line.
+
+The spectrum on the page shades the CO₂ band, about 13–17 µm, which holds 19% of what a 288 K surface emits, next to its peak, and the window, 8–13 µm, which holds 31%.
+
 ## The 5 km coincidence
 
 | | Earth | Venus |
@@ -55,9 +70,37 @@ Suppose the surface were kept at 288 K by the pressure, with no greenhouse effec
 
 Same Sun, same distance: the Moon absorbs more and is colder. For a body radiating what it absorbs, the mean of T is at most the fourth root of the mean of T⁴, so its average can't exceed its black-body temperature.
 
+## Dividing by 4 is not a flat Earth
+
+The Sun lights Earth's disc, πR², and Earth radiates from its whole sphere, 4πR². Dividing by 4 averages the absorbed sunlight over the sphere; it doesn't say the temperature is even. A planet with no infrared absorbers, where a share s of the sunlight is spread evenly and the rest is radiated where it falls, with no heat stored:
+
+| Spread evenly | Average temperature | Warmest | Coldest | Sent to space |
+|---|---|---|---|---|
+| 0% | 144.3 K | 360.8 K | 0 K | 240.2 W/m² |
+| 30% | 236.2 K | 338.5 K | 188.8 K | 240.2 W/m² |
+| 50% | 246.2 K | 320.8 K | 214.5 K | 240.2 W/m² |
+| 90% | 254.7 K | 272.4 K | 248.5 K | 240.2 W/m² |
+| 100% | 255.1 K | 255.1 K | 255.1 K | 240.2 W/m² |
+
+The planet always sends 240 W/m² to space; the more uneven it is, the colder its average. The even planet is the warmest case: 255 K is a ceiling, not a trick.
+
+## The Mars test
+
+| | Mars | Earth | Venus |
+|---|---|---|---|
+| Sunlight absorbed, planet average | 110 W/m² | 240 W/m² | 150 W/m² |
+| Black-body temperature | 210 K | 255 K | 227 K |
+| Greenhouse effect | about 5 K | 33 K | about 510 K |
+| Surface pressure | 0.006 bar | 1 bar | 92 bar |
+| CO₂ share of the air | 95% | 0.04% | 96.5% |
+| CO₂ above each m² | about 160 kg | 6.6 kg | about 1,000 t |
+| Water vapour | 210 ppm | about 1%, variable | 20 ppm |
+
+Mars has 25 times more CO₂ above each square metre than Earth and a much smaller greenhouse effect. Absorption lines widen with pressure: at 6 millibar they are narrow and the infrared slips out between them. Mars also has almost no water vapour, and it absorbs less than half of Earth's sunlight. The share of CO₂ in the air says little; the amount, the pressure and the water decide. Mars's plain average surface temperature, about 202 K, is below its effective temperature, about 208 K, because its surface is so uneven: the fair comparison uses the fourth root of the average of T⁴ (Haberle 2013).
+
 ## Using the page
 
-Hover or touch the measured curve to read altitude, temperature and pressure; click or tap to pin the reading. "Copy link to this view" copies a link that reopens the page exactly as it is. Every section and objection has its own address, for example `#moon`, `#compression` or `#o-co2-trace`. "Report an error" opens a GitHub issue already filled in.
+Hover or touch the measured curve to read altitude, temperature and pressure; click or tap to pin the reading. "Copy link to this view" copies a link that reopens the page exactly as it is. Every section and objection has its own address, for example `#moon`, `#mars`, `#saturated`, `#divide-by-4` or `#o-co2-trace`. "Report an error" opens a GitHub issue already filled in.
 
 ## Files
 
@@ -95,5 +138,11 @@ python3 earth_test.py
 - G. A. Schmidt, R. Ruedy, R. L. Miller and A. A. Lacis (2010), *The attribution of the present-day total greenhouse effect*, J. Geophys. Res. 115, D20106, doi:[10.1029/2010JD014287](https://doi.org/10.1029/2010JD014287).
 - A. A. Lacis, G. A. Schmidt, D. Rind and R. A. Ruedy (2010), *Atmospheric CO₂: principal control knob governing Earth's temperature*, Science 330, 356–359, doi:[10.1126/science.1190653](https://doi.org/10.1126/science.1190653).
 - A. Raval and V. Ramanathan (1989), *Observational determination of the greenhouse effect*, Nature 342, doi:[10.1038/342758a0](https://doi.org/10.1038/342758a0).
+- G. Myhre, E. J. Highwood, K. P. Shine and F. Stordal (1998), *New estimates of radiative forcing due to well mixed greenhouse gases*, Geophys. Res. Lett. 25, doi:[10.1029/98GL01908](https://doi.org/10.1029/98GL01908).
+- IPCC AR6 WG1, [Chapter 7](https://www.ipcc.ch/report/ar6/wg1/chapter/chapter-7/) (2021), *The Earth's energy budget, climate feedbacks and climate sensitivity*: CO₂ forcing 1750–2019 2.16 W/m², 3.93 ± 0.47 W/m² per doubling, equilibrium climate sensitivity 3 K, likely 2.5–4 K.
+- NASA NSSDC Mars Fact Sheet: https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html and Venus Fact Sheet: https://nssdc.gsfc.nasa.gov/planetary/factsheet/venusfact.html
+- R. M. Haberle (2013), [*Estimating the power of Mars' greenhouse effect*](https://www.sciencedirect.com/science/article/pii/S0019103513000055), Icarus.
+- R. M. Haberle (2015), *Planetary atmospheres: Mars*, Encyclopedia of Atmospheric Sciences, 2nd ed., Academic Press.
+- D. C. Catling and J. F. Kasting (2017), *Atmospheric Evolution on Inhabited and Lifeless Worlds*, Cambridge University Press.
 
 Code under the MIT licence. Made with Python by [@splugged](https://x.com/splugged).

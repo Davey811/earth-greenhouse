@@ -6,7 +6,8 @@ Two runs with the same sunlight, the same 1 bar and the same lapse rate:
   2. infrared absorbers   Earth radiates to space from the level where the measured profile
                           reaches the emission temperature
 
-Prints the energy ledgers, the compression bill, the middle-of-the-mass rule and the Moon test,
+Prints the energy ledgers, the compression bill, the middle-of-the-mass rule, the Moon test,
+the "dividing by 4" spread, the CO2 doubling numbers, the spectral bands and the Mars test,
 and writes results/numbers.txt and results/earth_test.png.
 
 Usage:
@@ -58,6 +59,39 @@ def main():
 
     q_moon = S * (1 - 0.11) / 4
 
+    # dividing by 4: a share s of the sunlight spread evenly, the rest radiated where it falls, no heat stored
+    x = (np.arange(200000) + 0.5) / 200000          # share of the surface from the point under the Sun
+    spread = []
+    for s_ in (0, 0.3, 0.5, 0.9, 1):
+        F = (1 - s_) * S * (1 - ALBEDO) * np.clip(1 - 2 * x, 0, None) + s_ * absorbed
+        Tx = (F / SIGMA) ** 0.25
+        spread.append(f"  {s_:4.0%} spread: average {Tx.mean():6.1f} K, warmest {Tx[0]:5.1f} K, coldest {Tx[-1]:5.1f} K, "
+                      f"sent to space {np.mean(SIGMA * Tx ** 4):.1f} W/m2")
+
+    # CO2: forcing 5.35 ln(C/280) (Myhre et al. 1998); no feedbacks, the column warms by F / (4 sigma Te^3)
+    planck = 4 * SIGMA * Te ** 3
+    co2 = []
+    for c in (420, 560, 1120, 2240):
+        F = 5.35 * np.log(c / 280)
+        co2.append(f"  {c:5d} ppm: forcing {F:5.2f} W/m2, emission level +{F / planck / LAPSE * 1e3:3.0f} m, "
+                   f"surface +{F / planck:.2f} K before feedbacks, {3 * np.log2(c / 280):.1f} K with them (3 K per doubling)")
+
+    # share of the surface's emission in the window and in the CO2 band, at 288.15 K
+    HP, CL, KB = 6.62607015e-34, 2.99792458e8, 1.380649e-23
+    lam = np.linspace(0.5, 300, 600000)
+    M = 2 * np.pi * HP * CL ** 2 / (lam * 1e-6) ** 5 / (np.exp(HP * CL / (lam * 1e-6 * KB * T[0])) - 1) * 1e-6
+    band = lambda a, b: np.trapezoid(M[(lam >= a) & (lam <= b)], lam[(lam >= a) & (lam <= b)]) / (SIGMA * T[0] ** 4)
+
+    # Mars and Venus, NASA NSSDC Fact Sheets: irradiance, Bond albedo, surface pressure (Pa), g, CO2 by volume, molar mass
+    planets = {"Mars": (586.2, 0.250, 636.0, 3.73, 0.951, 43.49), "Venus": (2601.3, 0.77, 92e5, 8.87, 0.965, 43.45)}
+    co2_earth = p[0] * 1e5 / 9.80665 * 420e-6 * 44.01 / 28.97
+    mars = []
+    for name, (Sp, Ap, pp, gp, xco2, mm) in planets.items():
+        qp = Sp * (1 - Ap) / 4
+        col = pp / gp * xco2 * 44.01 / mm
+        mars.append(f"  {name:5s}: absorbs {qp:5.1f} W/m2, black body {(qp / SIGMA) ** 0.25:5.1f} K, "
+                    f"CO2 above each m2 {col:,.0f} kg ({col / co2_earth:,.0f} x Earth's)")
+
     out = [
         f"absorbed sunlight (planet average)  {absorbed:6.1f} W/m2, Te = {Te:.2f} K",
         f"emission level                      {ze:6.3f} km, T_em = {T_em(ze):.2f} K (curvature)",
@@ -81,6 +115,17 @@ def main():
         f"  Moon absorbs {q_moon:.1f} W/m2 ({q_moon / absorbed - 1:+.0%} vs Earth), black body {(q_moon / SIGMA) ** 0.25:.1f} K (NASA Moon Fact Sheet: 270.4 K)",
         "",
         f"CO2 above each m2 at 420 ppm: {p0 / 9.80665 * 420e-6 * 44.01 / 28.97:.1f} kg, air {p0 / 9.80665 / 1e3:.1f} t",
+        "",
+        "dividing by 4: same sunlight, spread more or less evenly, no infrared absorbers:",
+        *spread,
+        "",
+        "is CO2 saturated?",
+        *co2,
+        "",
+        f"surface emission at {T[0]} K: window 8-13 um {band(8, 13):.1%}, CO2 band 13-17 um {band(13, 17):.1%}",
+        "",
+        "Mars test:",
+        *mars,
     ]
     print("\n".join(out))
     os.makedirs(os.path.join(BASE, "results"), exist_ok=True)
