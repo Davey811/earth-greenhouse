@@ -42,6 +42,22 @@ Today's 2.17 W/m² matches the IPCC AR6 assessed CO₂ forcing for 1750–2019, 
 
 The spectrum on the page shades the CO₂ band, about 13–17 µm, which holds 19% of what a 288 K surface emits, next to its peak, and the window, 8–13 µm, which holds 31%.
 
+## What a satellite sees
+
+The spectrum on the page has a button that draws Earth's outgoing infrared as a satellite sees it, as a schematic: the window, 8–13 µm, leaves from the surface at 288 K; the CO₂ band, 13–17 µm, from the cold air near the tropopause, 216.65 K in the U.S. Standard Atmosphere; the rest from water vapour, at the temperature that makes the total 240 W/m² (232 K). The bite in the CO₂ band is the greenhouse effect seen from space. Satellites have measured this shape since 1970; between 1970 and 1997 less infrared escaped in the CO₂ and methane bands (Harries et al. 2001).
+
+## CO₂ or the Sun? The stratosphere decides
+
+A brighter Sun and more CO₂ both warm the surface. A brighter Sun also warms the stratosphere, where ozone absorbs its ultraviolet; more CO₂ cools it, because up there CO₂ radiates more to space than it absorbs.
+
+| | Troposphere | Middle and upper stratosphere |
+|---|---|---|
+| Brighter Sun | warmer | warmer |
+| More CO₂ | warmer | cooler |
+| Measured, 1979–2018 | +0.6 to 0.8 K | −1 to −3 K |
+
+Measured: satellites, radiosondes and GPS radio occultation (Steiner et al. 2020). The lower stratosphere cooled mainly because of ozone loss until the mid-1990s (IPCC AR6); the clean CO₂ signal is at 25–50 km, and natural causes can't explain it (Santer et al. 2023). Natural drivers, the Sun included, account for −0.1 to +0.1 °C of the warming since 1850–1900 (IPCC AR6, SPM A.1.3).
+
 ## Out of balance: the warming in progress
 
 The real Earth absorbs more than it emits: 0.76 ± 0.2 W/m² on average for 2006–2020 (von Schuckmann et al. 2023), about 12 ZJ a year over the whole planet. The imbalance roughly doubled from 2005 to 2019, seen by CERES satellites and Argo ocean floats alike (Loeb et al. 2021). Of the 381 ZJ gained from 1971 to 2020, 89% is in the oceans, 6% in land, 4% went into melting ice and 1% into the air.
@@ -162,7 +178,7 @@ Each one opens directly from its link.
 
 ## Using the page
 
-Hover or touch the measured curve to read altitude, temperature and pressure; click or tap to pin the reading. "Copy link to this view" copies a link that reopens the page exactly as it is. Every section and objection has its own address, for example `#moon`, `#mars`, `#saturated`, `#imbalance`, `#divide-by-4` or `#o-co2-trace`. The sliders can be linked too: `?spread=0#divide-by-4`, `?co2=560#saturated`, `?yr=10#imbalance`. "Report an error" opens a GitHub issue already filled in.
+Hover or touch the measured curve to read altitude, temperature and pressure; click or tap to pin the reading. "Copy link to this view" copies a link that reopens the page exactly as it is. Every section and objection has its own address, for example `#moon`, `#mars`, `#saturated`, `#imbalance`, `#divide-by-4` or `#o-co2-trace`. The sliders and buttons can be linked too: `?spread=0#divide-by-4`, `?co2=560#saturated`, `?yr=10#imbalance`, `?fp=obs#fingerprint`, `?sat=1#spectrum`. "Report an error" opens a GitHub issue already filled in.
 
 ## Files
 
@@ -213,6 +229,8 @@ python3 earth_test.py
 - J. E. Harries, H. E. Brindley, P. J. Sagoo and R. J. Bantges (2001), *Increases in greenhouse forcing inferred from the outgoing longwave radiation spectra of the Earth in 1970 and 1997*, Nature 410, 355–357, doi:[10.1038/35066553](https://doi.org/10.1038/35066553).
 - S. Arrhenius (1896), *On the influence of carbonic acid in the air upon the temperature of the ground*, Phil. Mag. 41, 237–276, doi:[10.1080/14786449608620846](https://doi.org/10.1080/14786449608620846).
 - E. Foote (1856), *Circumstances affecting the heat of the sun's rays*, American Journal of Science and Arts. J. Tyndall (1859), Proceedings of the Royal Society of London. J. Fourier (1824), Annales de Chimie et de Physique.
+- A. K. Steiner et al. (2020), *Observed temperature changes in the troposphere and stratosphere from 1979 to 2018*, J. Climate 33, 8165, doi:[10.1175/JCLI-D-19-0998.1](https://doi.org/10.1175/JCLI-D-19-0998.1).
+- IPCC AR6 WG1, [Summary for Policymakers](https://www.ipcc.ch/report/ar6/wg1/chapter/summary-for-policymakers/) (2021), A.1.3.
 - R. W. Wood (1909), *Note on the theory of the greenhouse*, Phil. Mag. 17, 319–320, doi:[10.1080/14786440208636602](https://doi.org/10.1080/14786440208636602).
 - D. R. Feldman, W. D. Collins, P. J. Gero, M. S. Torn, E. J. Mlawer and T. R. Shippert (2015), *Observational determination of surface radiative forcing by CO₂ from 2000 to 2010*, Nature 519, 339–343, doi:[10.1038/nature14240](https://doi.org/10.1038/nature14240).
 - M. Wild et al. (2019), *The cloud-free global energy balance and inferred cloud radiative effects*, Clim. Dyn., doi:[10.1007/s00382-018-4413-y](https://doi.org/10.1007/s00382-018-4413-y).

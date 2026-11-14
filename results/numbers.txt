@@ -43,6 +43,7 @@ the First Law in time (doubling, no feedbacks):
   measured 0.76 W/m2 (2006-2020) over 5.101e+14 m2: 12.2 ZJ a year
 
 surface emission at 288.15 K: window 8-13 um 31.2%, CO2 band 13-17 um 18.8%
+seen from space (schematic): window at 288.15 K, CO2 band at 216.65 K, water vapour at 232.2 K -> 240.2 W/m2
 
 Mars test:
   Mars : absorbs 109.9 W/m2, black body 209.8 K, CO2 above each m2 164 kg (25 x Earth's)

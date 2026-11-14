@@ -96,6 +96,18 @@ def main():
     M = 2 * np.pi * HP * CL ** 2 / (lam * 1e-6) ** 5 / (np.exp(HP * CL / (lam * 1e-6 * KB * T[0])) - 1) * 1e-6
     band = lambda a, b: np.trapezoid(M[(lam >= a) & (lam <= b)], lam[(lam >= a) & (lam <= b)]) / (SIGMA * T[0] ** 4)
 
+    # what a satellite sees, schematic: window from the surface, CO2 band from the tropopause (216.65 K),
+    # the rest from water vapour at the temperature that makes the total equal to the absorbed sunlight
+    def seen_from_space(t_water):
+        t_lam = np.where((lam >= 8) & (lam < 13), T[0], np.where((lam >= 13) & (lam <= 17), 216.65, t_water))
+        m = 2 * np.pi * HP * CL ** 2 / (lam * 1e-6) ** 5 / (np.exp(HP * CL / (lam * 1e-6 * KB * t_lam)) - 1) * 1e-6
+        return np.trapezoid(m, lam)
+    lo, hi = 150.0, 350.0
+    for _ in range(60):
+        mid = (lo + hi) / 2
+        lo, hi = (lo, mid) if seen_from_space(mid) > absorbed else (mid, hi)
+    t_water = (lo + hi) / 2
+
     # Mars and Venus, NASA NSSDC Fact Sheets: irradiance, Bond albedo, surface pressure (Pa), g, CO2 by volume, molar mass
     planets = {"Mars": (586.2, 0.250, 636.0, 3.73, 0.951, 43.49), "Venus": (2601.3, 0.77, 92e5, 8.87, 0.965, 43.45)}
     co2_earth = p[0] * 1e5 / 9.80665 * 420e-6 * 44.01 / 28.97
@@ -140,6 +152,8 @@ def main():
         *first_law,
         "",
         f"surface emission at {T[0]} K: window 8-13 um {band(8, 13):.1%}, CO2 band 13-17 um {band(13, 17):.1%}",
+        f"seen from space (schematic): window at {T[0]} K, CO2 band at 216.65 K, water vapour at {t_water:.1f} K "
+        f"-> {seen_from_space(t_water):.1f} W/m2",
         "",
         "Mars test:",
         *mars,

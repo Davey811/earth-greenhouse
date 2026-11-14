@@ -166,7 +166,7 @@
       <div><b class="cold">255 K</b><span>the surface with the same air but no infrared absorbers (278 K even reflecting nothing)</span></div>
     </div>
     <nav class="toc" aria-label="Contents">
-      <a href="#tool">The two runs</a><a href="#ledger">Energy ledger</a><a href="#attribution">Who does what</a><a href="#spectrum">Spectrum</a><a href="#saturated">Saturated?</a><a href="#imbalance">Out of balance</a><a href="#argument">The argument</a><a href="#coincidence">The 5 km coincidence</a><a href="#compression">Compression</a><a href="#radiation-only">Radiation alone</a><a href="#divide-by-4">Dividing by 4</a><a href="#moon">The Moon test</a><a href="#mars">The Mars test</a><a href="#history">History</a><a href="#objections">Objections</a><a href="#report">Found an error?</a>
+      <a href="#tool">The two runs</a><a href="#ledger">Energy ledger</a><a href="#attribution">Who does what</a><a href="#spectrum">Spectrum</a><a href="#saturated">Saturated?</a><a href="#imbalance">Out of balance</a><a href="#fingerprint">CO₂ or the Sun?</a><a href="#argument">The argument</a><a href="#coincidence">The 5 km coincidence</a><a href="#compression">Compression</a><a href="#radiation-only">Radiation alone</a><a href="#divide-by-4">Dividing by 4</a><a href="#moon">The Moon test</a><a href="#mars">The Mars test</a><a href="#history">History</a><a href="#objections">Objections</a><a href="#report">Found an error?</a>
     </nav>
   </section>
 
@@ -245,7 +245,9 @@
     <h2>What leaves the surface, what leaves Earth</h2>
     <p id="spT"></p>
     <svg id="sp" viewBox="0 0 900 330" role="img" aria-label="Planck spectra: infrared emitted by the surface and infrared that leaves Earth"></svg>
-    <p class="note" style="margin-top:6px">Planck's law, M<sub>λ</sub> = 2πhc² / λ⁵ / (e<sup>hc/λkT</sup> − 1), per square metre; the area under each curve is σT⁴. Both curves follow the run and the emission height above. Shaded: the main CO₂ band, about 13–17 µm, and the window, 8–13 µm, where clear air absorbs least; the percentages are the share of the surface's emission that falls in each. The curves are smooth Planck curves: the real spectrum leaving Earth has a bite where the CO₂ band is, but the totals are set by the temperatures.</p>
+    <div class="chartbar"><button id="satBtn" aria-pressed="false">Show what a satellite sees</button>
+      <p class="note radnote" id="satNote" hidden></p></div>
+    <p class="note" style="margin-top:6px">Planck's law, M<sub>λ</sub> = 2πhc² / λ⁵ / (e<sup>hc/λkT</sup> − 1), per square metre; the area under each curve is σT⁴. Both curves follow the run and the emission height above. Shaded: the main CO₂ band, about 13–17 µm, and the window, 8–13 µm, where clear air absorbs least; the percentages are the share of the surface's emission that falls in each. The curves are smooth Planck curves: the real spectrum leaving Earth has a bite where the CO₂ band is ("Show what a satellite sees"), but the totals are set by the temperatures.</p>
   </section>
 
   <section class="card wide prose" id="saturated" aria-label="Isn't CO₂ saturated?">
@@ -297,6 +299,21 @@
       <svg id="imbc" viewBox="0 0 640 320" role="img" aria-label="Imbalance and warming after a sudden doubling of CO₂"></svg>
     </div>
     <p class="note">No feedbacks, one heat store: the top 100 m of ocean over 71% of the planet, C = 1025 × 3990 × 100 × 0.71 = 2.90 × 10⁸ J/(m²·K). The imbalance decays as 3.71 × e<sup>−t/τ</sup> W/m², with τ = C / (4σT<sub>e</sub>³) = 2.4 years; the energy stored is C × ΔT, the area under the imbalance curve. The real ocean is deeper and slower, and feedbacks, mostly water vapour, bring the final warming to about 3 K: the full response takes decades, and meanwhile CO₂ keeps rising. That is why the measured imbalance persists. Measured values: von Schuckmann et al. 2023 (0.76 ± 0.2 W/m², 2006–2020; 381 ZJ gained 1971–2020), Loeb et al. 2021 (CERES satellites and Argo ocean floats).</p>
+  </section>
+
+  <section class="card wide prose" id="fingerprint" aria-label="CO₂ or the Sun?">
+    <h2>CO₂ or the Sun? The stratosphere decides</h2>
+    <p>A brighter Sun and more CO₂ both warm the surface. They part ways higher up. Pick one, then look at what was measured.</p>
+    <div class="split">
+      <div>
+        <div class="seg" id="fpP" role="group" aria-label="Cause">
+          <button data-f="sun">Brighter Sun</button><button data-f="co2">More CO₂</button><button data-f="obs">Measured</button>
+        </div>
+        <p class="verdict" id="fpV"></p>
+      </div>
+      <svg id="fpc" viewBox="0 0 640 380" role="img" aria-label="Temperature change in the troposphere and in the stratosphere for each cause"></svg>
+    </div>
+    <p class="note">Measured, 1979–2018: satellites (MSU, AMSU, SSU), radiosondes and GPS radio occultation (Steiner et al. 2020). The lower stratosphere, 15–25 km, cooled too, but there the main driver until the mid-1990s was ozone loss (IPCC AR6); the clean CO₂ signal is higher up, 25–50 km, and natural causes can't explain it (Santer et al. 2023). The Sun heats the stratosphere through the ultraviolet that ozone absorbs, so a brighter Sun would warm it. Natural drivers, the Sun included: −0.1 to +0.1 °C of the warming since 1850–1900 (IPCC AR6, SPM A.1.3). Arrows show the direction, not the size. Profile: U.S. Standard Atmosphere 1976.</p>
   </section>
 
   <section class="card wide prose" id="argument" aria-label="The argument">
@@ -473,7 +490,7 @@
     </details>
     <details id="o-sun">
       <summary>"It's the Sun."</summary>
-      <p>The Sun supplies the 240 W/m² that Earth absorbs, and Earth sends the same back. The Moon, at the same distance, absorbs 26% more sunlight and is colder. See "The Moon test".</p>
+      <p>The Sun supplies the 240 W/m² that Earth absorbs, and Earth sends the same back. The Moon, at the same distance, absorbs 26% more sunlight and is colder. See "The Moon test". And the stratosphere tells the two apart: a brighter Sun would warm it, CO₂ cools it, and it has cooled. See "CO₂ or the Sun?".</p>
     </details>
     <details id="o-tuned">
       <summary>"You tuned the second run to give 288 K."</summary>
@@ -485,7 +502,7 @@
     </details>
     <details id="o-coolant">
       <summary>"CO₂ cools the planet: it radiates heat to space."</summary>
-      <p>It does radiate to space, and that is where the warming comes from. Earth's CO₂ band leaves from high, cold air, so it sends out less than the warm surface would. Add CO₂ and the band leaves from higher still, colder: less goes out, and the air below warms (see "Isn't CO₂ saturated?"). In the middle and upper stratosphere, about 25 to 50 km, more CO₂ does cool: there it radiates more than it absorbs. Satellites measure that cooling, a human fingerprint that natural causes can't explain (Santer et al. 2023). A brighter Sun would warm the stratosphere, not cool it.</p>
+      <p>It does radiate to space, and that is where the warming comes from. Earth's CO₂ band leaves from high, cold air, so it sends out less than the warm surface would. Add CO₂ and the band leaves from higher still, colder: less goes out, and the air below warms (see "Isn't CO₂ saturated?"). In the middle and upper stratosphere, about 25 to 50 km, more CO₂ does cool: there it radiates more than it absorbs. Satellites measure that cooling, a human fingerprint that natural causes can't explain (Santer et al. 2023). A brighter Sun would warm the stratosphere, not cool it. See "CO₂ or the Sun?".</p>
     </details>
     <details id="o-flat-earth">
       <summary>"Dividing the sunlight by 4 means a flat Earth with no night."</summary>
@@ -526,6 +543,8 @@
       R. W. Wood (1909), <i>Note on the theory of the greenhouse</i>, Phil. Mag. 17, 319–320, <a href="https://doi.org/10.1080/14786440208636602">doi:10.1080/14786440208636602</a>.
       D. R. Feldman, W. D. Collins, P. J. Gero, M. S. Torn, E. J. Mlawer and T. R. Shippert (2015), <i>Observational determination of surface radiative forcing by CO₂ from 2000 to 2010</i>, Nature 519, 339–343, <a href="https://doi.org/10.1038/nature14240">doi:10.1038/nature14240</a>.
       M. Wild et al. (2019), <i>The cloud-free global energy balance and inferred cloud radiative effects</i>, Clim. Dyn., <a href="https://doi.org/10.1007/s00382-018-4413-y">doi:10.1007/s00382-018-4413-y</a>: downward infrared at the surface 314 W/m² under clear skies, 342 W/m² with clouds.
+      A. K. Steiner et al. (2020), <i>Observed temperature changes in the troposphere and stratosphere from 1979 to 2018</i>, J. Climate 33, 8165, <a href="https://doi.org/10.1175/JCLI-D-19-0998.1">doi:10.1175/JCLI-D-19-0998.1</a>: troposphere +0.6 to 0.8 K, stratosphere −1 to −3 K.
+      IPCC AR6 WG1, <a href="https://www.ipcc.ch/report/ar6/wg1/chapter/summary-for-policymakers/">Summary for Policymakers</a> (2021), A.1.3: natural drivers −0.1 to +0.1 °C of the warming since 1850–1900; ozone depletion the main driver of lower-stratosphere cooling from 1979 to the mid-1990s.
       B. D. Santer et al. (2023), <i>Exceptional stratospheric contribution to human fingerprints on atmospheric temperature</i>, PNAS 120(20), <a href="https://doi.org/10.1073/pnas.2300758120">doi:10.1073/pnas.2300758120</a>.
       R. M. Haberle (2013), <a href="https://www.sciencedirect.com/science/article/pii/S0019103513000055"><i>Estimating the power of Mars' greenhouse effect</i></a>, Icarus.
       R. M. Haberle (2015), <i>Planetary atmospheres: Mars</i>, Encyclopedia of Atmospheric Sciences, 2nd ed., Academic Press.
@@ -549,7 +568,7 @@
   const atZ = z => { for (let i = 0; i < EZ.length - 1; i++) if (EZ[i] <= z && z <= EZ[i + 1]) { const f = (z - EZ[i]) / (EZ[i + 1] - EZ[i]); return { T: ET[i] + f * (ET[i + 1] - ET[i]), p: Math.exp(Math.log(EP[i]) + f * Math.log(EP[i + 1] / EP[i])) }; } };
   const $ = id => document.getElementById(id);
   const NS = "http://www.w3.org/2000/svg";
-  let mode = "greenhouse", hG = ZE, alb = A, readZ = null, pinned = false, geo = null;
+  let mode = "greenhouse", hG = ZE, alb = A, readZ = null, pinned = false, geo = null, sat = false, fp = "sun";
   const fmtW = w => `${(Math.round(w) || 0).toLocaleString("en-US")} W/m²`;
   const K = t => `${t.toFixed(0)} K (${(t - 273.15).toFixed(0).replace("-", "−")} °C)`;
   function el(tag, attrs, parent, text) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; parent.appendChild(e); return e; }
@@ -636,8 +655,27 @@
     if (green) {
       el("polygon", { points: curve(te), fill: "#4fd1c5", "fill-opacity": 0.5, stroke: "#4fd1c5", "stroke-width": 2 }, svg);
       const pe = 2898 / te;
-      el("text", { x: X(pe) + 30, y: Y(Mlam(pe, te) * 0.55), fill: "#4fd1c5", ...halo }, svg, narrow ? `to space, ${te.toFixed(0)} K` : `to space, ${te.toFixed(0)} K: ${fmtW(st.q)}`);
+      if (!sat) el("text", { x: X(pe) + 30, y: Y(Mlam(pe, te) * 0.55), fill: "#4fd1c5", ...halo }, svg, narrow ? `to space, ${te.toFixed(0)} K` : `to space, ${te.toFixed(0)} K: ${fmtW(st.q)}`);
     }
+    const TC = 216.65;   // tropopause, U.S. Standard Atmosphere 1976
+    const bandT = (l, tw) => (l >= 8 && l < 13) ? tg : (l >= 13 && l <= 17) ? TC : tw;
+    let tw = null;
+    if (sat && green) {
+      const tot = w => { let s = 0; const d = 0.05; for (let l = 0.5; l < 200; l += d) { const m = l + d / 2; s += Mlam(m, bandT(m, w)) * d; } return s; };
+      let lo = 150, hi = 350; for (let i = 0; i < 40; i++) { const mid = (lo + hi) / 2; if (tot(mid) > st.q) hi = mid; else lo = mid; }
+      tw = (lo + hi) / 2;
+      const pts = []; for (let l = 0.5; l <= lmax + 1e-9; l += 0.05) pts.push(`${X(l)},${Y(Mlam(l, bandT(l, tw)))}`);
+      el("polyline", { points: pts.join(" "), fill: "none", stroke: "#e7e9ea", "stroke-width": 2.4, "stroke-linejoin": "round" }, svg);
+      el("text", { x: X(15), y: Y(Mlam(15, TC)) + (narrow ? 15 : 17), fill: "#f6ad55", "text-anchor": "middle", ...halo }, svg, `${TC.toFixed(0)} K`);
+      el("text", { x: W - Rm - 4, y: T0 + 16, fill: "#e7e9ea", "text-anchor": "end", ...halo }, svg, narrow ? `seen from space: ${fmtW(st.q)}` : `white: seen from space (schematic), ${fmtW(st.q)}`);
+      el("text", { x: W - Rm - 4, y: T0 + (narrow ? 34 : 38), fill: "#4fd1c5", "text-anchor": "end", ...halo }, svg, narrow ? `smooth ${te.toFixed(0)} K: ${fmtW(st.q)}` : `green: smooth ${te.toFixed(0)} K curve, ${fmtW(st.q)}`);
+    }
+    $("satBtn").setAttribute("aria-pressed", String(sat));
+    $("satBtn").textContent = sat ? "Hide what a satellite sees" : "Show what a satellite sees";
+    $("satNote").hidden = !sat;
+    if (sat) $("satNote").innerHTML = green
+      ? `<b>What a satellite sees</b>, schematic: the window, 8–13 µm, leaves from the surface at ${tg.toFixed(0)} K; the CO₂ band from the cold air near the tropopause, ${TC.toFixed(0)} K in the Standard Atmosphere; the rest from water vapour, here at ${tw.toFixed(0)} K, set so that the total is ${fmtW(st.q)}. Satellites have measured this shape since 1970: between 1970 and 1997 less infrared escaped in the CO₂ and methane bands (Harries et al. 2001). The bite is the greenhouse effect, seen from space.`
+      : `<b>No infrared absorbers:</b> what a satellite sees is the surface curve itself, with no bite.`;
     const emit = SIGMA * tg ** 4;
     $("spT").innerHTML = green
       ? `The surface glows at ${tg.toFixed(0)} K and emits <b>${fmtW(emit)}</b>, peaking near ${(2898 / tg).toFixed(0)} µm. Earth glows to space from about ${st.h.toFixed(0)} km, at ${te.toFixed(0)} K, and sends out <b>${fmtW(st.q)}</b>: the green area. The difference, <b class="bad">${fmtW(emit - st.q)}</b>, is absorbed by the air. Same Planck law, two temperatures, set by where the radiation leaves.`
@@ -671,7 +709,7 @@
     $("h").value = hG; $("hO").textContent = hG === ZE ? `${ZE.toFixed(2)} km (measured)` : `${hG.toFixed(1)} km`;
     document.querySelectorAll(".mode button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.m === mode)));
     document.querySelectorAll("#ctlP .seg button").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.a === alb)));
-    drawChart(st); drawSpectrum(st); drawSpread(); drawCO2(); drawImb(); syncURL();
+    drawChart(st); drawSpectrum(st); drawSpread(); drawCO2(); drawImb(); drawFP(); syncURL();
   }
 
   // ---------- links to every view
@@ -684,6 +722,8 @@
     const sp = +$("spr").value; if (sp !== 30) q.set("spread", String(sp));
     if (Math.abs(co2 - 420) > 0.5) q.set("co2", String(Math.round(co2)));
     const yr = +$("yrs").value; if (Math.abs(yr - 3) > 1e-9) q.set("yr", yr.toFixed(1));
+    if (fp !== "sun") q.set("fp", fp);
+    if (sat) q.set("sat", "1");
     return q.toString();
   }
   function linkHere() { return location.href.split(/[?#]/)[0] + "?" + query() + location.hash; }
@@ -697,6 +737,8 @@
     const sp = parseFloat(q.get("spread")); if (sp >= 0 && sp <= 100) $("spr").value = Math.round(sp);
     const c = parseFloat(q.get("co2")); if (c >= 280 && c <= 2240) co2 = c;
     const yr = parseFloat(q.get("yr")); if (yr >= 0 && yr <= 15) $("yrs").value = yr;
+    if (["sun", "co2", "obs"].includes(q.get("fp"))) fp = q.get("fp");
+    if (q.get("sat") === "1") sat = true;
   }
   function zFromEvent(ev) {
     const svg = $("chart"); if (!geo || !svg.getScreenCTM()) return null;
@@ -818,6 +860,52 @@
     el("line", { x1: X(v), x2: X(v), y1: Y(F), y2: H - B, stroke: amber, "stroke-dasharray": "3 3" }, svg);
     el("circle", { cx: X(v), cy: Y(F), r: 7, fill: amber, stroke: "#161d24", "stroke-width": 2 }, svg);
   }
+  // ---------- CO2 or the Sun? the stratosphere decides
+  const T76 = z => z <= 11 ? 288.15 - 6.5 * z : z <= 20 ? 216.65 : z <= 32 ? 216.65 + (z - 20) : z <= 47 ? 228.65 + 2.8 * (z - 32) : 270.65;
+  function drawFP() {
+    document.querySelectorAll("#fpP button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.f === fp)));
+    const svg = $("fpc"); svg.innerHTML = "";
+    const narrow = (svg.getBoundingClientRect().width || 640) < 480;
+    const W = narrow ? 380 : 640, H = narrow ? 360 : 380, L = narrow ? 44 : 52, Rm = 14, T0 = 14, B = 42;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    const xmin = 170, xmax = 300, X = t => L + (W - L - Rm) * (t - xmin) / (xmax - xmin), Y = z => T0 + (H - T0 - B) * (1 - z / 50);
+    const dim = "#8b98a5", red = "#ff6b6b", blue = "#63b3ed", amber = "#f6ad55", fs = narrow ? 11.5 : 12.5;
+    el("rect", { x: L, y: Y(50), width: W - Rm - L, height: Y(25) - Y(50), fill: amber, "fill-opacity": 0.07 }, svg);
+    el("rect", { x: L, y: Y(25), width: W - Rm - L, height: Y(11) - Y(25), fill: "#8b98a5", "fill-opacity": 0.05 }, svg);
+    for (let t = 180; t <= 300; t += 20) {
+      el("line", { x1: X(t), x2: X(t), y1: T0, y2: H - B, stroke: "#2a333d" }, svg);
+      el("text", { x: X(t), y: H - B + 17, fill: dim, "font-size": 12, "text-anchor": "middle" }, svg, t);
+    }
+    for (let z = 0; z <= 50; z += 10) {
+      el("line", { x1: L, x2: W - Rm, y1: Y(z), y2: Y(z), stroke: "#2a333d" }, svg);
+      el("text", { x: L - 8, y: Y(z) + 4, fill: dim, "font-size": 12, "text-anchor": "end" }, svg, z);
+    }
+    el("line", { x1: L, x2: W - Rm, y1: Y(11), y2: Y(11), stroke: dim, "stroke-dasharray": "4 4" }, svg);
+    el("text", { x: W - Rm - 6, y: Y(11) + 15, fill: dim, "font-size": fs, "text-anchor": "end" }, svg, "troposphere");
+    el("text", { x: W - Rm - 6, y: Y(11) - 7, fill: dim, "font-size": fs, "text-anchor": "end" }, svg, "stratosphere");
+    el("text", { x: W - Rm - 6, y: Y(25) - 7, fill: amber, "font-size": fs, "text-anchor": "end" }, svg, narrow ? "25–50 km: the fingerprint" : "25–50 km: CO₂'s fingerprint");
+    el("text", { x: (L + W - Rm) / 2, y: H - 6, fill: dim, "font-size": 12.5, "text-anchor": "middle" }, svg, "temperature (K)");
+    el("text", { x: 12, y: (T0 + H - B) / 2, fill: dim, "font-size": 12.5, "text-anchor": "middle", transform: `rotate(-90 12 ${(T0 + H - B) / 2})` }, svg, "altitude (km)");
+    const pts = []; for (let z = 0; z <= 50; z += 0.5) pts.push(`${X(T76(z))},${Y(z)}`);
+    el("polyline", { points: pts.join(" "), fill: "none", stroke: "#e7e9ea", "stroke-opacity": 0.45, "stroke-width": 2.4 }, svg);
+    const dirs = { sun: [1, 1], co2: [1, -1], obs: [1, -1] }[fp];
+    const words = fp === "obs" ? [narrow ? "+0.6–0.8 K" : "+0.6 to 0.8 K", narrow ? "−1 to −3 K" : "−1 to −3 K"] : [dirs[0] > 0 ? "warmer" : "cooler", dirs[1] > 0 ? "warmer" : "cooler"];
+    const len = narrow ? 34 : 44, halo = { "paint-order": "stroke", stroke: "#161d24", "stroke-width": 4, "font-size": fs + 0.5, "font-weight": 700 };
+    [[5, 0], [38, 1]].forEach(([z, i]) => {
+      const d = dirs[i], col = d > 0 ? red : blue, x0 = X(T76(z)) + d * 6, x1 = x0 + d * len, y = Y(z);
+      el("line", { x1: x0, x2: x1 - d * 8, y1: y, y2: y, stroke: col, "stroke-width": 4, "stroke-linecap": "round" }, svg);
+      el("polygon", { points: `${x1},${y} ${x1 - d * 11},${y - 7} ${x1 - d * 11},${y + 7}`, fill: col }, svg);
+      el("text", { x: x1 + d * 8, y: y + 5, fill: col, "text-anchor": d > 0 ? "start" : "end", ...halo }, svg, words[i]);
+    });
+    $("fpV").innerHTML = {
+      sun: `<b>A brighter Sun</b> heats the whole column: the troposphere, and the stratosphere too, where ozone absorbs its ultraviolet. Warmer below, <b>warmer above</b>.`,
+      co2: `<b>More CO₂</b> warms the troposphere and cools the stratosphere: up there CO₂ radiates more to space than it absorbs. Warmer below, <b>cooler above</b>.`,
+      obs: `<b>Measured, 1979–2018:</b> troposphere +0.6 to 0.8 K, stratosphere −1 to −3 K. Warmer below, cooler above: <b>the CO₂ pattern</b>. Natural drivers, the Sun included, account for −0.1 to +0.1 °C of the warming since 1850–1900.`
+    }[fp];
+  }
+  document.querySelectorAll("#fpP button").forEach(b => b.addEventListener("click", () => { fp = b.dataset.f; drawFP(); syncURL(); }));
+  $("satBtn").addEventListener("click", () => { sat = !sat; render(); });
+
   // ---------- the First Law in time: CO2 doubled at once, one ocean layer, no feedbacks
   const F2X = 5.35 * Math.log(2), CML = 1025 * 3990 * 100 * 0.71, YR = 3.15576e7, TAU = CML / PLANCK / YR;   // TAU in years
   function drawImb() {
