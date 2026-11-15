@@ -147,6 +147,12 @@
   #sphPlay { font: inherit; font-size: 13px; color: var(--dim); background: transparent; border: 1px dashed var(--line); border-radius: 8px; padding: 7px 12px; cursor: pointer; }
   #sphPlay:hover { color: var(--fg); border-color: var(--dim); }
   #sph { max-width: 760px; }
+  @media (min-width: 1000px) {
+    figure.sphere { display: grid; grid-template-columns: minmax(0, 640px) minmax(0, 1fr); gap: 24px; align-items: center; }
+    .sphbar { flex-direction: column; align-items: stretch; }
+    .sphbar .seg { flex-direction: column; flex: none; }
+    #sphPlay { align-self: flex-start; }
+  }
   #sph .fade { transition: opacity .6s ease; }
   @media (prefers-reduced-motion: reduce) { #sph .fade { transition: none; } }
   .split { display: grid; grid-template-columns: 300px 1fr; gap: 20px; align-items: start; margin: 4px 0 8px; }
@@ -382,6 +388,7 @@
     <p>The Sun lights Earth's disc, πR², and Earth radiates from its whole sphere, 4πR²: the ratio is 4. The 4 is the sphere.</p>
     <figure class="sphere">
       <svg id="sph" viewBox="0 0 640 300" role="img" aria-label="Sunlight caught by a disc, falling on half the sphere, radiated by the whole sphere"></svg>
+      <div class="sphside">
       <div class="sphbar">
         <div class="seg" id="sphP" role="group" aria-label="Step">
           <button data-s="0">Disc, πR²</button><button data-s="1">Lit half, 2πR²</button><button data-s="2">Whole sphere, 4πR²</button>
@@ -390,6 +397,7 @@
       </div>
       <p class="verdict" id="sphCap"></p>
       <p class="eq" id="sphEq"></p>
+      </div>
     </figure>
     <p>So 1361 × (1 − 0.294) / 4 = 240 W/m² is the sunlight absorbed, averaged over the sphere. It is bookkeeping on a round Earth, not a claim that Earth is flat or evenly lit. Here is a planet with no infrared absorbers, lit on one side. Each spot radiates what it gets: its own sunlight, plus a share spread evenly by winds and oceans.</p>
     <div class="split">
@@ -904,7 +912,7 @@
       const gs = grp(); gs.id = "sShadow";
       el("polygon", { points: `${scX - 14},${cy - R - 26} ${scX + 14},${cy - R - 12} ${scX + 14},${cy + R + 26} ${scX - 14},${cy + R + 12}`, fill: "#1e2730", stroke: "#2a333d" }, gs);
       el("ellipse", { cx: scX, cy, rx: 10, ry: R, fill: "#0b1015", stroke: amber, "stroke-dasharray": "3 3" }, gs);
-      el("text", { x: scX, y: cy + R + 46, fill: amber, "font-size": fs, "text-anchor": "middle", "font-weight": 700 }, gs, narrow ? "shadow: πR²" : "shadow: a disc, πR²");
+      el("text", { x: scX, y: cy - R - 38, fill: amber, "font-size": fs, "text-anchor": "middle", "font-weight": 700 }, gs, narrow ? "shadow: πR²" : "shadow: a disc, πR²");
       // sunlight
       const gr = grp(); gr.id = "sRays";
       el("text", { x: 10, y: cy - 1.18 * R - 9, fill: amber, "font-size": fs, "font-weight": 700 }, gr, "sunlight");
@@ -961,7 +969,7 @@
       const o = op[step];
       for (const [id, k] of [["sRays", "rays"], ["sShadow", "shadow"], ["sDay", "day"], ["sIR", "ir"]]) { const n = document.getElementById(id); if (n) n.style.opacity = o[k]; }
       $("sphCap").innerHTML = caps[step];
-      $("sphEq").innerHTML = terms.map((t, i) => i === step ? `<b style="color:var(--fg)">${t}</b>` : t).join(" = ");
+      $("sphEq").innerHTML = terms.map((t, i) => i === step ? `<b style="color:var(--fg);white-space:nowrap">${t}</b>` : `<span style="white-space:nowrap">${t}</span>`).join(" = ");
       document.querySelectorAll("#sphP button").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.s === step)));
       $("sphPlay").setAttribute("aria-pressed", String(playing));
       $("sphPlay").textContent = playing ? "Pause" : "Play";
