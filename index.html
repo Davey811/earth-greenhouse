@@ -976,7 +976,7 @@
     if ("IntersectionObserver" in window) new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(svg);
     window.addEventListener("resize", build);
     build(); schedule();
-    if (!reduce) requestAnimationFrame(tick);
+    requestAnimationFrame(tick);   // the globe turns only while playing; with reduced motion it waits for "Play"
   })();
 
   // ---------- CO2 or the Sun? the stratosphere decides
