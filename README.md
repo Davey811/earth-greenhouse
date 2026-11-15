@@ -115,7 +115,15 @@ Convection cools the surface by carrying heat up to where the air can radiate it
 
 ## Dividing by 4 is not a flat Earth
 
-The Sun lights Earth's disc, πR², and Earth radiates from its whole sphere, 4πR². Dividing by 4 averages the absorbed sunlight over the sphere; it doesn't say the temperature is even. A planet with no infrared absorbers, where a share s of the sunlight is spread evenly and the rest is radiated where it falls, with no heat stored:
+The Sun lights Earth's disc, πR², and Earth radiates from its whole sphere, 4πR². Dividing by 4 averages the absorbed sunlight over the sphere; it doesn't say the temperature is even.
+
+An animation on the page shows the three areas on a turning globe. The Sun sees a disc, πR², the area of Earth's shadow: 960.9 W/m² absorbed on it. The light falls on the lit half, 2πR²: 480 W/m² on average, by day only. Earth radiates from the whole sphere, 4πR², day and night: 240 W/m². Same energy, three areas:
+
+```
+960.9 × πR² = 480.4 × 2πR² = 240.2 × 4πR²
+```
+
+The 4 is the sphere. A planet with no infrared absorbers, where a share s of the sunlight is spread evenly and the rest is radiated where it falls, with no heat stored:
 
 | Spread evenly | Average temperature | Warmest | Coldest | Sent to space |
 |---|---|---|---|---|

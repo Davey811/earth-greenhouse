@@ -141,6 +141,14 @@
   ol.timeline li:first-child { border-top: none; padding-top: 2px; }
   ol.timeline li > b { color: var(--teal); font-variant-numeric: tabular-nums; }
   @media (max-width: 600px) { ol.timeline li { grid-template-columns: 1fr; gap: 2px; } }
+  figure.sphere { margin: 4px 0 16px; }
+  .sphbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 4px; }
+  .sphbar .seg { flex: 1 1 420px; }
+  #sphPlay { font: inherit; font-size: 13px; color: var(--dim); background: transparent; border: 1px dashed var(--line); border-radius: 8px; padding: 7px 12px; cursor: pointer; }
+  #sphPlay:hover { color: var(--fg); border-color: var(--dim); }
+  #sph { max-width: 760px; }
+  #sph .fade { transition: opacity .6s ease; }
+  @media (prefers-reduced-motion: reduce) { #sph .fade { transition: none; } }
   .split { display: grid; grid-template-columns: 300px 1fr; gap: 20px; align-items: start; margin: 4px 0 8px; }
   @media (max-width: 860px) { .split { grid-template-columns: 1fr; } }
   .split .seg { margin: 4px 0 2px; }
@@ -371,7 +379,19 @@
 
   <section class="card wide prose" id="divide-by-4" aria-label="Dividing by 4">
     <h2>Dividing by 4 is not a flat Earth</h2>
-    <p>The Sun lights Earth's disc, πR², and Earth radiates from its whole sphere, 4πR²: the ratio is 4. So 1361 × (1 − 0.294) / 4 = 240 W/m² is the sunlight absorbed, averaged over the sphere. It is bookkeeping, not a claim that Earth is flat or evenly lit. Here is a planet with no infrared absorbers, lit on one side. Each spot radiates what it gets: its own sunlight, plus a share spread evenly by winds and oceans.</p>
+    <p>The Sun lights Earth's disc, πR², and Earth radiates from its whole sphere, 4πR²: the ratio is 4. The 4 is the sphere.</p>
+    <figure class="sphere">
+      <svg id="sph" viewBox="0 0 640 300" role="img" aria-label="Sunlight caught by a disc, falling on half the sphere, radiated by the whole sphere"></svg>
+      <div class="sphbar">
+        <div class="seg" id="sphP" role="group" aria-label="Step">
+          <button data-s="0">Disc, πR²</button><button data-s="1">Lit half, 2πR²</button><button data-s="2">Whole sphere, 4πR²</button>
+        </div>
+        <button id="sphPlay" aria-pressed="true">Pause</button>
+      </div>
+      <p class="verdict" id="sphCap"></p>
+      <p class="eq" id="sphEq"></p>
+    </figure>
+    <p>So 1361 × (1 − 0.294) / 4 = 240 W/m² is the sunlight absorbed, averaged over the sphere. It is bookkeeping on a round Earth, not a claim that Earth is flat or evenly lit. Here is a planet with no infrared absorbers, lit on one side. Each spot radiates what it gets: its own sunlight, plus a share spread evenly by winds and oceans.</p>
     <div class="split">
       <div>
         <label for="spr">Sunlight spread evenly <output id="sprO"></output></label>
@@ -860,6 +880,105 @@
     el("line", { x1: X(v), x2: X(v), y1: Y(F), y2: H - B, stroke: amber, "stroke-dasharray": "3 3" }, svg);
     el("circle", { cx: X(v), cy: Y(F), r: 7, fill: amber, stroke: "#161d24", "stroke-width": 2 }, svg);
   }
+  // ---------- why 4: a disc catches the light, half the sphere is lit, the whole sphere radiates
+  (function () {
+    const svg = $("sph"), SF = S * (1 - A);
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let step = 0, playing = !reduce, phase = 0.35, last = null, visible = true, timer = null, g = null;
+    const caps = [
+      `<b>The Sun sees a disc.</b> Earth catches sunlight over its cross-section, πR², the same area as its shadow: ${SF.toFixed(1)} W/m² absorbed on it, after the 29.4% reflected.`,
+      `<b>The light falls on half the sphere</b>, 2πR², slanting more and more towards the edge of day. Averaged over the lit half: ${(SF / 2).toFixed(0)} W/m², by day only.`,
+      `<b>Earth radiates from the whole sphere</b>, 4πR², day and night, while it turns. Averaged over all of it: ${(SF / 4).toFixed(0)} W/m². The 4 is the sphere.`
+    ];
+    const terms = [`${SF.toFixed(1)} × πR²`, `${(SF / 2).toFixed(1)} × 2πR²`, `${(SF / 4).toFixed(1)} × 4πR²`];
+    const op = [{ rays: 1, shadow: 1, day: 0, ir: 0.12 }, { rays: 0.45, shadow: 0.2, day: 1, ir: 0.12 }, { rays: 0.3, shadow: 0.15, day: 0.25, ir: 1 }];
+    function build() {
+      svg.innerHTML = "";
+      const narrow = (svg.getBoundingClientRect().width || 640) < 480;
+      const W = narrow ? 380 : 640, H = narrow ? 284 : 316, R = narrow ? 74 : 100, cx = narrow ? 170 : 290, cy = H / 2 + 4;
+      const scX = narrow ? 318 : 520, fs = narrow ? 11.5 : 13;
+      svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+      const amber = "#f6ad55", red = "#ff6b6b", dim = "#8b98a5", fg = "#e7e9ea";
+      const grp = cls => el("g", { class: "fade" }, svg);
+      // shadow on a screen behind Earth
+      const gs = grp(); gs.id = "sShadow";
+      el("polygon", { points: `${scX - 14},${cy - R - 26} ${scX + 14},${cy - R - 12} ${scX + 14},${cy + R + 26} ${scX - 14},${cy + R + 12}`, fill: "#1e2730", stroke: "#2a333d" }, gs);
+      el("ellipse", { cx: scX, cy, rx: 10, ry: R, fill: "#0b1015", stroke: amber, "stroke-dasharray": "3 3" }, gs);
+      el("text", { x: scX, y: cy + R + 46, fill: amber, "font-size": fs, "text-anchor": "middle", "font-weight": 700 }, gs, narrow ? "shadow: πR²" : "shadow: a disc, πR²");
+      // sunlight
+      const gr = grp(); gr.id = "sRays";
+      el("text", { x: 10, y: cy - 1.18 * R - 9, fill: amber, "font-size": fs, "font-weight": 700 }, gr, "sunlight");
+      for (let k = -0.9; k <= 0.901; k += 0.3) {
+        const y = cy + k * R, xe = cx - R * Math.sqrt(1 - k * k) - 2;
+        el("line", { x1: 10, x2: xe - 8, y1: y, y2: y, stroke: amber, "stroke-width": 2 }, gr);
+        el("polygon", { points: `${xe},${y} ${xe - 9},${y - 4} ${xe - 9},${y + 4}`, fill: amber }, gr);
+      }
+      for (const k of [-1.18, 1.18]) {
+        const y = cy + k * R;
+        el("line", { x1: 10, x2: scX - 18, y1: y, y2: y, stroke: amber, "stroke-width": 1.4, "stroke-opacity": 0.45, "stroke-dasharray": "5 5" }, gr);
+      }
+      // Earth: dark sphere, lit left half
+      el("circle", { cx, cy, r: R, fill: "#0b1015" }, svg);
+      el("path", { d: `M ${cx} ${cy - R} A ${R} ${R} 0 0 0 ${cx} ${cy + R} Z`, fill: amber, "fill-opacity": 0.22 }, svg);
+      const gd = grp(); gd.id = "sDay";
+      el("path", { d: `M ${cx} ${cy - R} A ${R} ${R} 0 0 0 ${cx} ${cy + R}`, fill: "none", stroke: amber, "stroke-width": 5, "stroke-linecap": "round" }, gd);
+      el("path", { d: `M ${cx} ${cy - R} A ${R} ${R} 0 0 0 ${cx} ${cy + R} Z`, fill: amber, "fill-opacity": 0.2 }, gd);
+      el("text", { x: cx - R * 0.5, y: cy + 5, fill: fg, "font-size": fs, "text-anchor": "middle", "font-weight": 700, "paint-order": "stroke", stroke: "#0b1015", "stroke-width": 4 }, gd, "2πR²");
+      for (const lat of [-60, -30, 0, 30, 60]) {
+        const r = lat * Math.PI / 180, w = R * Math.cos(r), y = cy - R * Math.sin(r);
+        el("line", { x1: cx - w, x2: cx + w, y1: y, y2: y, stroke: fg, "stroke-opacity": 0.14 }, svg);
+      }
+      g = el("g", {}, svg);
+      el("circle", { cx, cy, r: R, fill: "none", stroke: fg, "stroke-opacity": 0.5, "stroke-width": 1.4 }, svg);
+      el("line", { x1: cx, x2: cx, y1: cy - R - 10, y2: cy + R + 10, stroke: dim, "stroke-dasharray": "2 4" }, svg);
+      const lab = { "font-size": narrow ? 10.5 : 11.5, "paint-order": "stroke", stroke: "#0b1015", "stroke-width": 3 };
+      el("text", { x: cx - 6, y: cy - R * 0.72, fill: amber, "text-anchor": "end", ...lab }, svg, "day");
+      el("text", { x: cx + 6, y: cy - R * 0.72, fill: dim, ...lab }, svg, "night");
+      // infrared from the whole sphere
+      const gi = grp(); gi.id = "sIR";
+      for (let i = 0; i < 16; i++) {
+        const a = i * Math.PI / 8 + Math.PI / 16, x0 = cx + (R + 7) * Math.cos(a), y0 = cy + (R + 7) * Math.sin(a), x1 = cx + (R + 27) * Math.cos(a), y1 = cy + (R + 27) * Math.sin(a);
+        el("line", { x1: x0, y1: y0, x2: x1, y2: y1, stroke: red, "stroke-width": 2.4, "stroke-linecap": "round" }, gi);
+        el("polygon", { points: `${x1 + 5 * Math.cos(a)},${y1 + 5 * Math.sin(a)} ${x1 - 3 * Math.cos(a) - 4 * Math.sin(a)},${y1 - 3 * Math.sin(a) + 4 * Math.cos(a)} ${x1 - 3 * Math.cos(a) + 4 * Math.sin(a)},${y1 - 3 * Math.sin(a) - 4 * Math.cos(a)}`, fill: red }, gi);
+      }
+      el("text", { x: cx + R * 0.5, y: cy + 5, fill: red, "font-size": fs, "text-anchor": "middle", "font-weight": 700, "paint-order": "stroke", stroke: "#0b1015", "stroke-width": 4 }, gi, "4πR²");
+      el("text", { x: cx, y: H - 6, fill: red, "font-size": fs, "text-anchor": "middle", "font-weight": 700 }, gi, narrow ? "infrared, day and night" : "infrared from the whole sphere, day and night");
+      svg._geo = { cx, cy, R };
+      meridians(); show();
+    }
+    function meridians() {
+      if (!g) return;
+      const { cx, cy, R } = svg._geo; let d = "";
+      for (let k = 0; k < 12; k++) {
+        const lam = phase + k * Math.PI / 6;
+        if (Math.cos(lam) <= 0.02) continue;
+        const rx = R * Math.abs(Math.sin(lam));
+        d += rx < 0.6 ? `M ${cx} ${cy - R} L ${cx} ${cy + R} ` : `M ${cx} ${cy - R} A ${rx} ${R} 0 0 ${Math.sin(lam) > 0 ? 1 : 0} ${cx} ${cy + R} `;
+      }
+      g.innerHTML = `<path d="${d}" fill="none" stroke="#e7e9ea" stroke-opacity="0.28" stroke-width="1.1"/>`;
+    }
+    function show() {
+      const o = op[step];
+      for (const [id, k] of [["sRays", "rays"], ["sShadow", "shadow"], ["sDay", "day"], ["sIR", "ir"]]) { const n = document.getElementById(id); if (n) n.style.opacity = o[k]; }
+      $("sphCap").innerHTML = caps[step];
+      $("sphEq").innerHTML = terms.map((t, i) => i === step ? `<b style="color:var(--fg)">${t}</b>` : t).join(" = ");
+      document.querySelectorAll("#sphP button").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.s === step)));
+      $("sphPlay").setAttribute("aria-pressed", String(playing));
+      $("sphPlay").textContent = playing ? "Pause" : "Play";
+    }
+    function tick(t) {
+      if (last != null && playing && visible) { phase = (phase + (t - last) / 1000 * 0.45) % (2 * Math.PI); meridians(); }
+      last = t; requestAnimationFrame(tick);
+    }
+    function schedule() { clearInterval(timer); if (playing) timer = setInterval(() => { if (visible) { step = (step + 1) % 3; show(); } }, 4500); }
+    document.querySelectorAll("#sphP button").forEach(b => b.addEventListener("click", () => { step = +b.dataset.s; playing = false; schedule(); show(); }));
+    $("sphPlay").addEventListener("click", () => { playing = !playing; schedule(); show(); });
+    if ("IntersectionObserver" in window) new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(svg);
+    window.addEventListener("resize", build);
+    build(); schedule();
+    if (!reduce) requestAnimationFrame(tick);
+  })();
+
   // ---------- CO2 or the Sun? the stratosphere decides
   const T76 = z => z <= 11 ? 288.15 - 6.5 * z : z <= 20 ? 216.65 : z <= 32 ? 216.65 + (z - 20) : z <= 47 ? 228.65 + 2.8 * (z - 32) : 270.65;
   function drawFP() {
