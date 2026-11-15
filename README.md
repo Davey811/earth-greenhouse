@@ -123,7 +123,20 @@ An animation on the page shows the three areas on a turning globe. The Sun sees 
 960.9 × πR² = 480.4 × 2πR² = 240.2 × 4πR²
 ```
 
-The 4 is the sphere. A planet with no infrared absorbers, where a share s of the sunlight is spread evenly and the rest is radiated where it falls, with no heat stored:
+The 4 is the sphere, and the page lets you build it. Cut the globe into N rings around the Sun–Earth line and unroll them. Each ring catches the light that falls on its shadow, so all the rings together always catch 960.9 W/m² × πR². Their surface is 4πR² × cos(π/2N), which climbs to 4πR² as the rings get thinner:
+
+| Rings | Surface ÷ shadow | Sunlight per m² of surface |
+|---|---|---|
+| 2 | 2.828 | 339.7 W/m² |
+| 4 | 3.696 | 260.0 W/m² |
+| 6 | 3.864 | 248.7 W/m² |
+| 10 | 3.951 | 243.2 W/m² |
+| 40 | 3.997 | 240.4 W/m² |
+| sphere | 4 | 240.2 W/m² |
+
+Archimedes had it in the third century BC, in *On the Sphere and Cylinder*: the surface of a sphere equals that of the cylinder wrapped around it, 2πR × 2R = 4πR².
+
+A planet with no infrared absorbers, where a share s of the sunlight is spread evenly and the rest is radiated where it falls, with no heat stored:
 
 | Spread evenly | Average temperature | Warmest | Coldest | Sent to space |
 |---|---|---|---|---|
@@ -186,7 +199,7 @@ Each one opens directly from its link.
 
 ## Using the page
 
-Hover or touch the measured curve to read altitude, temperature and pressure; click or tap to pin the reading. "Copy link to this view" copies a link that reopens the page exactly as it is. Every section and objection has its own address, for example `#moon`, `#mars`, `#saturated`, `#imbalance`, `#divide-by-4` or `#o-co2-trace`. The sliders and buttons can be linked too: `?spread=0#divide-by-4`, `?co2=560#saturated`, `?yr=10#imbalance`, `?fp=obs#fingerprint`, `?sat=1#spectrum`. "Report an error" opens a GitHub issue already filled in.
+Hover or touch the measured curve to read altitude, temperature and pressure; click or tap to pin the reading. "Copy link to this view" copies a link that reopens the page exactly as it is. Every section and objection has its own address, for example `#moon`, `#mars`, `#saturated`, `#imbalance`, `#divide-by-4` or `#o-co2-trace`. The sliders and buttons can be linked too: `?spread=0#divide-by-4`, `?rings=40#divide-by-4`, `?co2=560#saturated`, `?yr=10#imbalance`, `?fp=obs#fingerprint`, `?sat=1#spectrum`. "Report an error" opens a GitHub issue already filled in.
 
 ## Files
 

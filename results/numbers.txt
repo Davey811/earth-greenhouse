@@ -27,6 +27,13 @@ dividing by 4: same sunlight, spread more or less evenly, no infrared absorbers:
    50% spread: average  246.2 K, warmest 320.8 K, coldest 214.5 K, sent to space 240.2 W/m2
    90% spread: average  254.7 K, warmest 272.4 K, coldest 248.5 K, sent to space 240.2 W/m2
   100% spread: average  255.1 K, warmest 255.1 K, coldest 255.1 K, sent to space 240.2 W/m2
+the sphere built from rings:
+   2 rings: light caught 1.0000 x pi R^2, surface 2.828 x pi R^2 (4 cos(pi/2N) = 2.828), sunlight per m2 339.7 W/m2
+   4 rings: light caught 1.0000 x pi R^2, surface 3.696 x pi R^2 (4 cos(pi/2N) = 3.696), sunlight per m2 260.0 W/m2
+   6 rings: light caught 1.0000 x pi R^2, surface 3.864 x pi R^2 (4 cos(pi/2N) = 3.864), sunlight per m2 248.7 W/m2
+  10 rings: light caught 1.0000 x pi R^2, surface 3.951 x pi R^2 (4 cos(pi/2N) = 3.951), sunlight per m2 243.2 W/m2
+  40 rings: light caught 1.0000 x pi R^2, surface 3.997 x pi R^2 (4 cos(pi/2N) = 3.997), sunlight per m2 240.4 W/m2
+  60 rings: light caught 1.0000 x pi R^2, surface 3.999 x pi R^2 (4 cos(pi/2N) = 3.999), sunlight per m2 240.3 W/m2
 
 is CO2 saturated?
     420 ppm: forcing  2.17 W/m2, emission level + 89 m, surface +0.58 K before feedbacks, 1.8 K with them (3 K per doubling)

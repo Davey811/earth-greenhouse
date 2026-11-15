@@ -7,7 +7,7 @@ Two runs with the same sunlight, the same 1 bar and the same lapse rate:
                           reaches the emission temperature
 
 Prints the energy ledgers, the compression bill, the middle-of-the-mass rule, the Moon test,
-the "dividing by 4" spread, the CO2 doubling numbers, the spectral bands and the Mars test,
+the "dividing by 4" spread and rings, the CO2 doubling numbers, the spectral bands and the Mars test,
 and writes results/numbers.txt and results/earth_test.png.
 
 Usage:
@@ -67,6 +67,15 @@ def main():
         Tx = (F / SIGMA) ** 0.25
         spread.append(f"  {s_:4.0%} spread: average {Tx.mean():6.1f} K, warmest {Tx[0]:5.1f} K, coldest {Tx[-1]:5.1f} K, "
                       f"sent to space {np.mean(SIGMA * Tx ** 4):.1f} W/m2")
+
+    # the sphere from N rings around the Sun-Earth line: light caught = light on the shadow, surface 4 pi R^2 cos(pi/2N)
+    rings = []
+    for n in (2, 4, 6, 10, 40, 60):
+        th = np.arange(n + 1) * np.pi / n
+        surf = np.sum((np.sin(th[:-1]) + np.sin(th[1:])) * 2 * np.sin(np.pi / (2 * n)))      # in units of pi R^2
+        light = np.sum(np.sin(np.minimum(th[1:], np.pi / 2)) ** 2 - np.sin(np.minimum(th[:-1], np.pi / 2)) ** 2)
+        rings.append(f"  {n:2d} rings: light caught {light:.4f} x pi R^2, surface {surf:.3f} x pi R^2 "
+                     f"(4 cos(pi/2N) = {4 * np.cos(np.pi / (2 * n)):.3f}), sunlight per m2 {S * (1 - ALBEDO) / surf:.1f} W/m2")
 
     # CO2: forcing 5.35 ln(C/280) (Myhre et al. 1998); no feedbacks, the column warms by F / (4 sigma Te^3)
     planck = 4 * SIGMA * Te ** 3
@@ -144,6 +153,8 @@ def main():
         "",
         "dividing by 4: same sunlight, spread more or less evenly, no infrared absorbers:",
         *spread,
+        "the sphere built from rings:",
+        *rings,
         "",
         "is CO2 saturated?",
         *co2,
