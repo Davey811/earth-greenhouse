@@ -148,6 +148,8 @@ A planet with no infrared absorbers, where a share s of the sunlight is spread e
 
 The planet always sends 240 W/m² to space; the more uneven it is, the colder its average. The even planet is the warmest case: 255 K is a ceiling, not a trick.
 
+**Try to beat 255 K.** The page turns this into a game. A planet with no infrared absorbers is cut into six zones of equal area; you set the temperatures of five, and the sixth adjusts so that on average the planet still sends 240.2 W/m² to space. Any pattern is allowed: day and night, rotation, oceans, winds, heat stored or not. Nobody wins. The average of T never exceeds the fourth root of the average of T⁴ (the power-mean inequality), and reaches it only when every zone has the same temperature: 255.1 K, or 258.4 K with emissivity 0.95. A button tries 10,000 random planets; none goes above the ceiling, and the closest are the most even. The real Earth averages 288 K.
+
 ## The Mars test
 
 | | Mars | Earth | Venus |
@@ -199,7 +201,7 @@ Each one opens directly from its link.
 
 ## Using the page
 
-Hover or touch the measured curve to read altitude, temperature and pressure; click or tap to pin the reading. "Copy link to this view" copies a link that reopens the page exactly as it is. Every section and objection has its own address, for example `#moon`, `#mars`, `#saturated`, `#imbalance`, `#divide-by-4` or `#o-co2-trace`. The sliders and buttons can be linked too: `?spread=0#divide-by-4`, `?rings=40#divide-by-4`, `?co2=560#saturated`, `?yr=10#imbalance`, `?fp=obs#fingerprint`, `?sat=1#spectrum`. "Report an error" opens a GitHub issue already filled in.
+Hover or touch the measured curve to read altitude, temperature and pressure; click or tap to pin the reading. "Copy link to this view" copies a link that reopens the page exactly as it is. Every section and objection has its own address, for example `#moon`, `#mars`, `#saturated`, `#imbalance`, `#divide-by-4` or `#o-co2-trace`. The sliders and buttons can be linked too: `?spread=0#divide-by-4`, `?rings=40#divide-by-4`, `?beat=300_280_260_230_200&eps=0.95#beat`, `?co2=560#saturated`, `?yr=10#imbalance`, `?fp=obs#fingerprint`, `?sat=1#spectrum`. "Report an error" opens a GitHub issue already filled in.
 
 ## Files
 

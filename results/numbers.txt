@@ -34,6 +34,8 @@ the sphere built from rings:
   10 rings: light caught 1.0000 x pi R^2, surface 3.951 x pi R^2 (4 cos(pi/2N) = 3.951), sunlight per m2 243.2 W/m2
   40 rings: light caught 1.0000 x pi R^2, surface 3.997 x pi R^2 (4 cos(pi/2N) = 3.997), sunlight per m2 240.4 W/m2
   60 rings: light caught 1.0000 x pi R^2, surface 3.999 x pi R^2 (4 cos(pi/2N) = 3.999), sunlight per m2 240.3 W/m2
+try to beat 255 K:
+  ceiling (even planet): 255.1219 K; 100,000 random six-zone planets: best average 255.1212 K (0.0007 K below), above the ceiling: 0
 
 is CO2 saturated?
     420 ppm: forcing  2.17 W/m2, emission level + 89 m, surface +0.58 K before feedbacks, 1.8 K with them (3 K per doubling)

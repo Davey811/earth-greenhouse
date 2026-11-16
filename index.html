@@ -155,6 +155,9 @@
   }
   #sph .fade { transition: opacity .6s ease; }
   @media (prefers-reduced-motion: reduce) { #sph .fade { transition: none; } }
+  .btbar { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .btbar button { font: inherit; font-size: 13px; color: var(--dim); background: transparent; border: 1px dashed var(--line); border-radius: 8px; padding: 7px 12px; cursor: pointer; }
+  .btbar button:hover { color: var(--fg); border-color: var(--dim); }
   .split { display: grid; grid-template-columns: 300px 1fr; gap: 20px; align-items: start; margin: 4px 0 8px; }
   @media (max-width: 860px) { .split { grid-template-columns: 1fr; } }
   .split .seg { margin: 4px 0 2px; }
@@ -432,6 +435,33 @@
       <svg id="spc" viewBox="0 0 640 340" role="img" aria-label="Surface temperature across the planet, from the point under the Sun to the opposite point"></svg>
     </div>
     <p class="note">No heat stored: each spot radiates what it receives, (1 − s) × 960.9 × cos θ on the day side, θ being the Sun's angle from overhead, plus s × 240.2 W/m² everywhere, s being the share spread evenly; 960.9 W/m² is 1361 × (1 − 0.294). The horizontal axis is area, so the average temperature is the average height of the curve, and the average of σT⁴ is always 240.2 W/m². On an uneven planet the average of T is below the fourth root of the average of T⁴, so below 255 K. With nothing spread, the night side is at 0 K: a body that stores heat, like the Moon, is less extreme, and still averages below its black-body temperature. Even reflecting nothing, the even planet would be at 278 K.</p>
+    <p class="sub2" id="beat">Try to beat 255 K</p>
+    <p>A planet with no infrared absorbers, cut into six zones of equal area. Set the temperatures of five; the sixth adjusts so that on average the planet still sends 240 W/m² to space, the sunlight it absorbs. Any pattern counts: day and night, rotation, oceans, winds, heat stored or not. Make the average temperature beat 255 K.</p>
+    <div class="split">
+      <div>
+        <label for="bt0">Zone 1 <output id="bt0O"></output></label>
+        <input id="bt0" type="range" min="0" max="400" step="0.1" value="300">
+        <label for="bt1">Zone 2 <output id="bt1O"></output></label>
+        <input id="bt1" type="range" min="0" max="400" step="0.1" value="280">
+        <label for="bt2">Zone 3 <output id="bt2O"></output></label>
+        <input id="bt2" type="range" min="0" max="400" step="0.1" value="260">
+        <label for="bt3">Zone 4 <output id="bt3O"></output></label>
+        <input id="bt3" type="range" min="0" max="400" step="0.1" value="230">
+        <label for="bt4">Zone 5 <output id="bt4O"></output></label>
+        <input id="bt4" type="range" min="0" max="400" step="0.1" value="200">
+        <div class="seg" id="btEp" role="group" aria-label="Emissivity of the surface"><button data-e="1">Emissivity 1</button><button data-e="0.95">0.95</button></div>
+        <table class="fltab">
+          <tr><td>Zone 6, set by the budget</td><td id="bt5O"></td></tr>
+          <tr><td>Infrared sent to space, average</td><td id="btOut"></td></tr>
+          <tr class="total"><td>Average temperature</td><td id="btAvg"></td></tr>
+          <tr><td>The ceiling</td><td id="btCap"></td></tr>
+        </table>
+        <p class="verdict" id="btV"></p>
+        <div class="btbar"><button id="btEven">Make it even</button><button id="btRand">10,000 random planets</button></div>
+      </div>
+      <svg id="btc" viewBox="0 0 640 320" role="img" aria-label="Temperatures of the six zones, their average and the ceiling"></svg>
+    </div>
+    <p class="note">Each zone sends ε σT⁴ to space; the six together must average 240.2 W/m², what the planet absorbs. The ceiling is the temperature of the even planet, (240.2 / εσ)<sup>1/4</sup>: 255.1 K, or 258.4 K with emissivity 0.95. The average of T can never exceed the fourth root of the average of T⁴ (the power-mean inequality), and equals it only when every zone has the same temperature. So no pattern of temperatures, however it comes about, lifts a planet with no infrared absorbers above the ceiling. The real Earth averages 288 K.</p>
   </section>
 
   <section class="card wide prose" id="moon" aria-label="The Moon test">
@@ -754,7 +784,7 @@
     $("h").value = hG; $("hO").textContent = hG === ZE ? `${ZE.toFixed(2)} km (measured)` : `${hG.toFixed(1)} km`;
     document.querySelectorAll(".mode button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.m === mode)));
     document.querySelectorAll("#ctlP .seg button").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.a === alb)));
-    drawChart(st); drawSpectrum(st); drawSpread(); drawCO2(); drawImb(); drawFP(); drawSlices(); syncURL();
+    drawChart(st); drawSpectrum(st); drawSpread(); drawCO2(); drawImb(); drawFP(); drawSlices(); drawBeat(); syncURL();
   }
 
   // ---------- links to every view
@@ -770,6 +800,8 @@
     if (fp !== "sun") q.set("fp", fp);
     if (sat) q.set("sat", "1");
     const nr = +$("nr").value; if (nr !== 6) q.set("rings", String(nr));
+    const bts = btTemps(); if (bts.some((t, i) => Math.abs(t - BT_DEF[i]) > 0.05)) q.set("beat", bts.map(t => +t.toFixed(1)).join("_"));
+    if (btEps !== 1) q.set("eps", "0.95");
     return q.toString();
   }
   function linkHere() { return location.href.split(/[?#]/)[0] + "?" + query() + location.hash; }
@@ -786,6 +818,10 @@
     if (["sun", "co2", "obs"].includes(q.get("fp"))) fp = q.get("fp");
     if (q.get("sat") === "1") sat = true;
     const rg = parseInt(q.get("rings")); if (rg >= 2 && rg <= 60) $("nr").value = rg;
+    if (q.get("eps") === "0.95") btEps = 0.95;
+    const bq = (q.get("beat") || "").split(/[_,]/).map(Number);
+    if (bq.length === BT_N - 1 && bq.every(t => Number.isFinite(t) && t >= 0 && t <= 400)) bq.forEach((t, i) => { $(`bt${i}`).value = t; });
+    btFit();
   }
   function zFromEvent(ev) {
     const svg = $("chart"); if (!geo || !svg.getScreenCTM()) return null;
@@ -868,6 +904,90 @@
     el("line", { x1: L, x2: W - Rm, y1: Y(st.avg), y2: Y(st.avg), stroke: amber, "stroke-width": 1.6, "stroke-dasharray": "7 5" }, svg);
     el("text", { x: X(0) + 6, y: Y(st.avg) + 17, fill: amber, ...halo }, svg, `average: ${st.avg.toFixed(0)} K`);
   }
+
+  // ---------- try to beat 255 K: six equal zones, the average of what they send to space is fixed
+  const BT_N = 6, BT_DEF = [300, 280, 260, 230, 200];
+  let btEps = 1, btBest = 0, btMsg = "";
+  const btE = t => btEps * SIGMA * t ** 4;
+  const btT = e => Math.pow(Math.max(0, e) / (btEps * SIGMA), 0.25);
+  const btTemps = () => [...Array(BT_N - 1)].map((_, i) => +$(`bt${i}`).value);
+  function btFit(keep) {   // keep zone 6 at or above 0 W/m²: trim the zone just moved, or scale all of them
+    const ts = btTemps(), budget = BT_N * Q, sum = ts.reduce((a, t) => a + btE(t), 0);
+    if (sum <= budget) return;
+    if (keep != null) {
+      const room = budget - (sum - btE(ts[keep]));
+      $(`bt${keep}`).value = Math.floor(btT(room) * 10) / 10;
+    } else {
+      const f = Math.pow(budget / sum, 0.25);
+      ts.forEach((t, i) => { $(`bt${i}`).value = Math.floor(t * f * 10) / 10; });
+    }
+  }
+  function drawBeat() {
+    const ts = btTemps(), budget = BT_N * Q, e6 = Math.max(0, budget - ts.reduce((a, t) => a + btE(t), 0));
+    const all = [...ts, btT(e6)], avg = all.reduce((a, t) => a + t, 0) / BT_N, cap = btT(Q), gap = cap - avg;
+    btBest = Math.max(btBest, avg);
+    ts.forEach((t, i) => { $(`bt${i}O`).textContent = `${t.toFixed(1)} K`; });
+    $("bt5O").textContent = `${all[5].toFixed(1)} K`;
+    $("btOut").textContent = fmtW(all.reduce((a, t) => a + btE(t), 0) / BT_N);
+    $("btAvg").textContent = `${avg.toFixed(1)} K`;
+    $("btCap").textContent = `${cap.toFixed(1)} K`;
+    document.querySelectorAll("#btEp button").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.e === btEps)));
+    const spread = Math.max(...all) - Math.min(...all);
+    const head = spread < 0.5
+      ? `<b>Even: ${avg.toFixed(1)}&nbsp;K, right on the ceiling.</b> The only way to reach it, and nothing goes above.`
+      : gap < 0.05
+      ? `<b>Almost even: ${avg.toFixed(1)}&nbsp;K, a hair below the ceiling.</b> The closer to even, the closer to it; never above.`
+      : `<b>Average ${avg.toFixed(1)}&nbsp;K: ${gap.toFixed(1)}&nbsp;K below the ceiling.</b> Same ${fmtW(Q)} to space; the more uneven, the colder.${e6 < 0.5 ? " No budget left for zone 6." : ""}`;
+    $("btV").innerHTML = `${head} Your best so far: ${btBest.toFixed(1)}&nbsp;K.${btMsg ? `<br>${btMsg}` : ""}`;
+    // chart
+    const svg = $("btc"); svg.innerHTML = "";
+    const narrow = (svg.getBoundingClientRect().width || 640) < 480;
+    const W = narrow ? 380 : 640, H = narrow ? 310 : 330, L = narrow ? 44 : 52, Rm = 10, T0 = 46, B = 58;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    const Y = t => T0 + (H - T0 - B) * (1 - t / 400), cw = (W - L - Rm) / BT_N;
+    const fs = narrow ? 11.5 : 12.5, dim = "#8b98a5", amber = "#f6ad55", teal = "#4fd1c5", fg = "#e7e9ea";
+    for (let t = 0; t <= 400; t += 100) {
+      el("line", { x1: L, x2: W - Rm, y1: Y(t), y2: Y(t), stroke: "#2a333d" }, svg);
+      el("text", { x: L - 8, y: Y(t) + 4, fill: dim, "font-size": 12, "text-anchor": "end" }, svg, t);
+    }
+    el("text", { x: 12, y: (T0 + H - B) / 2, fill: dim, "font-size": 12.5, "text-anchor": "middle", transform: `rotate(-90 12 ${(T0 + H - B) / 2})` }, svg, "temperature (K)");
+    all.forEach((t, i) => {
+      const x = L + i * cw + cw * 0.14, w = cw * 0.72, last = i === BT_N - 1, c = last ? teal : amber;
+      el("rect", { x, y: Y(t), width: w, height: Math.max(0, Y(0) - Y(t)), fill: c, "fill-opacity": 0.22, stroke: c, "stroke-width": 1.6 }, svg);
+      el("text", { x: x + w / 2, y: t > 70 ? Y(t) + 16 : Y(t) - 6, fill: fg, "font-size": narrow ? 10.5 : 12, "text-anchor": "middle", "font-weight": 700, "paint-order": "stroke", stroke: "#161d24", "stroke-width": 3.5 }, svg, t.toFixed(0));
+      el("text", { x: x + w / 2, y: Y(0) + 16, fill: last ? teal : dim, "font-size": narrow ? 10.5 : 12, "text-anchor": "middle" }, svg, last ? (narrow ? "6" : "6, budget") : String(i + 1));
+      el("text", { x: x + w / 2, y: Y(0) + 31, fill: dim, "font-size": narrow ? 9.5 : 11, "text-anchor": "middle" }, svg, `${Math.round(btE(t))} W`);
+    });
+    el("text", { x: (L + W - Rm) / 2, y: H - 7, fill: dim, "font-size": narrow ? 11 : 12, "text-anchor": "middle" }, svg, narrow ? "zone, and W/m² it sends to space" : "zone, and the W/m² it sends to space");
+    el("line", { x1: L, x2: W - Rm, y1: Y(cap), y2: Y(cap), stroke: fg, "stroke-opacity": 0.75, "stroke-dasharray": "2 4", "stroke-width": 1.4 }, svg);
+    el("line", { x1: L, x2: W - Rm, y1: Y(avg), y2: Y(avg), stroke: amber, "stroke-width": 1.8, "stroke-dasharray": "7 5" }, svg);
+    // legend above the plot, so it never sits on the bars
+    el("line", { x1: L, x2: L + 22, y1: 14, y2: 14, stroke: fg, "stroke-opacity": 0.75, "stroke-dasharray": "2 4", "stroke-width": 1.4 }, svg);
+    el("text", { x: L + 28, y: 18, fill: fg, "font-size": fs, "font-weight": 700 }, svg, `ceiling ${cap.toFixed(1)} K`);
+    el("line", { x1: L, x2: L + 22, y1: 32, y2: 32, stroke: amber, "stroke-width": 1.8, "stroke-dasharray": "7 5" }, svg);
+    el("text", { x: L + 28, y: 36, fill: amber, "font-size": fs, "font-weight": 700 }, svg, `average ${avg.toFixed(1)} K`);
+  }
+  for (let i = 0; i < BT_N - 1; i++) $(`bt${i}`).addEventListener("input", () => { btFit(i); btMsg = ""; drawBeat(); syncURL(); });
+  document.querySelectorAll("#btEp button").forEach(b => b.addEventListener("click", () => { btEps = +b.dataset.e; btFit(); btMsg = ""; drawBeat(); syncURL(); }));
+  $("btEven").addEventListener("click", () => {
+    const t = Math.floor(btT(Q) * 10) / 10;
+    for (let i = 0; i < BT_N - 1; i++) $(`bt${i}`).value = t;
+    btMsg = ""; drawBeat(); syncURL();
+  });
+  $("btRand").addEventListener("click", () => {
+    const cap = btT(Q); let best = null, above = 0;
+    for (let k = 0; k < 10000; k++) {
+      const a = 0.05 + 0.95 * Math.random();
+      const e = [...Array(BT_N)].map(() => 1 + a * (2 * Math.random() - 1)), s = e.reduce((x, y) => x + y, 0);
+      const ts = e.map(v => btT(v / s * BT_N * Q)), avg = ts.reduce((x, y) => x + y, 0) / BT_N;
+      if (avg > cap + 1e-9) above++;
+      if (!best || avg > best.avg) best = { avg, ts };
+    }
+    best.ts.slice(0, BT_N - 1).forEach((t, i) => { $(`bt${i}`).value = Math.floor(t * 10) / 10; });
+    const g = cap - best.avg;
+    btMsg = `10,000 random planets, above the ceiling: ${above}. The closest, ${g < 0.01 ? "less than 0.01" : g.toFixed(2)} K below it, is the most even of them; it's now on the sliders.`;
+    drawBeat(); syncURL();
+  });
 
   // ---------- is CO₂ saturated?
   const C0 = 280, PLANCK = 4 * SIGMA * TE ** 3;   // 3.77 W/m² per K

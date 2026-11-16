@@ -77,6 +77,17 @@ def main():
         rings.append(f"  {n:2d} rings: light caught {light:.4f} x pi R^2, surface {surf:.3f} x pi R^2 "
                      f"(4 cos(pi/2N) = {4 * np.cos(np.pi / (2 * n)):.3f}), sunlight per m2 {S * (1 - ALBEDO) / surf:.1f} W/m2")
 
+    # try to beat 255 K: random planets of six equal zones, each averaging 240.2 W/m2 to space
+    rng = np.random.default_rng(255)
+    q = S * (1 - ALBEDO) / 4
+    cap = (q / SIGMA) ** 0.25
+    amp = rng.uniform(0.05, 1.0, size=(100000, 1))
+    e = 1 + amp * rng.uniform(-1, 1, size=(100000, 6))
+    e = e / e.mean(axis=1, keepdims=True) * q
+    t_avg = ((e / SIGMA) ** 0.25).mean(axis=1)
+    beat = [f"  ceiling (even planet): {cap:.4f} K; 100,000 random six-zone planets: best average {t_avg.max():.4f} K "
+            f"({cap - t_avg.max():.4f} K below), above the ceiling: {(t_avg > cap + 1e-9).sum()}"]
+
     # CO2: forcing 5.35 ln(C/280) (Myhre et al. 1998); no feedbacks, the column warms by F / (4 sigma Te^3)
     planck = 4 * SIGMA * Te ** 3
     co2 = []
@@ -155,6 +166,8 @@ def main():
         *spread,
         "the sphere built from rings:",
         *rings,
+        "try to beat 255 K:",
+        *beat,
         "",
         "is CO2 saturated?",
         *co2,
