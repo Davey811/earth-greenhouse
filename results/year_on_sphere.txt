@@ -1,11 +1,34 @@
-the whole integral: 64,800 points (1 degree grid) x 8,766 hours, Earth's orbit and tilt, albedo 0.294
+the whole integral: 64,800 points (1 degree grid) x 8,766 hours, Earth's orbit and tilt
   mean sunlight on the sphere over the year: 340.295 W/m2
   disc formula S/4: 340.250 W/m2; with the orbit, S/4/sqrt(1 - e^2): 340.297 W/m2
+
+1) the same albedo everywhere, 0.294
   absorbed: 240.25 W/m2; ceiling for the mean temperature: 255.13 K
   mean surface temperature, no infrared absorbers, no heat moved between points:
     no heat storage             144.32 K   (up to 363.8 K under the Sun, 0 K at night)
     half a metre of soil        247.58 K   (range 70 to 290 K)
     50 m of ocean               253.83 K   (range 210 to 270 K)
-    infinite storage            253.86 K   (poles 215 K, equator 268 K)
+    infinite storage            253.86 K   (coldest point 215 K, warmest 268 K)
     perfect mixing, even        255.13 K
-  Earth, measured: 288 K
+  at the equator (warmest moment / average over the year):
+    no heat storage              361.9 K / 153.4 K
+    half a metre of soil         279.4 K / 268.0 K
+    50 m of ocean                270.1 K / 268.2 K
+    infinite storage             268.5 K / 268.2 K
+
+2) the sunlight each cell absorbs, measured by CERES (EBAF-TOA Ed4.2.1, monthly climatology 07/2005-06/2015)
+  measured absorbed sunlight, global mean: 241.23 W/m2; measured incoming: 340.42 W/m2
+  absorbed: 241.23 W/m2; ceiling for the mean temperature: 255.39 K
+  mean surface temperature, no infrared absorbers, no heat moved between points:
+    no heat storage             142.88 K   (up to 384.8 K under the Sun, 0 K at night)
+    half a metre of soil        245.51 K   (range 68 to 305 K)
+    50 m of ocean               251.82 K   (range 170 to 285 K)
+    infinite storage            251.84 K   (coldest point 172 K, warmest 283 K)
+    perfect mixing, even        255.39 K
+  at the equator (warmest moment / average over the year):
+    no heat storage              383.5 K / 157.0 K
+    half a metre of soil         297.2 K / 274.3 K
+    50 m of ocean                284.8 K / 274.5 K
+    infinite storage             282.9 K / 274.5 K
+
+Earth, measured: 288 K

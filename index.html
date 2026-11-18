@@ -170,8 +170,12 @@
   .ylegend { display: grid; grid-template-columns: auto minmax(120px, 220px) auto; gap: 8px; align-items: center; font-size: 12px; color: var(--dim); margin-top: 6px; }
   .ylegend i { display: block; height: 8px; border-radius: 4px; background: linear-gradient(90deg, #10161f, #1d2a44 18%, #5b3a6e 40%, #c4573a 62%, #f6ad55 82%, #fde7b0); }
   table.ytab { max-width: 560px; margin-top: 10px; }
-  table.ytab tr.head td:last-child { text-align: right; }
-  table.ytab tr.on td { color: var(--amber); font-weight: 700; }
+  table.ytab td[data-a], table.ytab tr.earth td:last-child { text-align: right; white-space: nowrap; padding-left: 14px; }
+  table.ytab tr.head td { vertical-align: bottom; }
+  table.ytab tr.head td[data-a] { white-space: normal; width: 5.5em; }
+  table.ytab tr.on td:first-child, table.ytab tr.on td.cur { color: var(--amber); font-weight: 700; }
+  table.ytab td[data-a]:not(.cur) { color: var(--dim); }
+  table.ytab tr.head td.cur { color: var(--fg); }
   table.ytab tr.earth td { color: var(--teal); }
   footer { margin-top: 24px; color: var(--dim); font-size: 13px; }
   footer p { margin: 0 0 6px; }
@@ -474,7 +478,7 @@
     <p class="note">Each zone sends ε σT⁴ to space; the six together must average 240.2 W/m², what the planet absorbs. The ceiling is the temperature of the even planet, (240.2 / εσ)<sup>1/4</sup>: 255.1 K, or 258.4 K with emissivity 0.95. The average of T can never exceed the fourth root of the average of T⁴ (the power-mean inequality), and equals it only when every zone has the same temperature. So no pattern of temperatures, however it comes about, lifts a planet with no infrared absorbers above the ceiling. The real Earth averages 288 K.</p>
     <p class="note">This game was suggested, without meaning to, by <a href="https://x.com/KaiserSzecg7i">@KaiserSzecg7i</a> on X. Thanks!</p>
     <p class="sub2" id="year">The whole integral: every point, every hour, a year</p>
-    <p>"The disc is a classroom shortcut: take many points on the sphere, follow them for 365 days and integrate." Here it is. The globe is cut into 10,368 points and the Sun moves as it really does, with Earth's 23.44° tilt and its elliptical orbit, nearest the Sun in early January. Each point absorbs the sunlight that reaches it, minus the 29.4% reflected, and with no infrared absorbers radiates σT⁴ straight to space. Nothing carries heat from one point to another; how much heat each point stores is up to you.</p>
+    <p>"The disc is a classroom shortcut: take many points on the sphere, follow them for 365 days and integrate." Here it is. The globe is cut into 10,368 points and the Sun moves as it really does, with Earth's 23.44° tilt and its elliptical orbit, nearest the Sun in early January. Each point absorbs the sunlight that reaches it, minus what it reflects: 29.4% everywhere, or what NASA's CERES satellites measure in that spot, month by month. With no infrared absorbers it radiates σT⁴ straight to space. Nothing carries heat from one point to another; how much heat each point stores is up to you.</p>
     <div class="split">
       <div>
         <span class="lab" id="yrL">Heat stored by each point</span>
@@ -482,14 +486,22 @@
           <button data-c="none">None</button><button data-c="soil">Soil</button><button data-c="ocean">Ocean</button><button data-c="inf">Infinite</button>
         </div>
         <p class="note" id="yrK"></p>
+        <span class="lab" id="yrAL">Sunlight absorbed</span>
+        <div class="seg" id="yrA" role="group" aria-labelledby="yrAL">
+          <button data-a="flat">29.4% everywhere</button><button data-a="ceres">Measured by CERES</button>
+        </div>
+        <p class="note" id="yrAK"></p>
         <div class="btbar"><button id="yrRun">Run the year</button><button id="yrEnd">Jump to the end</button></div>
         <table class="fltab">
           <tr><td>Hours done</td><td id="yrH"></td></tr>
           <tr><td>Sunlight on the sphere, average</td><td id="yrS"></td></tr>
           <tr><td>Disc formula, S/4</td><td>340.25 W/m²</td></tr>
+          <tr><td>Sunlight absorbed, average</td><td id="yrB"></td></tr>
           <tr><td>Infrared sent to space, average</td><td id="yrO"></td></tr>
           <tr class="total"><td>Average temperature</td><td id="yrT"></td></tr>
-          <tr><td>The ceiling</td><td>255.1 K</td></tr>
+          <tr><td>The ceiling</td><td id="yrCeil">255.1 K</td></tr>
+          <tr><td>At the equator, warmest moment</td><td id="yrEm"></td></tr>
+          <tr><td>At the equator, average</td><td id="yrEa"></td></tr>
         </table>
         <p class="verdict" id="yrV"></p>
       </div>
@@ -501,15 +513,15 @@
       </figure>
     </div>
     <table class="fltab ytab" id="yrTab">
-      <tr class="head"><td>The same year with 64,800 points</td><td>Average temperature</td></tr>
-      <tr data-c="none"><td>No heat storage <small>(up to 364 K under the Sun, 0 K at night)</small></td><td>144.3 K</td></tr>
-      <tr data-c="soil"><td>Half a metre of soil</td><td>247.6 K</td></tr>
-      <tr data-c="ocean"><td>50 m of ocean</td><td>253.8 K</td></tr>
-      <tr data-c="inf"><td>Infinite storage <small>(poles 215 K, equator 268 K)</small></td><td>253.9 K</td></tr>
-      <tr><td>Perfect mixing: the even planet</td><td>255.1 K</td></tr>
-      <tr class="earth"><td>Earth, measured</td><td>288 K</td></tr>
+      <tr class="head"><td>The same year with 64,800 points: average temperature</td><td data-a="flat">29.4% reflected</td><td data-a="ceres">Measured by CERES</td></tr>
+      <tr data-c="none"><td>No heat storage <small>(0 K at night)</small></td><td data-a="flat">144.3 K</td><td data-a="ceres">142.9 K</td></tr>
+      <tr data-c="soil"><td>Half a metre of soil</td><td data-a="flat">247.6 K</td><td data-a="ceres">245.5 K</td></tr>
+      <tr data-c="ocean"><td>50 m of ocean</td><td data-a="flat">253.8 K</td><td data-a="ceres">251.8 K</td></tr>
+      <tr data-c="inf"><td>Infinite storage</td><td data-a="flat">253.9 K</td><td data-a="ceres">251.8 K</td></tr>
+      <tr><td>Perfect mixing: the even planet, the ceiling</td><td data-a="flat">255.1 K</td><td data-a="ceres">255.4 K</td></tr>
+      <tr class="earth"><td>Earth, measured</td><td colspan="2">288 K</td></tr>
     </table>
-    <p class="note">Each point: C dT/dt = 0.706 × sunlight − σT⁴, in hourly steps, with C = 0 (none), 10⁶ J/(m² K) (soil, about half a metre), 2.09 × 10⁸ J/(m² K) (ocean, 50 m of water) or infinite (each point at the temperature of its own annual mean sunlight). Soil and ocean start from that annual temperature and run one year (soil) or six (ocean) before the year shown. Orbit: eccentricity 0.0167, perihelion on 3 January, tilt 23.44°. The sunlight on the sphere integrates to S/4 × 1/√(1 − e²) = 340.30 W/m²: the disc formula, plus 0.014% from the orbit. Storing heat only evens the temperatures out; only moving heat between points, as winds and currents do, could reach the even planet, and nothing goes above it. The table comes from <a href="https://github.com/Davey811/earth-greenhouse/blob/main/year_on_sphere.py">year_on_sphere.py</a>, which does the same on a 1° grid.</p>
+    <p class="note">Each point: C dT/dt = 0.706 × sunlight − σT⁴, in hourly steps, with C = 0 (none), 10⁶ J/(m² K) (soil, about half a metre), 2.09 × 10⁸ J/(m² K) (ocean, 50 m of water) or infinite (each point at the temperature of its own annual mean sunlight). Soil and ocean start from that annual temperature and run one year (soil) or six (ocean) before the year shown. Orbit: eccentricity 0.0167, perihelion on 3 January, tilt 23.44°. The sunlight on the sphere integrates to S/4 × 1/√(1 − e²) = 340.30 W/m²: the disc formula, plus 0.014% from the orbit. Measured by CERES: the sunlight each 1° cell absorbs, month by month, averaged over July 2005 to June 2015 (<a href="https://doi.org/10.5067/TERRA-AQUA-NOAA20/CERES/EBAF-TOA_L3B004.2.1">CERES EBAF-TOA Ed4.2.1</a>, NASA), averaged onto the page's 2.5° cells; hour by hour each cell gets the sunlight computed here, scaled so that its monthly total is the measured one. The satellites measure 340.42 W/m² arriving, averaged over the sphere and the year (the integral here gives 340.30 with S = 1361 W/m²; CERES uses a slightly higher solar constant), and 241.2 W/m² absorbed. Real reflection is uneven, ice and clouds bright, oceans dark, so every case comes out a little colder than with the same 29.4% everywhere, and the ceiling, set by the average, moves up to 255.4 K. The equator, the warmest band, averages over the year at most 268 K with 29.4% everywhere and 274 K with the measured sunlight; with no heat storage its noon reaches 362 K (383 K measured), but its nights fall to 0 K. The real equator averages about 300 K. Storing heat only evens the temperatures out; only moving heat between points, as winds and currents do, could reach the even planet, and nothing goes above it. The table comes from <a href="https://github.com/Davey811/earth-greenhouse/blob/main/year_on_sphere.py">year_on_sphere.py</a>, which does the same on a 1° grid.</p>
   </section>
 
   <section class="card wide prose" id="moon" aria-label="The Moon test">
@@ -851,6 +863,7 @@
     const bts = btTemps(); if (bts.some((t, i) => Math.abs(t - BT_DEF[i]) > 0.05)) q.set("beat", bts.map(t => +t.toFixed(1)).join("_"));
     if (btEps !== 1) q.set("eps", "0.95");
     if (yCase !== "none") q.set("store", yCase);
+    if (yMode === "ceres") q.set("asr", "ceres");
     return q.toString();
   }
   function linkHere() { return location.href.split(/[?#]/)[0] + "?" + query() + location.hash; }
@@ -869,6 +882,7 @@
     const rg = parseInt(q.get("rings")); if (rg >= 2 && rg <= 60) $("nr").value = rg;
     if (q.get("eps") === "0.95") btEps = 0.95;
     if (Y_KEYS.includes(q.get("store"))) yCase = q.get("store");
+    yWantCeres = q.get("asr") === "ceres";
     const bq = (q.get("beat") || "").split(/[_,]/).map(Number);
     if (bq.length === BT_N - 1 && bq.every(t => Number.isFinite(t) && t >= 0 && t <= 400)) bq.forEach((t, i) => { $(`bt${i}`).value = t; });
     btFit();
@@ -1050,6 +1064,17 @@
     ocean: "Ocean: 50 m of water under every point, 2.09 × 10⁸ J/(m² K).",
     inf: "Infinite: each point sits at the temperature of its own annual mean sunlight."
   };
+  const Y_ATXT = {
+    flat: "Every point reflects 29.4% of the sunlight that reaches it, Earth's average.",
+    ceres: "Each point absorbs what NASA's CERES satellites measure there, month by month: ice and clouds reflect a lot, oceans little."
+  };
+  const Y_MEDGE = [0, 31, 59.25, 90.25, 120.25, 151.25, 181.25, 212.25, 243.25, 273.25, 304.25, 334.25, 365.25];
+  function yMonth(t) {   // calendar month (0 = January), t hours after perihelion, which falls on 3 January
+    const d = (((2 + t / 24) % 365.25) + 365.25) % 365.25; let m = 0;
+    while (m < 11 && d >= Y_MEDGE[m + 1]) m++;
+    return m;
+  }
+  let yMode = "flat", yF = null, yU = null, yAbsC = 0, yCeil = TE, yLoading = null, yWantCeres = false;
   const ySin = new Float64Array(YNL), yCosL = new Float64Array(YNL), yW = new Float64Array(YNL);
   const yCl = new Float64Array(YNO), ySl = new Float64Array(YNO), yCh = new Float64Array(YNO);
   (function () {
@@ -1065,46 +1090,80 @@
     return { f: 1 / (r * r), dec: Math.asin(Math.sin(OBL) * Math.sin(nu + LPER)) };
   }
   let yCase = "none", yT = new Float64Array(YN), yAcc = new Float64Array(YN), yHour = 0, yAnim = null, ySunAt = 0.5;
-  let ySumS = 0, ySumO = 0, ySumT = 0, yLastT = 0, yClock = 0, yCarry = 0, ySpin = 0;
+  let ySumS = 0, ySumO = 0, ySumT = 0, ySumA = 0, yLastT = 0, yClock = 0, yCarry = 0, ySpin = 0, ySumEq = 0, yEqMax = 0;
+  const YEQ = YNL / 2 - 1;   // the two rows either side of the equator: YEQ and YEQ + 1
   const yDayS = new Float64Array(366), yDayN = new Int32Array(366);   // the globe's mean temperature, day by day
   const yInit = {};   // each heat capacity's starting state, once it has settled
   // one hour of sunlight on every point; with dt (s) the points also store heat, otherwise they only collect
   function yStep(t, dt, rec) {
     const { f, dec } = yOrbit(t), sd = Math.sin(dec), cd = Math.cos(dec), a = 2 * Math.PI * (((t % 24) + 24) % 24) / 24;
     const ca = Math.cos(a), sa = Math.sin(a), C = Y_C[yCase], SF = S * f;
+    const cer = yMode === "ceres" && yF, mo = cer ? yMonth(t) * YN : 0;
     for (let j = 0; j < YNO; j++) yCh[j] = ca * yCl[j] - sa * ySl[j];
-    let sS = 0, sO = 0, sT = 0;
+    let sS = 0, sO = 0, sT = 0, sA = 0, sE = 0;
     for (let i = 0; i < YNL; i++) {
-      const p = ySin[i] * sd, q = yCosL[i] * cd, w = yW[i], row = i * YNO;
+      const p = ySin[i] * sd, q = yCosL[i] * cd, w = yW[i], row = i * YNO, eq = rec && (i === YEQ || i === YEQ + 1) && C !== Infinity;
       for (let j = 0; j < YNO; j++) {
-        const cz = p + q * yCh[j], I = cz > 0 ? SF * cz : 0, ab = (1 - A) * I, k = row + j;
-        if (C === 0) { yT[k] = Math.sqrt(Math.sqrt(ab / SIGMA)); if (rec) { sS += w * I; sO += w * ab; sT += w * yT[k]; } }
-        else if (C === Infinity) { yAcc[k] += ab; if (rec) sS += w * I; }
+        const cz = p + q * yCh[j], I = cz > 0 ? SF * cz : 0, k = row + j;
+        const ab = cer ? yF[mo + k] * I + yU[mo + k] : (1 - A) * I;
+        if (C === 0) { yT[k] = Math.sqrt(Math.sqrt(ab / SIGMA)); if (rec) { sS += w * I; sA += w * ab; sO += w * ab; sT += w * yT[k]; } }
+        else if (C === Infinity) { yAcc[k] += ab; if (rec) { sS += w * I; sA += w * ab; } }
         else {
           let T = yT[k]; const T2 = T * T; T += dt * (ab - SIGMA * T2 * T2) / C; if (T < 0) T = 0; yT[k] = T;
-          if (rec) { const U2 = T * T; sS += w * I; sO += w * SIGMA * U2 * U2; sT += w * T; }
+          if (rec) { const U2 = T * T; sS += w * I; sA += w * ab; sO += w * SIGMA * U2 * U2; sT += w * T; }
         }
+        if (eq) { const Te = yT[k]; sE += Te; if (Te > yEqMax) yEqMax = Te; }
       }
     }
-    if (rec) { ySumS += sS; ySumO += sO; ySumT += sT; yLastT = sT; }
+    if (rec) { ySumS += sS; ySumO += sO; ySumT += sT; ySumA += sA; ySumEq += sE / (2 * YNO); yLastT = sT; }
     ySunAt = t;
   }
+  function yLoadCeres() {   // the measured absorbed sunlight, 12 months x 72 x 144, in steps of 0.05 W/m²
+    if (yLoading) return yLoading;
+    yLoading = fetch("data/ceres_asr_2p5deg.bin").then(r => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); }).then(buf => {
+      const dv = new DataView(buf); if (buf.byteLength !== 12 * YN * 2) throw new Error("size");
+      const asr = new Float64Array(12 * YN); for (let k = 0; k < 12 * YN; k++) asr[k] = dv.getUint16(2 * k, true) / 20;
+      // the model's mean sunlight in each cell and month, from the same hourly geometry
+      const sum = new Float64Array(12 * YN), n = new Float64Array(12);
+      for (let h = 0; h < YEAR_H; h++) {
+        const t = h + 0.5, m = yMonth(t), mo = m * YN, { f, dec } = yOrbit(t), sd = Math.sin(dec), cd = Math.cos(dec), a = 2 * Math.PI * (t % 24) / 24;
+        const ca = Math.cos(a), sa = Math.sin(a), SF = S * f; n[m]++;
+        for (let j = 0; j < YNO; j++) yCh[j] = ca * yCl[j] - sa * ySl[j];
+        for (let i = 0; i < YNL; i++) { const p = ySin[i] * sd, q = yCosL[i] * cd, row = mo + i * YNO; for (let j = 0; j < YNO; j++) { const cz = p + q * yCh[j]; if (cz > 0) sum[row + j] += SF * cz; } }
+      }
+      yF = new Float64Array(12 * YN); yU = new Float64Array(12 * YN); let tot = 0;
+      for (let m = 0; m < 12; m++) for (let k = 0; k < YN; k++) {
+        const g = m * YN + k, mean = sum[g] / n[m];
+        if (mean > 0.5) yF[g] = asr[g] / mean; else yU[g] = asr[g];   // a dark model month with a little measured light: spread it evenly
+        tot += yW[Math.floor(k / YNO)] * asr[g] * n[m];
+      }
+      yAbsC = tot / YEAR_H;
+    });
+    return yLoading;
+  }
+  function ySetMode(mode) {   // returns a promise; falls back to the uniform reflection if the measurements can't be loaded
+    if (mode !== "ceres") { yMode = "flat"; yCeil = TE; return Promise.resolve(); }
+    $("yrAK").textContent = "Loading the CERES measurements…";
+    return yLoadCeres().then(() => { yMode = "ceres"; yCeil = Math.pow(yAbsC / SIGMA, 0.25); })
+      .catch(() => { yLoading = null; yMode = "flat"; yCeil = TE; return "failed"; });
+  }
   function ySpinUp() {   // soil and ocean start from each point's annual equilibrium, then run before the year shown
-    if (yInit[yCase]) { yT.set(yInit[yCase]); return; }
+    const key = yCase + "|" + yMode;
+    if (yInit[key]) { yT.set(yInit[key]); return; }
     const keep = yCase; yCase = "inf"; yAcc.fill(0);
     let n = 0; for (let t = 0.5; t < YEAR_H; t += 6, n++) yStep(t, 0, false);
     for (let k = 0; k < YN; k++) yT[k] = Math.pow((yAcc[k] / n) / SIGMA, 0.25);
     yAcc.fill(0); yCase = keep;
     const yrs = yCase === "ocean" ? 6 : 1, dh = yCase === "ocean" ? 3 : 1;
     for (let t = -yrs * YEAR_H; t < 0; t += dh) yStep(t + dh / 2, dh * 3600, false);
-    yInit[yCase] = Float64Array.from(yT);
+    yInit[key] = Float64Array.from(yT);
   }
   function yReset() {
     if (yAnim) { cancelAnimationFrame(yAnim); yAnim = null; }
     const C = Y_C[yCase];
     if (C > 0 && C < Infinity) ySpinUp();
     else { const keep = yCase; yCase = "none"; yStep(0.5, 0, false); yCase = keep; }   // the picture before the run: the first hour
-    yAcc.fill(0); yHour = 0; ySumS = ySumO = ySumT = 0; ySunAt = 0.5; yDayS.fill(0); yDayN.fill(0); ySpin = 0;
+    yAcc.fill(0); yHour = 0; ySumS = ySumO = ySumT = ySumA = ySumEq = yEqMax = 0; ySunAt = 0.5; yDayS.fill(0); yDayN.fill(0); ySpin = 0;
   }
   function yAdvance(hours) {
     const end = Math.min(YEAR_H, yHour + hours);
@@ -1119,6 +1178,11 @@
     let s = 0, o = 0;
     for (let i = 0; i < YNL; i++) for (let j = 0; j < YNO; j++) { const m = yAcc[i * YNO + j] / Math.max(1, yHour); s += yW[i] * Math.pow(m / SIGMA, 0.25); o += yW[i] * m; }
     return { T: s, O: o };
+  }
+  function yEquatorInf() {   // infinite storage: the equator's points at the temperature of their mean absorbed sunlight so far
+    let s = 0, mx = 0;
+    for (let i = YEQ; i <= YEQ + 1; i++) for (let j = 0; j < YNO; j++) { const T = Math.pow(yAcc[i * YNO + j] / Math.max(1, yHour) / SIGMA, 0.25); s += T; if (T > mx) mx = T; }
+    return { avg: s / (2 * YNO), max: mx };
   }
   function yMeanIncl(h) {
     let s = 0;
@@ -1184,10 +1248,10 @@
       el("text", { x: L - 6, y: Y(t) + 4, fill: dim, "font-size": 11, "text-anchor": "end" }, svg, `${t}`);
     }
     [["Jan", 0], ["Apr", 88], ["Jul", 179], ["Oct", 271]].forEach(([m, d]) => el("text", { x: X(d), y: H - 8, fill: dim, "font-size": 11 }, svg, m));
-    el("line", { x1: L, x2: W - Rm, y1: Y(TE), y2: Y(TE), stroke: fg, "stroke-opacity": 0.75, "stroke-dasharray": "2 4", "stroke-width": 1.4 }, svg);
+    el("line", { x1: L, x2: W - Rm, y1: Y(yCeil), y2: Y(yCeil), stroke: fg, "stroke-opacity": 0.75, "stroke-dasharray": "2 4", "stroke-width": 1.4 }, svg);
     el("line", { x1: L, x2: W - Rm, y1: Y(288), y2: Y(288), stroke: teal, "stroke-dasharray": "6 4", "stroke-width": 1.4 }, svg);
     el("text", { x: W - Rm, y: Y(288) - 5, fill: teal, "font-size": 11, "text-anchor": "end" }, svg, "Earth, measured: 288 K");
-    el("text", { x: W - Rm, y: Y(TE) + 13, fill: fg, "font-size": 11, "text-anchor": "end", "fill-opacity": 0.85 }, svg, `ceiling ${TE.toFixed(1)} K`);
+    el("text", { x: W - Rm, y: Y(yCeil) + 13, fill: fg, "font-size": 11, "text-anchor": "end", "fill-opacity": 0.85 }, svg, `ceiling ${yCeil.toFixed(1)} K`);
     const days = Math.min(366, Math.ceil(yHour / 24)), inf = yCase === "inf";
     let daily = "", run = "", sum = 0, n = 0, avg = 0;
     for (let d = 0; d < days; d++) {
@@ -1213,18 +1277,27 @@
   function drawYear() {
     document.querySelectorAll("#yrP button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.c === yCase)));
     document.querySelectorAll("#yrTab tr[data-c]").forEach(r => r.classList.toggle("on", r.dataset.c === yCase));
+    document.querySelectorAll("#yrA button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.a === yMode)));
+    document.querySelectorAll("#yrTab td[data-a]").forEach(c => c.classList.toggle("cur", c.dataset.a === yMode));
     $("yrK").textContent = Y_TXT[yCase];
+    if (!yAModeMsg) $("yrAK").textContent = Y_ATXT[yMode];
+    $("yrCeil").textContent = `${yCeil.toFixed(1)} K`;
     $("yrH").textContent = `${yHour.toLocaleString("en-US")} of ${YEAR_H.toLocaleString("en-US")}`;
     const done = yHour >= YEAR_H, running = !!yAnim;
-    if (!yHour) { $("yrS").textContent = $("yrO").textContent = $("yrT").textContent = "—"; }
+    if (!yHour) { $("yrS").textContent = $("yrB").textContent = $("yrO").textContent = $("yrT").textContent = $("yrEm").textContent = $("yrEa").textContent = "—"; }
     else {
       const inf = yCase === "inf" ? yMeanInf() : null, T = inf ? inf.T : ySumT / yHour, O = inf ? inf.O : ySumO / yHour;
       $("yrS").textContent = `${(ySumS / yHour).toFixed(2)} W/m²`;
+      $("yrB").textContent = `${(ySumA / yHour).toFixed(1)} W/m²`;
+      const eqs = yCase === "inf" ? yEquatorInf() : { avg: ySumEq / yHour, max: yEqMax };
+      $("yrEm").textContent = `${eqs.max.toFixed(1)} K`;
+      $("yrEa").textContent = `${eqs.avg.toFixed(1)} K`;
       $("yrO").textContent = `${O.toFixed(1)} W/m²`;
       $("yrT").textContent = `${T.toFixed(1)} K`;
       if (done) {
-        $("yrV").innerHTML = `<b>A whole year: ${T.toFixed(1)}&nbsp;K on average, ${(TE - T).toFixed(1)}&nbsp;K below the ceiling.</b> `
+        $("yrV").innerHTML = `<b>A whole year: ${T.toFixed(1)}&nbsp;K on average, ${(yCeil - T).toFixed(1)}&nbsp;K below the ceiling.</b> `
           + `The sunlight on the sphere averaged ${(ySumS / yHour).toFixed(2)} W/m² on this grid; the exact integral is 340.30, the disc formula plus 0.014% from the elliptical orbit. The disc was exact. `
+          + (yMode === "ceres" ? `Absorbed, as CERES measures it cell by cell: ${(ySumA / yHour).toFixed(1)} W/m², so the ceiling is ${yCeil.toFixed(1)} K. ` : "")
           + `The real Earth averages 288 K.`;
       }
     }
@@ -1257,9 +1330,21 @@
   document.querySelectorAll("#yrP button").forEach(b => b.addEventListener("click", () => {
     if (yAnim) { cancelAnimationFrame(yAnim); yAnim = null; }
     yCase = b.dataset.c;
-    const slow = !yInit[yCase] && Y_C[yCase] > 0 && Y_C[yCase] < Infinity;
+    const slow = !yInit[yCase + "|" + yMode] && Y_C[yCase] > 0 && Y_C[yCase] < Infinity;
     if (slow) $("yrV").textContent = "Letting the points settle into their seasons first…";
     setTimeout(() => { yReset(); drawYear(); syncURL(); }, slow ? 30 : 0);
+  }));
+  let yAModeMsg = false;
+  document.querySelectorAll("#yrA button").forEach(b => b.addEventListener("click", () => {
+    if (yAnim) { cancelAnimationFrame(yAnim); yAnim = null; }
+    yAModeMsg = true;
+    ySetMode(b.dataset.a).then(res => {
+      yAModeMsg = res === "failed";
+      if (res === "failed") $("yrAK").textContent = "The CERES measurements could not be loaded here: open the page from its web address. Showing 29.4% everywhere.";
+      const slow = !yInit[yCase + "|" + yMode] && Y_C[yCase] > 0 && Y_C[yCase] < Infinity;
+      if (slow) $("yrV").textContent = "Letting the points settle into their seasons first…";
+      setTimeout(() => { yReset(); drawYear(); syncURL(); }, slow ? 30 : 0);
+    });
   }));
   window.addEventListener("resize", () => { yPix = null; yDraw(); });
 
@@ -1574,7 +1659,11 @@
   }
   window.addEventListener("hashchange", openFromHash);
   readURL(); yReset(); render(); drawYear(); openFromHash();
-  if (location.hash === "#year") setTimeout(() => $("yrEnd").click(), 60);   // a link to the year opens it already run
+  (yWantCeres ? ySetMode("ceres").then(res => {
+    if (res === "failed") { yAModeMsg = true; $("yrAK").textContent = "The CERES measurements could not be loaded here: open the page from its web address. Showing 29.4% everywhere."; syncURL(); }
+    else { yReset(); drawYear(); syncURL(); }
+  }) : Promise.resolve())
+    .then(() => { if (location.hash === "#year") setTimeout(() => $("yrEnd").click(), 60); });   // a link to the year opens it already run
 })();
 </script>
 
