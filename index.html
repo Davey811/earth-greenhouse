@@ -165,6 +165,7 @@
   .fltab td small { color: var(--dim); }
   figure.yglobe { margin: 4px 0 0; display: flex; flex-direction: column; align-items: center; }
   #yrc { display: block; width: 100%; max-width: 400px; aspect-ratio: 1 / 1; }
+  #yrChart { max-width: 420px; margin-top: 10px; }
   #yrCap { font-size: 13px; color: var(--dim); margin-top: 6px; text-align: center; font-variant-numeric: tabular-nums; }
   .ylegend { display: grid; grid-template-columns: auto minmax(120px, 220px) auto; gap: 8px; align-items: center; font-size: 12px; color: var(--dim); margin-top: 6px; }
   .ylegend i { display: block; height: 8px; border-radius: 4px; background: linear-gradient(90deg, #10161f, #1d2a44 18%, #5b3a6e 40%, #c4573a 62%, #f6ad55 82%, #fde7b0); }
@@ -495,7 +496,8 @@
       <figure class="yglobe">
         <canvas id="yrc" width="400" height="400" role="img" aria-label="The globe's surface temperature, point by point, with the Sun on the left"></canvas>
         <figcaption id="yrCap"></figcaption>
-        <div class="ylegend" aria-hidden="true"><span>0 K</span><i></i><span>360 K</span></div>
+        <div class="ylegend" aria-hidden="true"><span>150 K or less</span><i></i><span>350 K</span></div>
+        <svg id="yrChart" viewBox="0 0 400 200" role="img" aria-label="The globe's average temperature, day by day, against the ceiling and the measured 288 K"></svg>
       </figure>
     </div>
     <table class="fltab ytab" id="yrTab">
@@ -1063,7 +1065,8 @@
     return { f: 1 / (r * r), dec: Math.asin(Math.sin(OBL) * Math.sin(nu + LPER)) };
   }
   let yCase = "none", yT = new Float64Array(YN), yAcc = new Float64Array(YN), yHour = 0, yAnim = null, ySunAt = 0.5;
-  let ySumS = 0, ySumO = 0, ySumT = 0;
+  let ySumS = 0, ySumO = 0, ySumT = 0, yLastT = 0, yClock = 0, yCarry = 0;
+  const yDayS = new Float64Array(366), yDayN = new Int32Array(366);   // the globe's mean temperature, day by day
   const yInit = {};   // each heat capacity's starting state, once it has settled
   // one hour of sunlight on every point; with dt (s) the points also store heat, otherwise they only collect
   function yStep(t, dt, rec) {
@@ -1083,7 +1086,7 @@
         }
       }
     }
-    if (rec) { ySumS += sS; ySumO += sO; ySumT += sT; }
+    if (rec) { ySumS += sS; ySumO += sO; ySumT += sT; yLastT = sT; }
     ySunAt = t;
   }
   function ySpinUp() {   // soil and ocean start from each point's annual equilibrium, then run before the year shown
@@ -1101,16 +1104,26 @@
     const C = Y_C[yCase];
     if (C > 0 && C < Infinity) ySpinUp();
     else { const keep = yCase; yCase = "none"; yStep(0.5, 0, false); yCase = keep; }   // the picture before the run: the first hour
-    yAcc.fill(0); yHour = 0; ySumS = ySumO = ySumT = 0; ySunAt = 0.5;
+    yAcc.fill(0); yHour = 0; ySumS = ySumO = ySumT = 0; ySunAt = 0.5; yDayS.fill(0); yDayN.fill(0);
   }
   function yAdvance(hours) {
     const end = Math.min(YEAR_H, yHour + hours);
-    for (; yHour < end; yHour++) yStep(yHour + 0.5, 3600, true);
+    for (; yHour < end; yHour++) {
+      yStep(yHour + 0.5, 3600, true);
+      const d = Math.floor(yHour / 24);
+      if (yCase === "inf") { if ((yHour + 1) % 24 === 0 || yHour + 1 === YEAR_H) { yDayS[d] = yMeanIncl(yHour + 1); yDayN[d] = 1; } }
+      else { yDayS[d] += yLastT; yDayN[d]++; }
+    }
   }
   function yMeanInf() {   // infinite storage: the temperature of each point's mean absorbed sunlight so far
     let s = 0, o = 0;
     for (let i = 0; i < YNL; i++) for (let j = 0; j < YNO; j++) { const m = yAcc[i * YNO + j] / Math.max(1, yHour); s += yW[i] * Math.pow(m / SIGMA, 0.25); o += yW[i] * m; }
     return { T: s, O: o };
+  }
+  function yMeanIncl(h) {
+    let s = 0;
+    for (let i = 0; i < YNL; i++) for (let j = 0; j < YNO; j++) s += yW[i] * Math.pow(yAcc[i * YNO + j] / h / SIGMA, 0.25);
+    return s;
   }
   const yLUT = (() => {
     const stops = ["#10161f", "#1d2a44", "#5b3a6e", "#c4573a", "#f6ad55", "#fde7b0"].map(h => [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16)));
@@ -1151,13 +1164,44 @@
       let lon = (rel[k] - a) / DR; lon = ((lon % 360) + 360) % 360;
       const j = Math.min(YNO - 1, Math.floor(lon / YD)), g = i * YNO + j;
       const T = inf && yHour ? Math.pow(yAcc[g] / yHour / SIGMA, 0.25) : yT[g];
-      const c = Math.max(0, Math.min(255, Math.round(T / 360 * 255))) * 3, s = shade[k];
+      const c = Math.max(0, Math.min(255, Math.round((T - 150) / 200 * 255))) * 3, s = shade[k];
       const grid = par[k] || Math.abs(((lon + 7.5) % 15) - 7.5) < 0.35 / Math.max(0.2, yCosL[i]);
       for (let ch = 0; ch < 3; ch++) d[k * 4 + ch] = grid ? yLUT[c + ch] * 0.8 * s + 48 : yLUT[c + ch] * s;
       d[k * 4 + 3] = 255;
     }
     ctx.putImageData(img, 0, 0);
     $("yrCap").textContent = `${yDate()}, day ${Math.min(365, Math.floor(ySunAt / 24) + 1)} of 365. The Sun is on the left.`;
+  }
+  function yChart() {   // the globe's average temperature day by day, with the average so far, the ceiling and the measured 288 K
+    const svg = $("yrChart"); svg.innerHTML = "";
+    const W = 400, H = 200, L = 40, Rm = 8, T0 = 44, B = 26, dim = "#8b98a5", amber = "#f6ad55", teal = "#4fd1c5", fg = "#e7e9ea";
+    const X = d => L + (W - L - Rm) * d / 365, Y = t => T0 + (H - T0 - B) * (1 - t / 300);
+    for (let t = 0; t <= 300; t += 100) {
+      el("line", { x1: L, x2: W - Rm, y1: Y(t), y2: Y(t), stroke: "#2a333d" }, svg);
+      el("text", { x: L - 6, y: Y(t) + 4, fill: dim, "font-size": 11, "text-anchor": "end" }, svg, `${t}`);
+    }
+    [["Jan", 0], ["Apr", 88], ["Jul", 179], ["Oct", 271]].forEach(([m, d]) => el("text", { x: X(d), y: H - 8, fill: dim, "font-size": 11 }, svg, m));
+    el("line", { x1: L, x2: W - Rm, y1: Y(TE), y2: Y(TE), stroke: fg, "stroke-opacity": 0.75, "stroke-dasharray": "2 4", "stroke-width": 1.4 }, svg);
+    el("line", { x1: L, x2: W - Rm, y1: Y(288), y2: Y(288), stroke: teal, "stroke-dasharray": "6 4", "stroke-width": 1.4 }, svg);
+    el("text", { x: W - Rm, y: Y(288) - 5, fill: teal, "font-size": 11, "text-anchor": "end" }, svg, "Earth, measured: 288 K");
+    el("text", { x: W - Rm, y: Y(TE) + 13, fill: fg, "font-size": 11, "text-anchor": "end", "fill-opacity": 0.85 }, svg, `ceiling ${TE.toFixed(1)} K`);
+    const days = Math.min(366, Math.ceil(yHour / 24)), inf = yCase === "inf";
+    let daily = "", run = "", sum = 0, n = 0, avg = 0;
+    for (let d = 0; d < days; d++) {
+      if (!yDayN[d]) continue;
+      const v = yDayS[d] / yDayN[d];
+      if (inf) { avg = v; n = 1; } else { sum += yDayS[d]; n += yDayN[d]; avg = sum / n; }   // hour-weighted, as in the table
+      const x = X(Math.min(365, d + 0.5)).toFixed(1);
+      daily += `${x},${Y(v).toFixed(1)} `; run += `${x},${Y(avg).toFixed(1)} `;
+    }
+    if (n) {
+      el("polyline", { points: daily, fill: "none", stroke: amber, "stroke-width": 1.4, "stroke-opacity": 0.55 }, svg);
+      el("polyline", { points: run, fill: "none", stroke: amber, "stroke-width": 2.2 }, svg);
+    }
+    el("line", { x1: L, x2: L + 18, y1: 12, y2: 12, stroke: amber, "stroke-width": 1.4, "stroke-opacity": 0.55 }, svg);
+    el("text", { x: L + 24, y: 16, fill: dim, "font-size": 11.5 }, svg, "the globe's average, day by day");
+    el("line", { x1: L, x2: L + 18, y1: 30, y2: 30, stroke: amber, "stroke-width": 2.2 }, svg);
+    el("text", { x: L + 24, y: 34, fill: amber, "font-size": 11.5, "font-weight": 700 }, svg, n ? `average so far: ${avg.toFixed(1)} K` : "average so far");
   }
   function yDate() {
     const dt = new Date(Date.UTC(2026, 0, 3 + Math.min(364, Math.floor(ySunAt / 24))));
@@ -1185,18 +1229,19 @@
       : yHour ? `Paused at ${yDate()}.` : "Pick how much heat each point stores, then run the year: 10,368 points, 8,766 hours.";
     $("yrRun").textContent = running ? "Pause" : done ? "Run it again" : yHour ? "Continue" : "Run the year";
     $("yrRun").setAttribute("aria-pressed", String(running));
-    yDraw();
+    yDraw(); yChart();
   }
-  function yLoop() {
-    yAdvance(24); drawYear();
+  function yLoop(ts) {   // a year in about 12 seconds, whatever the screen's refresh rate
+    const dt = yClock ? Math.min(100, ts - yClock) : 16; yClock = ts;
+    yCarry += dt * YEAR_H / 12000; const n = Math.floor(yCarry / 24) * 24; yCarry -= n;   // whole days, so the globe keeps its face to us
+    if (n) yAdvance(n);
     yAnim = yHour < YEAR_H ? requestAnimationFrame(yLoop) : null;
-    if (!yAnim) drawYear();
+    drawYear();
   }
-  const yReduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   $("yrRun").addEventListener("click", () => {
     if (yAnim) { cancelAnimationFrame(yAnim); yAnim = null; drawYear(); return; }
     if (yHour >= YEAR_H) yReset();
-    if (yReduce) { yAdvance(YEAR_H); drawYear(); return; }
+    yClock = 0; yCarry = 0;
     yAnim = requestAnimationFrame(yLoop); drawYear();
   });
   $("yrEnd").addEventListener("click", () => {
