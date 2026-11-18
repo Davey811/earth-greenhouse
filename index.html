@@ -1065,7 +1065,8 @@
     return { f: 1 / (r * r), dec: Math.asin(Math.sin(OBL) * Math.sin(nu + LPER)) };
   }
   let yCase = "none", yT = new Float64Array(YN), yAcc = new Float64Array(YN), yHour = 0, yAnim = null, ySunAt = 0.5;
-  let ySumS = 0, ySumO = 0, ySumT = 0, yLastT = 0, yClock = 0, yCarry = 0;
+  let ySumS = 0, ySumO = 0, ySumT = 0, yLastT = 0, yClock = 0, yCarry = 0, ySpin = 0;
+  const yStill = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;   // no spinning globe for those who asked for less motion
   const yDayS = new Float64Array(366), yDayN = new Int32Array(366);   // the globe's mean temperature, day by day
   const yInit = {};   // each heat capacity's starting state, once it has settled
   // one hour of sunlight on every point; with dt (s) the points also store heat, otherwise they only collect
@@ -1104,7 +1105,7 @@
     const C = Y_C[yCase];
     if (C > 0 && C < Infinity) ySpinUp();
     else { const keep = yCase; yCase = "none"; yStep(0.5, 0, false); yCase = keep; }   // the picture before the run: the first hour
-    yAcc.fill(0); yHour = 0; ySumS = ySumO = ySumT = 0; ySunAt = 0.5; yDayS.fill(0); yDayN.fill(0);
+    yAcc.fill(0); yHour = 0; ySumS = ySumO = ySumT = 0; ySunAt = 0.5; yDayS.fill(0); yDayN.fill(0); ySpin = 0;
   }
   function yAdvance(hours) {
     const end = Math.min(YEAR_H, yHour + hours);
@@ -1158,11 +1159,13 @@
     if (cv.width !== want) { cv.width = cv.height = want; yPix = null; }
     if (!yPix) yMap(cv);
     const ctx = cv.getContext("2d"), img = ctx.createImageData(cv.width, cv.height), d = img.data, { n, row, rel, par, shade } = yPix;
-    const a = 2 * Math.PI * (((ySunAt % 24) + 24) % 24) / 24, inf = yCase === "inf";
+    // the ground turns under the Sun (the grid), while the warm side always faces the Sun (the colours)
+    const a = 2 * Math.PI * (((ySunAt % 24) + 24) % 24) / 24, inf = yCase === "inf", aG = a + ySpin, aT = a;
     for (let k = 0; k < n * n; k++) {
       const i = row[k]; if (i < 0) continue;
-      let lon = (rel[k] - a) / DR; lon = ((lon % 360) + 360) % 360;
-      const j = Math.min(YNO - 1, Math.floor(lon / YD)), g = i * YNO + j;
+      let lonT = (rel[k] - aT) / DR; lonT = ((lonT % 360) + 360) % 360;
+      let lon = (rel[k] - aG) / DR; lon = ((lon % 360) + 360) % 360;
+      const j = Math.min(YNO - 1, Math.floor(lonT / YD)), g = i * YNO + j;
       const T = inf && yHour ? Math.pow(yAcc[g] / yHour / SIGMA, 0.25) : yT[g];
       const c = Math.max(0, Math.min(255, Math.round((T - 150) / 200 * 255))) * 3, s = shade[k];
       const grid = par[k] || Math.abs(((lon + 7.5) % 15) - 7.5) < 0.35 / Math.max(0.2, yCosL[i]);
@@ -1170,7 +1173,8 @@
       d[k * 4 + 3] = 255;
     }
     ctx.putImageData(img, 0, 0);
-    $("yrCap").textContent = `${yDate()}, day ${Math.min(365, Math.floor(ySunAt / 24) + 1)} of 365. The Sun is on the left.`;
+    $("yrCap").textContent = `${yDate()}, day ${Math.min(365, Math.floor(ySunAt / 24) + 1)} of 365. The Sun is on the left.`
+      + (yAnim && !yStill ? " The globe turns once every four seconds; the year runs at about a month a second." : "");
   }
   function yChart() {   // the globe's average temperature day by day, with the average so far, the ceiling and the measured 288 K
     const svg = $("yrChart"); svg.innerHTML = "";
@@ -1235,7 +1239,9 @@
     const dt = yClock ? Math.min(100, ts - yClock) : 16; yClock = ts;
     yCarry += dt * YEAR_H / 12000; const n = Math.floor(yCarry / 24) * 24; yCarry -= n;   // whole days, so the globe keeps its face to us
     if (n) yAdvance(n);
+    if (!yStill) ySpin = (ySpin + dt / 4000 * 2 * Math.PI) % (2 * Math.PI);
     yAnim = yHour < YEAR_H ? requestAnimationFrame(yLoop) : null;
+    if (!yAnim) ySpin = 0;   // the finished year is shown as it is at its last hour
     drawYear();
   }
   $("yrRun").addEventListener("click", () => {
@@ -1247,7 +1253,7 @@
   $("yrEnd").addEventListener("click", () => {
     if (yAnim) { cancelAnimationFrame(yAnim); yAnim = null; }
     if (yHour >= YEAR_H) yReset();
-    yAdvance(YEAR_H); drawYear();
+    ySpin = 0; yAdvance(YEAR_H); drawYear();
   });
   document.querySelectorAll("#yrP button").forEach(b => b.addEventListener("click", () => {
     if (yAnim) { cancelAnimationFrame(yAnim); yAnim = null; }
