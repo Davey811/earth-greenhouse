@@ -1066,7 +1066,6 @@
   }
   let yCase = "none", yT = new Float64Array(YN), yAcc = new Float64Array(YN), yHour = 0, yAnim = null, ySunAt = 0.5;
   let ySumS = 0, ySumO = 0, ySumT = 0, yLastT = 0, yClock = 0, yCarry = 0, ySpin = 0;
-  const yStill = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;   // no spinning globe for those who asked for less motion
   const yDayS = new Float64Array(366), yDayN = new Int32Array(366);   // the globe's mean temperature, day by day
   const yInit = {};   // each heat capacity's starting state, once it has settled
   // one hour of sunlight on every point; with dt (s) the points also store heat, otherwise they only collect
@@ -1174,7 +1173,7 @@
     }
     ctx.putImageData(img, 0, 0);
     $("yrCap").textContent = `${yDate()}, day ${Math.min(365, Math.floor(ySunAt / 24) + 1)} of 365. The Sun is on the left.`
-      + (yAnim && !yStill ? " The globe turns once every four seconds; the year runs at about a month a second." : "");
+      + (yAnim ? " The globe turns once every four seconds; the year runs at about a month a second." : "");
   }
   function yChart() {   // the globe's average temperature day by day, with the average so far, the ceiling and the measured 288 K
     const svg = $("yrChart"); svg.innerHTML = "";
@@ -1239,7 +1238,7 @@
     const dt = yClock ? Math.min(100, ts - yClock) : 16; yClock = ts;
     yCarry += dt * YEAR_H / 12000; const n = Math.floor(yCarry / 24) * 24; yCarry -= n;   // whole days, so the globe keeps its face to us
     if (n) yAdvance(n);
-    if (!yStill) ySpin = (ySpin + dt / 4000 * 2 * Math.PI) % (2 * Math.PI);
+    ySpin = (ySpin + dt / 4000 * 2 * Math.PI) % (2 * Math.PI);   // the spin only runs after a press of Run, and Pause stops it
     yAnim = yHour < YEAR_H ? requestAnimationFrame(yLoop) : null;
     if (!yAnim) ySpin = 0;   // the finished year is shown as it is at its last hour
     drawYear();
