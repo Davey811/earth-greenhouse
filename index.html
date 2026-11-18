@@ -163,6 +163,15 @@
   .split .seg { margin: 4px 0 2px; }
   .split .verdict { max-width: none; }
   .fltab td small { color: var(--dim); }
+  figure.yglobe { margin: 4px 0 0; display: flex; flex-direction: column; align-items: center; }
+  #yrc { display: block; width: 100%; max-width: 400px; aspect-ratio: 1 / 1; }
+  #yrCap { font-size: 13px; color: var(--dim); margin-top: 6px; text-align: center; font-variant-numeric: tabular-nums; }
+  .ylegend { display: grid; grid-template-columns: auto minmax(120px, 220px) auto; gap: 8px; align-items: center; font-size: 12px; color: var(--dim); margin-top: 6px; }
+  .ylegend i { display: block; height: 8px; border-radius: 4px; background: linear-gradient(90deg, #10161f, #1d2a44 18%, #5b3a6e 40%, #c4573a 62%, #f6ad55 82%, #fde7b0); }
+  table.ytab { max-width: 560px; margin-top: 10px; }
+  table.ytab tr.head td:last-child { text-align: right; }
+  table.ytab tr.on td { color: var(--amber); font-weight: 700; }
+  table.ytab tr.earth td { color: var(--teal); }
   footer { margin-top: 24px; color: var(--dim); font-size: 13px; }
   footer p { margin: 0 0 6px; }
 </style>
@@ -463,6 +472,42 @@
     </div>
     <p class="note">Each zone sends ε σT⁴ to space; the six together must average 240.2 W/m², what the planet absorbs. The ceiling is the temperature of the even planet, (240.2 / εσ)<sup>1/4</sup>: 255.1 K, or 258.4 K with emissivity 0.95. The average of T can never exceed the fourth root of the average of T⁴ (the power-mean inequality), and equals it only when every zone has the same temperature. So no pattern of temperatures, however it comes about, lifts a planet with no infrared absorbers above the ceiling. The real Earth averages 288 K.</p>
     <p class="note">This game was suggested, without meaning to, by <a href="https://x.com/KaiserSzecg7i">@KaiserSzecg7i</a> on X. Thanks!</p>
+    <p class="sub2" id="year">The whole integral: every point, every hour, a year</p>
+    <p>"The disc is a classroom shortcut: take many points on the sphere, follow them for 365 days and integrate." Here it is. The globe is cut into 10,368 points and the Sun moves as it really does, with Earth's 23.44° tilt and its elliptical orbit, nearest the Sun in early January. Each point absorbs the sunlight that reaches it, minus the 29.4% reflected, and with no infrared absorbers radiates σT⁴ straight to space. Nothing carries heat from one point to another; how much heat each point stores is up to you.</p>
+    <div class="split">
+      <div>
+        <span class="lab" id="yrL">Heat stored by each point</span>
+        <div class="seg" id="yrP" role="group" aria-labelledby="yrL">
+          <button data-c="none">None</button><button data-c="soil">Soil</button><button data-c="ocean">Ocean</button><button data-c="inf">Infinite</button>
+        </div>
+        <p class="note" id="yrK"></p>
+        <div class="btbar"><button id="yrRun">Run the year</button><button id="yrEnd">Jump to the end</button></div>
+        <table class="fltab">
+          <tr><td>Hours done</td><td id="yrH"></td></tr>
+          <tr><td>Sunlight on the sphere, average</td><td id="yrS"></td></tr>
+          <tr><td>Disc formula, S/4</td><td>340.25 W/m²</td></tr>
+          <tr><td>Infrared sent to space, average</td><td id="yrO"></td></tr>
+          <tr class="total"><td>Average temperature</td><td id="yrT"></td></tr>
+          <tr><td>The ceiling</td><td>255.1 K</td></tr>
+        </table>
+        <p class="verdict" id="yrV"></p>
+      </div>
+      <figure class="yglobe">
+        <canvas id="yrc" width="400" height="400" role="img" aria-label="The globe's surface temperature, point by point, with the Sun on the left"></canvas>
+        <figcaption id="yrCap"></figcaption>
+        <div class="ylegend" aria-hidden="true"><span>0 K</span><i></i><span>360 K</span></div>
+      </figure>
+    </div>
+    <table class="fltab ytab" id="yrTab">
+      <tr class="head"><td>The same year with 64,800 points</td><td>Average temperature</td></tr>
+      <tr data-c="none"><td>No heat storage <small>(up to 364 K under the Sun, 0 K at night)</small></td><td>144.3 K</td></tr>
+      <tr data-c="soil"><td>Half a metre of soil</td><td>247.6 K</td></tr>
+      <tr data-c="ocean"><td>50 m of ocean</td><td>253.8 K</td></tr>
+      <tr data-c="inf"><td>Infinite storage <small>(poles 215 K, equator 268 K)</small></td><td>253.9 K</td></tr>
+      <tr><td>Perfect mixing: the even planet</td><td>255.1 K</td></tr>
+      <tr class="earth"><td>Earth, measured</td><td>288 K</td></tr>
+    </table>
+    <p class="note">Each point: C dT/dt = 0.706 × sunlight − σT⁴, in hourly steps, with C = 0 (none), 10⁶ J/(m² K) (soil, about half a metre), 2.09 × 10⁸ J/(m² K) (ocean, 50 m of water) or infinite (each point at the temperature of its own annual mean sunlight). Soil and ocean start from that annual temperature and run one year (soil) or six (ocean) before the year shown. Orbit: eccentricity 0.0167, perihelion on 3 January, tilt 23.44°. The sunlight on the sphere integrates to S/4 × 1/√(1 − e²) = 340.30 W/m²: the disc formula, plus 0.014% from the orbit. Storing heat only evens the temperatures out; only moving heat between points, as winds and currents do, could reach the even planet, and nothing goes above it. The table comes from <a href="https://github.com/Davey811/earth-greenhouse/blob/main/year_on_sphere.py">year_on_sphere.py</a>, which does the same on a 1° grid.</p>
   </section>
 
   <section class="card wide prose" id="moon" aria-label="The Moon test">
@@ -803,6 +848,7 @@
     const nr = +$("nr").value; if (nr !== 6) q.set("rings", String(nr));
     const bts = btTemps(); if (bts.some((t, i) => Math.abs(t - BT_DEF[i]) > 0.05)) q.set("beat", bts.map(t => +t.toFixed(1)).join("_"));
     if (btEps !== 1) q.set("eps", "0.95");
+    if (yCase !== "none") q.set("store", yCase);
     return q.toString();
   }
   function linkHere() { return location.href.split(/[?#]/)[0] + "?" + query() + location.hash; }
@@ -820,6 +866,7 @@
     if (q.get("sat") === "1") sat = true;
     const rg = parseInt(q.get("rings")); if (rg >= 2 && rg <= 60) $("nr").value = rg;
     if (q.get("eps") === "0.95") btEps = 0.95;
+    if (Y_KEYS.includes(q.get("store"))) yCase = q.get("store");
     const bq = (q.get("beat") || "").split(/[_,]/).map(Number);
     if (bq.length === BT_N - 1 && bq.every(t => Number.isFinite(t) && t >= 0 && t <= 400)) bq.forEach((t, i) => { $(`bt${i}`).value = t; });
     btFit();
@@ -989,6 +1036,182 @@
     btMsg = `10,000 random planets, above the ceiling: ${above}. The closest, ${g < 0.01 ? "less than 0.01" : g.toFixed(2)} K below it, is the most even of them; it's now on the sliders.`;
     drawBeat(); syncURL();
   });
+
+  // ---------- the whole integral: every point of a 2.5° grid, every hour of a year, Earth's orbit and tilt
+  const YD = 2.5, YNL = 72, YNO = 144, YN = YNL * YNO, YEAR_H = 8766, ECC = 0.0167;
+  const OBL = 23.44 * Math.PI / 180, LPER = 282.9 * Math.PI / 180, DR = Math.PI / 180;
+  const Y_C = { none: 0, soil: 1e6, ocean: 4180e3 * 50, inf: Infinity };
+  const Y_KEYS = Object.keys(Y_C);
+  const Y_TXT = {
+    none: "No storage: each point radiates, instant by instant, what it absorbs.",
+    soil: "Soil: 10⁶ J/(m² K) per point, about half a metre of ground.",
+    ocean: "Ocean: 50 m of water under every point, 2.09 × 10⁸ J/(m² K).",
+    inf: "Infinite: each point sits at the temperature of its own annual mean sunlight."
+  };
+  const ySin = new Float64Array(YNL), yCosL = new Float64Array(YNL), yW = new Float64Array(YNL);
+  const yCl = new Float64Array(YNO), ySl = new Float64Array(YNO), yCh = new Float64Array(YNO);
+  (function () {
+    let s = 0;
+    for (let i = 0; i < YNL; i++) { const la = (-90 + YD / 2 + i * YD) * DR; ySin[i] = Math.sin(la); yCosL[i] = Math.cos(la); s += yCosL[i] * YNO; }
+    for (let i = 0; i < YNL; i++) yW[i] = yCosL[i] / s;
+    for (let j = 0; j < YNO; j++) { const lo = (YD / 2 + j * YD) * DR; yCl[j] = Math.cos(lo); ySl[j] = Math.sin(lo); }
+  })();
+  function yOrbit(t) {   // (a/r)^2 and the Sun's declination, t hours after perihelion
+    const M = 2 * Math.PI * t / YEAR_H; let E = M;
+    for (let k = 0; k < 8; k++) E -= (E - ECC * Math.sin(E) - M) / (1 - ECC * Math.cos(E));
+    const nu = 2 * Math.atan2(Math.sqrt(1 + ECC) * Math.sin(E / 2), Math.sqrt(1 - ECC) * Math.cos(E / 2)), r = 1 - ECC * Math.cos(E);
+    return { f: 1 / (r * r), dec: Math.asin(Math.sin(OBL) * Math.sin(nu + LPER)) };
+  }
+  let yCase = "none", yT = new Float64Array(YN), yAcc = new Float64Array(YN), yHour = 0, yAnim = null, ySunAt = 0.5;
+  let ySumS = 0, ySumO = 0, ySumT = 0;
+  const yInit = {};   // each heat capacity's starting state, once it has settled
+  // one hour of sunlight on every point; with dt (s) the points also store heat, otherwise they only collect
+  function yStep(t, dt, rec) {
+    const { f, dec } = yOrbit(t), sd = Math.sin(dec), cd = Math.cos(dec), a = 2 * Math.PI * (((t % 24) + 24) % 24) / 24;
+    const ca = Math.cos(a), sa = Math.sin(a), C = Y_C[yCase], SF = S * f;
+    for (let j = 0; j < YNO; j++) yCh[j] = ca * yCl[j] - sa * ySl[j];
+    let sS = 0, sO = 0, sT = 0;
+    for (let i = 0; i < YNL; i++) {
+      const p = ySin[i] * sd, q = yCosL[i] * cd, w = yW[i], row = i * YNO;
+      for (let j = 0; j < YNO; j++) {
+        const cz = p + q * yCh[j], I = cz > 0 ? SF * cz : 0, ab = (1 - A) * I, k = row + j;
+        if (C === 0) { yT[k] = Math.sqrt(Math.sqrt(ab / SIGMA)); if (rec) { sS += w * I; sO += w * ab; sT += w * yT[k]; } }
+        else if (C === Infinity) { yAcc[k] += ab; if (rec) sS += w * I; }
+        else {
+          let T = yT[k]; const T2 = T * T; T += dt * (ab - SIGMA * T2 * T2) / C; if (T < 0) T = 0; yT[k] = T;
+          if (rec) { const U2 = T * T; sS += w * I; sO += w * SIGMA * U2 * U2; sT += w * T; }
+        }
+      }
+    }
+    if (rec) { ySumS += sS; ySumO += sO; ySumT += sT; }
+    ySunAt = t;
+  }
+  function ySpinUp() {   // soil and ocean start from each point's annual equilibrium, then run before the year shown
+    if (yInit[yCase]) { yT.set(yInit[yCase]); return; }
+    const keep = yCase; yCase = "inf"; yAcc.fill(0);
+    let n = 0; for (let t = 0.5; t < YEAR_H; t += 6, n++) yStep(t, 0, false);
+    for (let k = 0; k < YN; k++) yT[k] = Math.pow((yAcc[k] / n) / SIGMA, 0.25);
+    yAcc.fill(0); yCase = keep;
+    const yrs = yCase === "ocean" ? 6 : 1, dh = yCase === "ocean" ? 3 : 1;
+    for (let t = -yrs * YEAR_H; t < 0; t += dh) yStep(t + dh / 2, dh * 3600, false);
+    yInit[yCase] = Float64Array.from(yT);
+  }
+  function yReset() {
+    if (yAnim) { cancelAnimationFrame(yAnim); yAnim = null; }
+    const C = Y_C[yCase];
+    if (C > 0 && C < Infinity) ySpinUp();
+    else { const keep = yCase; yCase = "none"; yStep(0.5, 0, false); yCase = keep; }   // the picture before the run: the first hour
+    yAcc.fill(0); yHour = 0; ySumS = ySumO = ySumT = 0; ySunAt = 0.5;
+  }
+  function yAdvance(hours) {
+    const end = Math.min(YEAR_H, yHour + hours);
+    for (; yHour < end; yHour++) yStep(yHour + 0.5, 3600, true);
+  }
+  function yMeanInf() {   // infinite storage: the temperature of each point's mean absorbed sunlight so far
+    let s = 0, o = 0;
+    for (let i = 0; i < YNL; i++) for (let j = 0; j < YNO; j++) { const m = yAcc[i * YNO + j] / Math.max(1, yHour); s += yW[i] * Math.pow(m / SIGMA, 0.25); o += yW[i] * m; }
+    return { T: s, O: o };
+  }
+  const yLUT = (() => {
+    const stops = ["#10161f", "#1d2a44", "#5b3a6e", "#c4573a", "#f6ad55", "#fde7b0"].map(h => [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16)));
+    const pos = [0, 0.18, 0.4, 0.62, 0.82, 1], lut = new Uint8ClampedArray(256 * 3);
+    for (let n = 0; n < 256; n++) {
+      const x = n / 255; let s = 0; while (s < pos.length - 2 && x > pos[s + 1]) s++;
+      const u = (x - pos[s]) / (pos[s + 1] - pos[s]);
+      for (let c = 0; c < 3; c++) lut[n * 3 + c] = stops[s][c] + u * (stops[s + 1][c] - stops[s][c]);
+    }
+    return lut;
+  })();
+  let yPix = null;
+  function yMap(cv) {   // per pixel: latitude row, longitude east of the point under the Sun, grid-line weight
+    const n = cv.width, vlat = 18 * DR, vlon = 62 * DR, e = [-Math.sin(vlon), Math.cos(vlon), 0];
+    const no = [-Math.sin(vlat) * Math.cos(vlon), -Math.sin(vlat) * Math.sin(vlon), Math.cos(vlat)];
+    const v = [Math.cos(vlat) * Math.cos(vlon), Math.cos(vlat) * Math.sin(vlon), Math.sin(vlat)];
+    const row = new Int16Array(n * n).fill(-1), rel = new Float32Array(n * n), par = new Uint8Array(n * n), shade = new Float32Array(n * n);
+    for (let py = 0; py < n; py++) for (let px = 0; px < n; px++) {
+      const x = (px + 0.5) / n * 2.04 - 1.02, y = 1.02 - (py + 0.5) / n * 2.04, r2 = x * x + y * y, k = py * n + px;
+      if (r2 > 1) continue;
+      const z = Math.sqrt(1 - r2), P = [0, 1, 2].map(c => x * e[c] + y * no[c] + z * v[c]);
+      const la = Math.asin(Math.max(-1, Math.min(1, P[2])));
+      row[k] = Math.min(YNL - 1, Math.floor((la / DR + 90) / YD)); rel[k] = Math.atan2(P[1], P[0]);
+      par[k] = Math.abs(((la / DR + 7.5) % 15 + 15) % 15 - 7.5) < 0.35 ? 1 : 0;
+      shade[k] = 0.82 + 0.18 * z;   // a little limb darkening, so the ball reads as a ball
+    }
+    yPix = { n, row, rel, par, shade };
+  }
+  function yDraw() {
+    const cv = $("yrc"), dpr = Math.min(2, window.devicePixelRatio || 1), css = cv.getBoundingClientRect().width || 360;
+    const want = Math.max(200, Math.round(Math.min(400, css) * dpr));
+    if (cv.width !== want) { cv.width = cv.height = want; yPix = null; }
+    if (!yPix) yMap(cv);
+    const ctx = cv.getContext("2d"), img = ctx.createImageData(cv.width, cv.height), d = img.data, { n, row, rel, par, shade } = yPix;
+    const a = 2 * Math.PI * (((ySunAt % 24) + 24) % 24) / 24, inf = yCase === "inf";
+    for (let k = 0; k < n * n; k++) {
+      const i = row[k]; if (i < 0) continue;
+      let lon = (rel[k] - a) / DR; lon = ((lon % 360) + 360) % 360;
+      const j = Math.min(YNO - 1, Math.floor(lon / YD)), g = i * YNO + j;
+      const T = inf && yHour ? Math.pow(yAcc[g] / yHour / SIGMA, 0.25) : yT[g];
+      const c = Math.max(0, Math.min(255, Math.round(T / 360 * 255))) * 3, s = shade[k];
+      const grid = par[k] || Math.abs(((lon + 7.5) % 15) - 7.5) < 0.35 / Math.max(0.2, yCosL[i]);
+      for (let ch = 0; ch < 3; ch++) d[k * 4 + ch] = grid ? yLUT[c + ch] * 0.8 * s + 48 : yLUT[c + ch] * s;
+      d[k * 4 + 3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+    $("yrCap").textContent = `${yDate()}, day ${Math.min(365, Math.floor(ySunAt / 24) + 1)} of 365. The Sun is on the left.`;
+  }
+  function yDate() {
+    const dt = new Date(Date.UTC(2026, 0, 3 + Math.min(364, Math.floor(ySunAt / 24))));
+    return `${dt.getUTCDate()} ${["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][dt.getUTCMonth()]}`;
+  }
+  function drawYear() {
+    document.querySelectorAll("#yrP button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.c === yCase)));
+    document.querySelectorAll("#yrTab tr[data-c]").forEach(r => r.classList.toggle("on", r.dataset.c === yCase));
+    $("yrK").textContent = Y_TXT[yCase];
+    $("yrH").textContent = `${yHour.toLocaleString("en-US")} of ${YEAR_H.toLocaleString("en-US")}`;
+    const done = yHour >= YEAR_H, running = !!yAnim;
+    if (!yHour) { $("yrS").textContent = $("yrO").textContent = $("yrT").textContent = "—"; }
+    else {
+      const inf = yCase === "inf" ? yMeanInf() : null, T = inf ? inf.T : ySumT / yHour, O = inf ? inf.O : ySumO / yHour;
+      $("yrS").textContent = `${(ySumS / yHour).toFixed(2)} W/m²`;
+      $("yrO").textContent = `${O.toFixed(1)} W/m²`;
+      $("yrT").textContent = `${T.toFixed(1)} K`;
+      if (done) {
+        $("yrV").innerHTML = `<b>A whole year: ${T.toFixed(1)}&nbsp;K on average, ${(TE - T).toFixed(1)}&nbsp;K below the ceiling.</b> `
+          + `The sunlight on the sphere averaged ${(ySumS / yHour).toFixed(2)} W/m² on this grid; the exact integral is 340.30, the disc formula plus 0.014% from the elliptical orbit. The disc was exact. `
+          + `The real Earth averages 288 K.`;
+      }
+    }
+    if (!done) $("yrV").innerHTML = running ? `Running: ${yDate()}. The average so far is the line in bold.`
+      : yHour ? `Paused at ${yDate()}.` : "Pick how much heat each point stores, then run the year: 10,368 points, 8,766 hours.";
+    $("yrRun").textContent = running ? "Pause" : done ? "Run it again" : yHour ? "Continue" : "Run the year";
+    $("yrRun").setAttribute("aria-pressed", String(running));
+    yDraw();
+  }
+  function yLoop() {
+    yAdvance(24); drawYear();
+    yAnim = yHour < YEAR_H ? requestAnimationFrame(yLoop) : null;
+    if (!yAnim) drawYear();
+  }
+  const yReduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  $("yrRun").addEventListener("click", () => {
+    if (yAnim) { cancelAnimationFrame(yAnim); yAnim = null; drawYear(); return; }
+    if (yHour >= YEAR_H) yReset();
+    if (yReduce) { yAdvance(YEAR_H); drawYear(); return; }
+    yAnim = requestAnimationFrame(yLoop); drawYear();
+  });
+  $("yrEnd").addEventListener("click", () => {
+    if (yAnim) { cancelAnimationFrame(yAnim); yAnim = null; }
+    if (yHour >= YEAR_H) yReset();
+    yAdvance(YEAR_H); drawYear();
+  });
+  document.querySelectorAll("#yrP button").forEach(b => b.addEventListener("click", () => {
+    if (yAnim) { cancelAnimationFrame(yAnim); yAnim = null; }
+    yCase = b.dataset.c;
+    const slow = !yInit[yCase] && Y_C[yCase] > 0 && Y_C[yCase] < Infinity;
+    if (slow) $("yrV").textContent = "Letting the points settle into their seasons first…";
+    setTimeout(() => { yReset(); drawYear(); syncURL(); }, slow ? 30 : 0);
+  }));
+  window.addEventListener("resize", () => { yPix = null; yDraw(); });
 
   // ---------- is CO₂ saturated?
   const C0 = 280, PLANCK = 4 * SIGMA * TE ** 3;   // 3.77 W/m² per K
@@ -1300,7 +1523,8 @@
     t.scrollIntoView();
   }
   window.addEventListener("hashchange", openFromHash);
-  readURL(); render(); openFromHash();
+  readURL(); yReset(); render(); drawYear(); openFromHash();
+  if (location.hash === "#year") setTimeout(() => $("yrEnd").click(), 60);   // a link to the year opens it already run
 })();
 </script>
 

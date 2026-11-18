@@ -1,0 +1,11 @@
+the whole integral: 64,800 points (1 degree grid) x 8,766 hours, Earth's orbit and tilt, albedo 0.294
+  mean sunlight on the sphere over the year: 340.295 W/m2
+  disc formula S/4: 340.250 W/m2; with the orbit, S/4/sqrt(1 - e^2): 340.297 W/m2
+  absorbed: 240.25 W/m2; ceiling for the mean temperature: 255.13 K
+  mean surface temperature, no infrared absorbers, no heat moved between points:
+    no heat storage             144.32 K   (up to 363.8 K under the Sun, 0 K at night)
+    half a metre of soil        247.58 K   (range 70 to 290 K)
+    50 m of ocean               253.83 K   (range 210 to 270 K)
+    infinite storage            253.86 K   (poles 215 K, equator 268 K)
+    perfect mixing, even        255.13 K
+  Earth, measured: 288 K

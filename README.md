@@ -150,6 +150,19 @@ The planet always sends 240 W/m² to space; the more uneven it is, the colder it
 
 **Try to beat 255 K.** The page turns this into a game. A planet with no infrared absorbers is cut into six zones of equal area; you set the temperatures of five, and the sixth adjusts so that on average the planet still sends 240.2 W/m² to space. Any pattern is allowed: day and night, rotation, oceans, winds, heat stored or not. Nobody wins. The average of T never exceeds the fourth root of the average of T⁴ (the power-mean inequality), and reaches it only when every zone has the same temperature: 255.1 K, or 258.4 K with emissivity 0.95. A button tries 10,000 random planets; none goes above the ceiling, and the closest are the most even. The real Earth averages 288 K.
 
+**The whole integral: every point, every hour, a year.** "The disc is a classroom shortcut: integrate over many points on the sphere for 365 days." The page does it: 10,368 points, each followed hour by hour for a year (8,766 hours), with Earth's 23.44° tilt and its elliptical orbit. Each point absorbs the sunlight that reaches it, minus the 29.4% reflected, and with no infrared absorbers radiates σT⁴ straight to space; nothing moves heat between points, and each one stores as much heat as you choose. `year_on_sphere.py` does the same with 64,800 points:
+
+| Heat stored by each point | Average temperature |
+|---|---|
+| None (up to 364 K under the Sun, 0 K at night) | 144.3 K |
+| Half a metre of soil, 10⁶ J/(m² K) | 247.6 K |
+| 50 m of ocean, 2.09 × 10⁸ J/(m² K) | 253.8 K |
+| Infinite: each point at its own annual mean (poles 215 K, equator 268 K) | 253.9 K |
+| Perfect mixing: the even planet | 255.1 K |
+| Earth, measured | 288 K |
+
+The sunlight on the sphere integrates to 340.30 W/m²: the disc formula S/4 = 340.25, times 1/√(1 − e²) = 1.00014 for the elliptical orbit. The disc was exact, and no amount of storage lifts the average above the even planet.
+
 ## The Mars test
 
 | | Mars | Earth | Venus |
@@ -201,7 +214,7 @@ Each one opens directly from its link.
 
 ## Using the page
 
-Hover or touch the measured curve to read altitude, temperature and pressure; click or tap to pin the reading. "Copy link to this view" copies a link that reopens the page exactly as it is. Every section and objection has its own address, for example `#moon`, `#mars`, `#saturated`, `#imbalance`, `#divide-by-4` or `#o-co2-trace`. The sliders and buttons can be linked too: `?spread=0#divide-by-4`, `?rings=40#divide-by-4`, `?beat=300_280_260_230_200&eps=0.95#beat`, `?co2=560#saturated`, `?yr=10#imbalance`, `?fp=obs#fingerprint`, `?sat=1#spectrum`. "Report an error" opens a GitHub issue already filled in.
+Hover or touch the measured curve to read altitude, temperature and pressure; click or tap to pin the reading. "Copy link to this view" copies a link that reopens the page exactly as it is. Every section and objection has its own address, for example `#moon`, `#mars`, `#saturated`, `#imbalance`, `#divide-by-4` or `#o-co2-trace`. The sliders and buttons can be linked too: `?spread=0#divide-by-4`, `?rings=40#divide-by-4`, `?beat=300_280_260_230_200&eps=0.95#beat`, `?store=ocean#year` (opens the year already run), `?co2=560#saturated`, `?yr=10#imbalance`, `?fp=obs#fingerprint`, `?sat=1#spectrum`. "Report an error" opens a GitHub issue already filled in.
 
 ## Files
 
@@ -209,15 +222,17 @@ Hover or touch the measured curve to read altitude, temperature and pressure; cl
 index.html          interactive page (self-contained)
 og.png              preview image shown when the page is shared
 earth_test.py       computes every number above from the data file and draws the figure
+year_on_sphere.py   the whole integral: sunlight and temperature on a 1° grid, hour by hour, for a year
 data/
   earth_us1976.csv  U.S. Standard Atmosphere 1976, 0–50 km
 results/
-  numbers.txt, earth_test.png
+  numbers.txt, earth_test.png, year_on_sphere.txt
 ```
 
 ```
 pip install numpy matplotlib
 python3 earth_test.py
+python3 year_on_sphere.py      # about a minute; add 2.5 for the page's grid
 ```
 
 ## Method and caveats
