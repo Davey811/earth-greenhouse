@@ -166,6 +166,10 @@
   figure.yglobe { margin: 4px 0 0; display: flex; flex-direction: column; align-items: center; }
   #yrc { display: block; width: 100%; max-width: 400px; aspect-ratio: 1 / 1; }
   #yrChart { max-width: 420px; margin-top: 10px; }
+  #dyc { display: block; width: 100%; touch-action: none; cursor: crosshair; user-select: none; -webkit-user-select: none; margin-top: 8px; }
+  #dyc:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+  #dyP { flex-wrap: wrap; }
+  #dyP button { flex: 1 1 140px; }
   #yrCap { font-size: 13px; color: var(--dim); margin-top: 6px; text-align: center; font-variant-numeric: tabular-nums; }
   .ylegend { display: grid; grid-template-columns: auto minmax(120px, 220px) auto; gap: 8px; align-items: center; font-size: 12px; color: var(--dim); margin-top: 6px; }
   .ylegend i { display: block; height: 8px; border-radius: 4px; background: linear-gradient(90deg, #10161f, #1d2a44 18%, #5b3a6e 40%, #c4573a 62%, #f6ad55 82%, #fde7b0); }
@@ -522,6 +526,23 @@
       <tr class="earth"><td>Earth, measured</td><td colspan="2">288 K</td></tr>
     </table>
     <p class="note">Each point: C dT/dt = 0.706 × sunlight − σT⁴, in hourly steps, with C = 0 (none), 10⁶ J/(m² K) (soil, about half a metre), 2.09 × 10⁸ J/(m² K) (ocean, 50 m of water) or infinite (each point at the temperature of its own annual mean sunlight). Soil and ocean start from that annual temperature and run one year (soil) or six (ocean) before the year shown. Orbit: eccentricity 0.0167, perihelion on 3 January, tilt 23.44°. The sunlight on the sphere integrates to S/4 × 1/√(1 − e²) = 340.30 W/m²: the disc formula, plus 0.014% from the orbit. Measured by CERES: the sunlight each 1° cell absorbs, month by month, averaged over July 2005 to June 2015 (<a href="https://doi.org/10.5067/TERRA-AQUA-NOAA20/CERES/EBAF-TOA_L3B004.2.1">CERES EBAF-TOA Ed4.2.1</a>, NASA), averaged onto the page's 2.5° cells; hour by hour each cell gets the sunlight computed here, scaled so that its monthly total is the measured one. The satellites measure 340.42 W/m² arriving, averaged over the sphere and the year (the integral here gives 340.30 with S = 1361 W/m²; CERES uses a slightly higher solar constant), and 241.2 W/m² absorbed. Real reflection is uneven, ice and clouds bright, oceans dark, so every case comes out a little colder than with the same 29.4% everywhere, and the ceiling, set by the average, moves up to 255.4 K. The equator, the warmest band, averages over the year at most 268 K with 29.4% everywhere and 274 K with the measured sunlight; with no heat storage its noon reaches 362 K (383 K measured), but its nights fall to 0 K. The real equator averages about 300 K. Storing heat only evens the temperatures out; only moving heat between points, as winds and currents do, could reach the even planet, and nothing goes above it. The table comes from <a href="https://github.com/Davey811/earth-greenhouse/blob/main/year_on_sphere.py">year_on_sphere.py</a>, which does the same on a 1° grid.</p>
+    <p class="sub2" id="day">Draw a day</p>
+    <p>"362 K at noon!" "The asphalt burns!" "The ground keeps the heat at night!" Each one can happen, and none of them beats 255 K. Draw the surface temperature through a day, any shape you like: a hot noon, a cold night, a warm night, a flat line. Think of it as the whole surface, hour by hour. Whatever temperature it has, it radiates σT⁴, and with no infrared absorbers that is all that leaves the planet, so on average it has to match the 240.2 W/m² of sunlight that comes in. The tool keeps your shape and scales it, every hour by the same factor, until it does.</p>
+    <div class="seg" id="dyP" role="group" aria-label="Start from">
+      <button data-d="noon">362 K at noon, 0 K at night</button><button data-d="asphalt">Hot asphalt</button><button data-d="keep">Heat kept at night</button><button data-d="flat">Flat</button>
+    </div>
+    <svg id="dyc" viewBox="0 0 640 340" role="img" aria-label="The surface temperature through a day: your drawing, and the same shape once 240 W/m² leave"></svg>
+    <p class="note" id="dyHint">Draw on the chart with your finger or the mouse: drag across the hours. The faint line is your drawing; the amber line is the same shape with 240.2 W/m² going out.</p>
+    <table class="fltab" style="max-width:560px">
+      <tr><td>Your drawing, as drawn: average</td><td id="dyA"></td></tr>
+      <tr><td>It would send to space</td><td id="dyO"></td></tr>
+      <tr><td>Same shape, 240.2 W/m² out: warmest hour</td><td id="dyMx"></td></tr>
+      <tr><td>Same shape, 240.2 W/m² out: coldest hour</td><td id="dyMn"></td></tr>
+      <tr class="total"><td>Same shape, 240.2 W/m² out: average</td><td id="dyT"></td></tr>
+      <tr><td>The ceiling</td><td>255.1 K</td></tr>
+    </table>
+    <p class="verdict" id="dyV"></p>
+    <p class="note">Why it can only go down: with 240.2 W/m² going out, the average of σT⁴ is fixed, and the average of T is never larger than the fourth root of the average of T⁴ (the power-mean inequality). So the average is at most 255.1 K, and reaches it only when every hour has the same temperature. Heat kept at night, wind, oceans: anything that evens the hours out brings the average closer to 255.1 K; nothing takes it past. Above it, on the real Earth at 288 K, the surface radiates more than leaves the planet, and the difference is taken up by the infrared absorbers.</p>
   </section>
 
   <section class="card wide prose" id="moon" aria-label="The Moon test">
@@ -844,7 +865,7 @@
     $("h").value = hG; $("hO").textContent = hG === ZE ? `${ZE.toFixed(2)} km (measured)` : `${hG.toFixed(1)} km`;
     document.querySelectorAll(".mode button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.m === mode)));
     document.querySelectorAll("#ctlP .seg button").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.a === alb)));
-    drawChart(st); drawSpectrum(st); drawSpread(); drawCO2(); drawImb(); drawFP(); drawSlices(); drawBeat(); syncURL();
+    drawChart(st); drawSpectrum(st); drawSpread(); drawCO2(); drawImb(); drawFP(); drawSlices(); drawBeat(); drawDay(); syncURL();
   }
 
   // ---------- links to every view
@@ -864,6 +885,7 @@
     if (btEps !== 1) q.set("eps", "0.95");
     if (yCase !== "none") q.set("store", yCase);
     if (yMode === "ceres") q.set("asr", "ceres");
+    const dq = dyQuery(); if (dq) q.set("day", dq);
     return q.toString();
   }
   function linkHere() { return location.href.split(/[?#]/)[0] + "?" + query() + location.hash; }
@@ -883,6 +905,7 @@
     if (q.get("eps") === "0.95") btEps = 0.95;
     if (Y_KEYS.includes(q.get("store"))) yCase = q.get("store");
     yWantCeres = q.get("asr") === "ceres";
+    dyRead(q.get("day"));
     const bq = (q.get("beat") || "").split(/[_,]/).map(Number);
     if (bq.length === BT_N - 1 && bq.every(t => Number.isFinite(t) && t >= 0 && t <= 400)) bq.forEach((t, i) => { $(`bt${i}`).value = t; });
     btFit();
@@ -1347,6 +1370,121 @@
     });
   }));
   window.addEventListener("resize", () => { yPix = null; yDraw(); });
+
+  // ---------- draw a day: any shape, rescaled so that 240.2 W/m² leave; the average never passes the ceiling
+  const DN = 96, DTMAX = 400;   // 96 quarter-hours, 0..400 K
+  const D_PRE = {
+    noon: h => 362 * Math.pow(Math.max(0, Math.cos(2 * Math.PI * (h - 12) / 24)), 0.25),
+    asphalt: h => 295 + 35 * Math.cos(2 * Math.PI * (h - 14) / 24),
+    keep: h => 268 + 11 * Math.cos(2 * Math.PI * (h - 13) / 24),
+    flat: () => TE
+  };
+  let dyT = new Float64Array(DN), dyPre = "noon", dyGeo = null, dyLast = null, dyDrawing = false;
+  function dySet(name) { dyPre = name; for (let i = 0; i < DN; i++) dyT[i] = D_PRE[name]((i + 0.5) / 4); }
+  dySet("noon");
+  function dyStats() {
+    let m = 0, m4 = 0;
+    for (let i = 0; i < DN; i++) { m += dyT[i]; m4 += dyT[i] ** 4; }
+    m /= DN; m4 /= DN;
+    const out = SIGMA * m4, k = out > 1e-6 ? Math.pow(Q / out, 0.25) : 0;
+    let mx = 0, mn = Infinity; for (let i = 0; i < DN; i++) { mx = Math.max(mx, k * dyT[i]); mn = Math.min(mn, k * dyT[i]); }
+    return { mean: m, out, k, smean: k * m, smax: mx, smin: mn };
+  }
+  function drawDay() {
+    const svg = $("dyc"); svg.innerHTML = "";
+    const narrow = (svg.getBoundingClientRect().width || 640) < 480;
+    const W = narrow ? 380 : 640, H = narrow ? 330 : 340, L = narrow ? 40 : 48, Rm = 12, T0 = narrow ? 58 : 46, B = 40;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    dyGeo = { W, H, L, Rm, T0, B };
+    const X = i => L + (W - L - Rm) * i / DN, Y = t => T0 + (H - T0 - B) * (1 - t / DTMAX);
+    const dim = "#8b98a5", amber = "#f6ad55", teal = "#4fd1c5", fg = "#e7e9ea", fs = narrow ? 11 : 12;
+    for (let t = 0; t <= DTMAX; t += 100) {
+      el("line", { x1: L, x2: W - Rm, y1: Y(t), y2: Y(t), stroke: "#2a333d" }, svg);
+      el("text", { x: L - 6, y: Y(t) + 4, fill: dim, "font-size": fs, "text-anchor": "end" }, svg, t === DTMAX ? `${t} K` : `${t}`);
+    }
+    [[0, "midnight"], [24, "6"], [48, "noon"], [72, "18"], [96, "midnight"]].forEach(([i, lb]) => {
+      el("line", { x1: X(i), x2: X(i), y1: T0, y2: H - B, stroke: "#2a333d" }, svg);
+      el("text", { x: X(i), y: H - B + 16, fill: dim, "font-size": fs, "text-anchor": i === 0 ? "start" : i === DN ? "end" : "middle" }, svg, lb);
+    });
+    const st = dyStats();
+    el("line", { x1: L, x2: W - Rm, y1: Y(288), y2: Y(288), stroke: teal, "stroke-dasharray": "6 4", "stroke-width": 1.4 }, svg);
+    el("line", { x1: L, x2: W - Rm, y1: Y(TE), y2: Y(TE), stroke: fg, "stroke-opacity": 0.75, "stroke-dasharray": "2 4", "stroke-width": 1.4 }, svg);
+    let raw = "", sc = "";
+    for (let i = 0; i < DN; i++) { const x = X(i + 0.5).toFixed(1); raw += `${x},${Y(dyT[i]).toFixed(1)} `; sc += `${x},${Y(st.k * dyT[i]).toFixed(1)} `; }
+    el("polyline", { points: raw, fill: "none", stroke: fg, "stroke-opacity": 0.35, "stroke-width": 1.6 }, svg);
+    if (st.k) {
+      el("polyline", { points: sc, fill: "none", stroke: amber, "stroke-width": 2.6, "stroke-linejoin": "round" }, svg);
+      el("line", { x1: L, x2: W - Rm, y1: Y(st.smean), y2: Y(st.smean), stroke: amber, "stroke-dasharray": "8 5", "stroke-width": 1.6 }, svg);
+    }
+    // legend, two rows
+    const lg = (x, y, attrs, label, col) => { el("line", Object.assign({ x1: x, x2: x + 18, y1: y - 4, y2: y - 4 }, attrs), svg); el("text", { x: x + 24, y, fill: col || dim, "font-size": fs }, svg, label); };
+    const c2 = narrow ? 175 : 190, c3 = 360;
+    lg(L, 16, { stroke: fg, "stroke-opacity": 0.35, "stroke-width": 1.6 }, "as you drew it");
+    lg(L + (narrow ? 120 : c2), 16, { stroke: amber, "stroke-width": 2.6 }, "same shape, 240.2 W/m² out", amber);
+    lg(L, 34, { stroke: amber, "stroke-dasharray": "8 5", "stroke-width": 1.6 }, st.k ? `its average: ${st.smean.toFixed(1)} K` : "its average", amber);
+    lg(L + c2, 34, { stroke: fg, "stroke-opacity": 0.75, "stroke-dasharray": "2 4", "stroke-width": 1.4 }, `ceiling ${TE.toFixed(1)} K`, fg);
+    if (!narrow) lg(L + c3, 34, { stroke: teal, "stroke-dasharray": "6 4", "stroke-width": 1.4 }, "Earth, measured: 288 K", teal);
+    else lg(L, 52, { stroke: teal, "stroke-dasharray": "6 4", "stroke-width": 1.4 }, "Earth, measured: 288 K", teal);
+    // table and verdict
+    document.querySelectorAll("#dyP button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.d === dyPre)));
+    $("dyA").textContent = `${st.mean.toFixed(1)} K`;
+    $("dyO").innerHTML = `${st.out.toFixed(1)} W/m² <small>(in: 240.2)</small>`;
+    if (!st.k) {
+      ["dyMx", "dyMn", "dyT"].forEach(id => { $(id).textContent = "—"; });
+      $("dyV").textContent = "At 0 K all day nothing is radiated: draw something above zero.";
+      return;
+    }
+    $("dyMx").textContent = `${st.smax.toFixed(1)} K`;
+    $("dyMn").textContent = `${st.smin.toFixed(1)} K`;
+    $("dyT").textContent = `${st.smean.toFixed(1)} K`;
+    const gap = TE - st.smean, drift = st.out - Q;
+    const asDrawn = Math.abs(drift) < 0.5 ? "As drawn, it already sends out what comes in."
+      : drift > 0 ? `As drawn, it would send out ${drift.toFixed(0)} W/m² more than comes in, and cool down until it matched.`
+        : `As drawn, it would send out ${(-drift).toFixed(0)} W/m² less than comes in, and warm up until it matched.`;
+    $("dyV").innerHTML = gap < 0.05
+      ? `<b>A flat day: ${st.smean.toFixed(1)}&nbsp;K, right on the ceiling.</b> ${asDrawn} Any hot noon or cold night would pull the average down.`
+      : `<b>Your day averages ${st.smean.toFixed(1)}&nbsp;K once the energy balances: ${gap.toFixed(1)}&nbsp;K below the ceiling.</b> ${asDrawn} The flatter the day, the closer to 255.1&nbsp;K; only a perfectly flat line reaches it.`;
+  }
+  function dyPoint(ev) {
+    const svg = $("dyc"); if (!dyGeo || !svg.getScreenCTM()) return null;
+    const pt = svg.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY;
+    const q = pt.matrixTransform(svg.getScreenCTM().inverse()), g = dyGeo;
+    const i = Math.max(0, Math.min(DN - 1, Math.floor((q.x - g.L) / (g.W - g.L - g.Rm) * DN)));
+    const t = Math.max(0, Math.min(DTMAX, DTMAX * (1 - (q.y - g.T0) / (g.H - g.T0 - g.B))));
+    return { i, t };
+  }
+  function dyPaint(ev) {
+    const p = dyPoint(ev); if (!p) return;
+    if (dyLast && dyLast.i !== p.i) {   // fill the hours skipped by a fast stroke
+      const a = dyLast, step = p.i > a.i ? 1 : -1;
+      for (let i = a.i; i !== p.i; i += step) dyT[i] = a.t + (p.t - a.t) * (i - a.i) / (p.i - a.i);
+    }
+    dyT[p.i] = p.t; dyLast = p; dyPre = "custom"; drawDay();
+  }
+  $("dyc").addEventListener("pointerdown", ev => { dyDrawing = true; dyLast = null; try { $("dyc").setPointerCapture(ev.pointerId); } catch (e) {} dyPaint(ev); ev.preventDefault(); });
+  $("dyc").addEventListener("pointermove", ev => { if (dyDrawing) dyPaint(ev); });
+  ["pointerup", "pointercancel", "lostpointercapture"].forEach(n => $("dyc").addEventListener(n, () => { if (dyDrawing) { dyDrawing = false; dyLast = null; syncURL(); } }));
+  document.querySelectorAll("#dyP button").forEach(b => b.addEventListener("click", () => { dySet(b.dataset.d); drawDay(); syncURL(); }));
+  function dyQuery() {   // a preset by name; a drawing as its 96 samples, whole kelvin, two base-36 digits each
+    if (dyPre !== "custom") return dyPre === "noon" ? null : dyPre;
+    return Array.from(dyT, t => Math.round(t).toString(36).padStart(2, "0")).join("");
+  }
+  function dyRead(v) {
+    if (!v) return;
+    if (Object.prototype.hasOwnProperty.call(D_PRE, v)) { dySet(v); return; }
+    let t;
+    if (/^[0-9a-z]{192}$/.test(v)) t = Array.from({ length: DN }, (_, i) => parseInt(v.slice(2 * i, 2 * i + 2), 36));
+    else {   // or by hand: 2 to 96 temperatures spread evenly over the day, e.g. day=300_250
+      const n = v.split(/[_,]/).map(Number);
+      if (n.length < 2 || n.length > DN || !n.every(Number.isFinite)) return;
+      t = Array.from({ length: DN }, (_, i) => {   // each value at the middle of its slot, straight lines around the clock
+        const x = (i + 0.5) * n.length / DN - 0.5, a = Math.floor(x), f = x - a, L = n.length;
+        return n[(a + L) % L] * (1 - f) + n[(a + 1 + L) % L] * f;
+      });
+    }
+    if (!t.every(x => x >= 0 && x <= DTMAX)) return;
+    dyT.set(t); dyPre = "custom";
+  }
 
   // ---------- is CO₂ saturated?
   const C0 = 280, PLANCK = 4 * SIGMA * TE ** 3;   // 3.77 W/m² per K

@@ -176,6 +176,17 @@ The sunlight on the sphere integrates to 340.30 W/m²: the disc formula S/4 = 34
 
 Without infrared absorbers even the equator averages below the freezing point of water, or just above it with the measured sunlight. The real equator averages about 300 K. The page shows both figures for the run on screen.
 
+**Draw a day.** "362 K at noon!" "The asphalt burns!" "The ground keeps the heat at night!" The page lets you draw any of them: the surface temperature through 24 hours, any shape, with a finger or the mouse. With no infrared absorbers the surface sends σT⁴ straight to space, so the page works out what your day would radiate, then keeps the same shape and scales it until it sends out the 240.2 W/m² that come in:
+
+| Start from | Average as drawn | Sent to space as drawn | Same shape, 240.2 W/m² out |
+|---|---|---|---|
+| 362 K at noon, 0 K at night | 155.7 K | 310.0 W/m² | 146.1 K |
+| Hot asphalt, 260 to 330 K | 295.0 K | 447.6 W/m² | 252.5 K |
+| Heat kept at night, 257 to 279 K | 268.0 K | 294.0 W/m² | 254.8 K |
+| Flat | 255.1 K | 240.2 W/m² | 255.1 K |
+
+The balanced average is 255.1 K × mean(T) / (mean T⁴)^¼. The power-mean inequality keeps that fraction at 1 or below, and only a flat line reaches 1. A hot noon pulls the average down, and so does a cold night. Draw what you like: nothing goes above 255.1 K.
+
 ## The Mars test
 
 | | Mars | Earth | Venus |
@@ -227,7 +238,7 @@ Each one opens directly from its link.
 
 ## Using the page
 
-Hover or touch the measured curve to read altitude, temperature and pressure; click or tap to pin the reading. "Copy link to this view" copies a link that reopens the page exactly as it is. Every section and objection has its own address, for example `#moon`, `#mars`, `#saturated`, `#imbalance`, `#divide-by-4` or `#o-co2-trace`. The sliders and buttons can be linked too: `?spread=0#divide-by-4`, `?rings=40#divide-by-4`, `?beat=300_280_260_230_200&eps=0.95#beat`, `?store=ocean#year` (opens the year already run), `?asr=ceres&store=ocean#year` (the same with the measured sunlight), `?co2=560#saturated`, `?yr=10#imbalance`, `?fp=obs#fingerprint`, `?sat=1#spectrum`. "Report an error" opens a GitHub issue already filled in.
+Hover or touch the measured curve to read altitude, temperature and pressure; click or tap to pin the reading. "Copy link to this view" copies a link that reopens the page exactly as it is. Every section and objection has its own address, for example `#moon`, `#mars`, `#saturated`, `#imbalance`, `#divide-by-4` or `#o-co2-trace`. The sliders and buttons can be linked too: `?spread=0#divide-by-4`, `?rings=40#divide-by-4`, `?beat=300_280_260_230_200&eps=0.95#beat`, `?store=ocean#year` (opens the year already run), `?asr=ceres&store=ocean#year` (the same with the measured sunlight), `?day=asphalt#day`, `?day=300_250#day` (a day drawn by hand: 2 to 96 temperatures spread evenly over the 24 hours), `?co2=560#saturated`, `?yr=10#imbalance`, `?fp=obs#fingerprint`, `?sat=1#spectrum`. "Report an error" opens a GitHub issue already filled in.
 
 ## Files
 
